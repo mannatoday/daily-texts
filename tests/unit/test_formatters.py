@@ -59,9 +59,13 @@ def test_html_formatter() -> None:
     assert "<h2>舊約</h2>" in out.content
     assert "<h2>經文選讀</h2>" in out.content
     assert 'class="verse"' in out.content
-    assert "<p class=\"reading\">詩篇 91:1–8</p>" in out.content
-    assert "<p class=\"reading\">約書亞記 8:30–9:27</p>" in out.content
-    assert "<p class=\"reading\">路加福音 12:49–59</p>" in out.content
+    assert "詩篇 91:1–8" in out.content
+    assert "約書亞記 8:30–9:27" in out.content
+    assert "路加福音 12:49–59" in out.content
+    assert "biblegateway.com/passage/" in out.content
+    assert "version=CUV" in out.content
+    assert "Psalm+91" in out.content or "Psalm%2091" in out.content
+    assert "[閱讀]" in out.content
     assert "原文連結" not in out.content
     assert "color-scheme" in out.content
     assert "data-copy-scripture" in out.content

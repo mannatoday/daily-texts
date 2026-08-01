@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import quote
+
 from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.domain.references import localize_reference
 
@@ -17,8 +19,23 @@ def date_title_zh(content: LocalizedDailyText) -> str:
 
 
 def lectionary_lines(content: LocalizedDailyText) -> list[str]:
-    lines: list[str] = []
+    return [zh for zh, _en in lectionary_entries(content)]
+
+
+def lectionary_entries(content: LocalizedDailyText) -> list[tuple[str, str]]:
+    """Return ``(zh_label, english_reference)`` pairs for lectionary readings."""
+    entries: list[tuple[str, str]] = []
     if content.psalm:
-        lines.append(localize_reference(content.psalm))
-    lines.extend(localize_reference(reading) for reading in content.readings)
-    return lines
+        entries.append((localize_reference(content.psalm), content.psalm))
+    for reading in content.readings:
+        entries.append((localize_reference(reading), reading))
+    return entries
+
+
+def biblegateway_cuv_url(reference: str) -> str:
+    """Bible Gateway link for Traditional Chinese Union Version (和合本)."""
+    cleaned = reference.strip().replace("–", "-").replace("—", "-")
+    return (
+        "https://www.biblegateway.com/passage/"
+        f"?search={quote(cleaned)}&version=CUV"
+    )

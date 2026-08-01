@@ -6,7 +6,11 @@ from pathlib import Path
 
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.models import LocalizedDailyText
-from daily_texts.infrastructure.formatters._common import date_title_zh, lectionary_lines
+from daily_texts.infrastructure.formatters._common import (
+    biblegateway_cuv_url,
+    date_title_zh,
+    lectionary_entries,
+)
 
 _FONT_LINKS = """\
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,13 +39,11 @@ class HtmlFormatter:
         home_href: str | None = None,
     ) -> FormattedOutput:
         title = escape(date_title_zh(content))
-        lectionary = lectionary_lines(content)
+        entries = lectionary_entries(content)
 
         lectionary_block = ""
-        if lectionary:
-            refs = "\n".join(
-                f'    <p class="reading">{escape(ref)}</p>' for ref in lectionary
-            )
+        if entries:
+            refs = "\n".join(_reading_row(zh, en) for zh, en in entries)
             lectionary_block = f"    <h2>經文選讀</h2>\n{refs}\n"
 
         source_block = ""
@@ -95,6 +97,17 @@ class HtmlFormatter:
             content=body,
             filename="daily-text.html",
         )
+
+
+def _reading_row(zh_label: str, english_ref: str) -> str:
+    url = biblegateway_cuv_url(english_ref)
+    return (
+        f'    <p class="reading">'
+        f'<span class="reading__ref">{escape(zh_label)}</span>'
+        f'<a class="reading__open" href="{escape(url, quote=True)}" '
+        f'target="_blank" rel="noopener noreferrer" '
+        f'title="在 Bible Gateway 閱讀和合本">[閱讀]</a></p>'
+    )
 
 
 def _day_nav(
