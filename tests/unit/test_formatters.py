@@ -68,7 +68,8 @@ def test_html_formatter() -> None:
     assert "[閱讀]" in out.content
     assert "原文連結" not in out.content
     assert "color-scheme" in out.content
-    assert "data-copy-scripture" in out.content
+    assert "複製經文" not in out.content
+    assert "data-copy-scripture" not in out.content
     prayer_idx = out.content.index("<h2>今日禱告</h2>")
     lectionary_idx = out.content.index("<h2>經文選讀</h2>")
     assert prayer_idx < lectionary_idx

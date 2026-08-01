@@ -61,7 +61,6 @@ class HtmlFormatter:
             style_block = f"  <style>\n{css}\n  </style>\n"
 
         nav = _day_nav(prev_href=prev_href, next_href=next_href, home_href=home_href)
-        copy_script = _copy_script()
 
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -78,9 +77,6 @@ class HtmlFormatter:
     <h2>舊約</h2>
     <p class="verse">{escape(content.ot.text_zh)}</p>
     <p class="ref">— {escape(content.ot.reference_zh)}</p>
-    <div class="scripture-actions">
-      <button type="button" data-copy-scripture>複製經文</button>
-    </div>
     <h2>新約</h2>
     <p class="verse">{escape(content.nt.text_zh)}</p>
     <p class="ref">— {escape(content.nt.reference_zh)}</p>
@@ -89,7 +85,7 @@ class HtmlFormatter:
 {lectionary_block}{source_block}    </article>
     <footer class="site-foot">每日經文 · Daily Texts</footer>
   </div>
-{copy_script}</body>
+</body>
 </html>
 """
         return FormattedOutput(
@@ -137,27 +133,3 @@ def _day_nav(
         + _link(next_href, "後一日 →", "day-nav__next")
         + "  </nav>\n"
     )
-
-
-def _copy_script() -> str:
-    return """  <script>
-    (function () {
-      var btn = document.querySelector("[data-copy-scripture]");
-      if (!btn || !navigator.clipboard) return;
-      btn.addEventListener("click", function () {
-        var verses = Array.prototype.map.call(
-          document.querySelectorAll("article p.verse, article p.ref"),
-          function (el) { return el.textContent.trim(); }
-        ).join("\\n");
-        navigator.clipboard.writeText(verses).then(function () {
-          btn.dataset.copied = "true";
-          btn.textContent = "已複製";
-          setTimeout(function () {
-            btn.dataset.copied = "false";
-            btn.textContent = "複製經文";
-          }, 1600);
-        });
-      });
-    })();
-  </script>
-"""

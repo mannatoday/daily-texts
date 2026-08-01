@@ -150,13 +150,6 @@ article > h1 + h2 {
   border-top: none;
 }
 
-/* Keep section rhythm when copy button sits between OT and NT */
-article > .scripture-actions + h2 {
-  margin-top: 2.75rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--rule);
-}
-
 p.verse {
   margin: 0;
   font-family: var(--font-serif);
@@ -219,32 +212,6 @@ h2 + p.reading {
 
 .reading__open:hover {
   color: var(--link-hover);
-}
-
-.scripture-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0.75rem 0 0;
-}
-
-.scripture-actions button {
-  appearance: none;
-  border: none;
-  background: transparent;
-  color: var(--text-soft);
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  padding: 0.35rem 0.15rem;
-}
-
-.scripture-actions button:hover {
-  color: var(--text-muted);
-}
-
-.scripture-actions button[data-copied="true"] {
-  color: var(--text-muted);
 }
 
 .site-index h1 {
@@ -340,7 +307,6 @@ footer.site-foot {
   }
 
   .day-nav,
-  .scripture-actions,
   footer.site-foot {
     display: none !important;
   }

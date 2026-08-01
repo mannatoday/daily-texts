@@ -22,9 +22,6 @@
     <h2>舊約</h2>
     <p class="verse">「『不可貪戀你鄰舍的妻子；也不可貪圖你鄰舍的房屋、田地、僕婢、牛驢，以及他一切所有的。』</p>
     <p class="ref">— 申命記 5:21</p>
-    <div class="scripture-actions">
-      <button type="button" data-copy-scripture>複製經文</button>
-    </div>
     <h2>新約</h2>
     <p class="verse">我說，你們要順着聖靈而行，絕不可滿足肉體的情慾。因為肉體的情慾和聖靈相爭，聖靈和肉體相爭，這兩個彼此敵對，使你們不能做所願意做的。</p>
     <p class="ref">— 加拉太書 5:16–17</p>
@@ -39,25 +36,5 @@
     </article>
     <footer class="site-foot">每日經文 · Daily Texts</footer>
   </div>
-  <script>
-    (function () {
-      var btn = document.querySelector("[data-copy-scripture]");
-      if (!btn || !navigator.clipboard) return;
-      btn.addEventListener("click", function () {
-        var verses = Array.prototype.map.call(
-          document.querySelectorAll("article p.verse, article p.ref"),
-          function (el) { return el.textContent.trim(); }
-        ).join("\n");
-        navigator.clipboard.writeText(verses).then(function () {
-          btn.dataset.copied = "true";
-          btn.textContent = "已複製";
-          setTimeout(function () {
-            btn.dataset.copied = "false";
-            btn.textContent = "複製經文";
-          }, 1600);
-        });
-      });
-    })();
-  </script>
 </body>
 </html>
