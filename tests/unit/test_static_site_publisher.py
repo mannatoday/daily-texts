@@ -53,6 +53,15 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "2026-08-01.html" in index
     assert "每日經文" in index
     assert 'href="styles.css"' in index
+    assert (tmp_path / "about.html").is_file()
+    about = (tmp_path / "about.html").read_text(encoding="utf-8")
+    assert "1731" in about
+    assert "非官方出版物" in about
+    assert "了解更多" in html
+    assert "about.html" in html
+    assert "跳至內容" in html
+    assert "歷日檔案" in html
+    assert "today-card" in index or "今日經文" in index
 
 
 def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:
@@ -75,8 +84,9 @@ def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:
     pos_aug = index.index("2026-08-01.html")
     pos_jul = index.index("2026-07-31.html")
     assert pos_aug < pos_jul
-    assert 'class="latest"' in index
-    assert index.index("最新") < pos_aug
+    assert "今日經文" in index
+    assert "歷日檔案" in index
+    assert 'class="today-card"' in index
 
 
 def test_static_site_publisher_overwrites_same_day(tmp_path: Path) -> None:

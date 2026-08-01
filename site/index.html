@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="每日經文檔案 · Moravian Daily Texts 中文靈修閱讀" />
   <title>每日經文</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,14 +12,29 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell site-index">
-    <h1>每日經文</h1>
-    <p class="lede">安靜閱讀 · 每日一句</p>
-    <p class="latest">最新：<a href="2026-08-01.html">2026-08-01</a></p>
-    <ul>
-      <li><a href="2026-08-01.html">2026-08-01</a></li>
+    <main id="main">
+    <h1 class="brand">每日經文</h1>
+    <p class="lede">安靜閱讀 · 以神的話開始每一天</p>
+    <a class="today-card" href="2026-08-01.html"><span class="today-card__label">今日經文</span><span class="today-card__date">2026 年 8 月 1 日（星期六）</span></a>
+    <h2 class="archive-title">歷日檔案</h2>
+    <ul class="archive-list">
+      <li><a href="2026-08-01.html"><span>2026 年 8 月 1 日（星期六）</span><span class="iso">2026-08-01</span></a></li>
+      <li><a href="2026-07-31.html"><span>2026 年 7 月 31 日（星期五）</span><span class="iso">2026-07-31</span></a></li>
     </ul>
-    <footer class="site-foot">Daily Texts</footer>
+    </main>
+    <footer class="site-foot">
+      <section class="about-blurb" aria-labelledby="about-blurb-title">
+        <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
+        <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
+        <p class="more"><a href="about.html">了解更多</a></p>
+      </section>
+      <nav class="foot-nav" aria-label="頁尾導覽">
+        <a href="about.html">關於</a>
+      </nav>
+      <p class="foot-credit">每日經文 · 非官方中文整理</p>
+    </footer>
   </div>
 </body>
 </html>

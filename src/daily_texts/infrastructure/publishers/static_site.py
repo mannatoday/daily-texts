@@ -8,6 +8,7 @@ from pathlib import Path
 
 from daily_texts.application.dto import FormattedOutput, PublishResult
 from daily_texts.domain.models import LocalizedDailyText
+from daily_texts.infrastructure.formatters._common import format_date_zh
 from daily_texts.infrastructure.formatters.html import HtmlFormatter, load_devotional_css
 
 logger = logging.getLogger(__name__)
@@ -36,9 +37,9 @@ class StaticSitePublisher:
     ) -> PublishResult:
         self._site_dir.mkdir(parents=True, exist_ok=True)
         self._write_stylesheet()
+        self._write_about_page()
 
         days_before = self._list_day_pages()
-        # Include today so nav neighbors resolve even on first write.
         days = sorted(set(days_before) | {content.date}, reverse=True)
 
         prev_href, next_href = _neighbors(content.date, days)
@@ -57,13 +58,16 @@ class StaticSitePublisher:
         index_path = self._site_dir / "index.html"
         index_path.write_text(self._build_index(days), encoding="utf-8")
 
-        message = f"Wrote {day_path} and updated {index_path}"
+        message = f"Wrote {day_path}, about.html, and updated {index_path}"
         logger.info(message)
         return PublishResult(channel=self.channel, success=True, message=message)
 
     def _write_stylesheet(self) -> None:
         css_path = self._site_dir / "styles.css"
         css_path.write_text(load_devotional_css() + "\n", encoding="utf-8")
+
+    def _write_about_page(self) -> None:
+        (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
 
     def _list_day_pages(self) -> list[date]:
         days: list[date] = []
@@ -77,7 +81,6 @@ class StaticSitePublisher:
         return days
 
     def _refresh_neighbor_nav(self, current: date, days: list[date]) -> None:
-        """Update prev/next links on adjacent day pages after insert/overwrite."""
         chronological = sorted(days)
         if current not in chronological:
             return
@@ -101,14 +104,24 @@ class StaticSitePublisher:
             body = '    <p class="empty">尚無每日經文。</p>\n'
         else:
             latest = days[0]
+            latest_label = escape(format_date_zh(latest))
             items = "\n".join(
-                f'      <li><a href="{d.isoformat()}.html">{escape(d.isoformat())}</a></li>'
+                (
+                    "      <li>"
+                    f'<a href="{d.isoformat()}.html">'
+                    f"<span>{escape(format_date_zh(d))}</span>"
+                    f'<span class="iso">{d.isoformat()}</span>'
+                    "</a></li>"
+                )
                 for d in days
             )
             body = (
-                f'    <p class="latest">最新：'
-                f'<a href="{latest.isoformat()}.html">{escape(latest.isoformat())}</a></p>\n'
-                f"    <ul>\n{items}\n    </ul>\n"
+                f'    <a class="today-card" href="{latest.isoformat()}.html">'
+                f'<span class="today-card__label">今日經文</span>'
+                f'<span class="today-card__date">{latest_label}</span>'
+                "</a>\n"
+                '    <h2 class="archive-title">歷日檔案</h2>\n'
+                f'    <ul class="archive-list">\n{items}\n    </ul>\n'
             )
 
         return f"""<!DOCTYPE html>
@@ -117,14 +130,28 @@ class StaticSitePublisher:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="每日經文檔案 · Moravian Daily Texts 中文靈修閱讀" />
   <title>每日經文</title>
 {_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell site-index">
-    <h1>每日經文</h1>
-    <p class="lede">安靜閱讀 · 每日一句</p>
-{body}    <footer class="site-foot">Daily Texts</footer>
+    <main id="main">
+    <h1 class="brand">每日經文</h1>
+    <p class="lede">安靜閱讀 · 以神的話開始每一天</p>
+{body}    </main>
+    <footer class="site-foot">
+      <section class="about-blurb" aria-labelledby="about-blurb-title">
+        <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
+        <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
+        <p class="more"><a href="about.html">了解更多</a></p>
+      </section>
+      <nav class="foot-nav" aria-label="頁尾導覽">
+        <a href="about.html">關於</a>
+      </nav>
+      <p class="foot-credit">每日經文 · 非官方中文整理</p>
+    </footer>
   </div>
 </body>
 </html>
@@ -138,14 +165,13 @@ def _neighbors(day: date, days_newest_first: list[date]) -> tuple[str | None, st
     idx = chronological.index(day)
     prev_day = chronological[idx - 1] if idx > 0 else None
     next_day = chronological[idx + 1] if idx + 1 < len(chronological) else None
-    # Reading order: 前一日 = older, 後一日 = newer
     prev_href = f"{prev_day.isoformat()}.html" if prev_day else None
     next_href = f"{next_day.isoformat()}.html" if next_day else None
     return prev_href, next_href
 
 
 _NAV_BLOCK = re.compile(
-    r'<nav class="day-nav"[^>]*>.*?</nav>\s*',
+    r'<nav class="day-nav(?:\s+day-nav--bottom)?"[^>]*>.*?</nav>\s*',
     re.DOTALL,
 )
 
@@ -153,11 +179,81 @@ _NAV_BLOCK = re.compile(
 def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) -> str:
     from daily_texts.infrastructure.formatters.html import _day_nav
 
-    nav = _day_nav(prev_href=prev_href, next_href=next_href, home_href="index.html")
-    if _NAV_BLOCK.search(html):
-        return _NAV_BLOCK.sub(nav.lstrip(), html, count=1)
-    return html.replace(
-        '<div class="site-shell">',
-        f'<div class="site-shell">\n{nav.rstrip()}',
-        1,
+    top = _day_nav(prev_href=prev_href, next_href=next_href, home_href="index.html")
+    bottom = _day_nav(
+        prev_href=prev_href,
+        next_href=next_href,
+        home_href="index.html",
+        css_extra="day-nav--bottom",
     )
+    matches = list(_NAV_BLOCK.finditer(html))
+    if not matches:
+        return html
+
+    parts: list[str] = []
+    last = 0
+    for i, match in enumerate(matches):
+        parts.append(html[last : match.start()])
+        if i == 0:
+            parts.append(top.lstrip() if match.start() > 0 else top)
+        else:
+            parts.append(bottom.lstrip())
+        last = match.end()
+    parts.append(html[last:])
+    return "".join(parts)
+
+
+_ABOUT_HTML = f"""<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="關於 Moravian Daily Texts 與本站中文版" />
+  <title>關於 · 每日經文</title>
+{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至內容</a>
+  <div class="site-shell about-page">
+    <nav class="day-nav" aria-label="網站導覽">
+      <a class="day-nav__prev" href="index.html">← 歷日檔案</a>
+      <span class="day-nav__home" aria-current="page">關於</span>
+      <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+    </nav>
+    <main id="main">
+      <h1>關於 Moravian Daily Texts</h1>
+
+      <h2>起源</h2>
+      <p>Moravian Daily Texts（摩拉維亞每日經文）自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。數百年來，它陪伴全球信徒以神的話開始每一天。</p>
+
+      <h2>每日內容</h2>
+      <p>每一天通常包含：</p>
+      <ul>
+        <li>一段舊約守望經文（Watchword）</li>
+        <li>一段新約經文</li>
+        <li>一段簡短禱告</li>
+        <li>讀經進度（詩篇、舊約、新約）</li>
+      </ul>
+      <p>舊約與新約並陳，提醒我們整本聖經彼此呼應：神的應許與成全、律法與福音，都在每日閱讀中相遇。</p>
+
+      <h2>讀經計畫</h2>
+      <p>除了當日兩段守望經文，Daily Texts 也提供當日讀經進度，通常包括詩篇（Psalm）、一段舊約經文，以及一段新約經文，幫助讀者按著節奏走完更廣的經卷。</p>
+
+      <h2>關於本站中文版</h2>
+      <p class="meta">本站依據官方每日內容整理，經文引用中文聖經版本（如和合本相關版本），禱告另行翻譯為繁體中文。本站為個人靈修整理用途，<strong>非官方出版物</strong>。</p>
+
+      <h2>版權與來源</h2>
+      <p class="meta">英文原文來自 <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America — The Daily Texts</a>。中文經文文字另依公開聖經資源引用；使用前請自行確認相關授權與使用規範。</p>
+      <p class="meta">若需正式出版、轉載或商業用途，請聯繫原文出版單位，並遵守各聖經譯本之版權規定。</p>
+    </main>
+    <footer class="site-foot">
+      <nav class="foot-nav" aria-label="頁尾導覽">
+        <a href="index.html">歷日檔案</a>
+      </nav>
+      <p class="foot-credit">每日經文 · 非官方中文整理</p>
+    </footer>
+  </div>
+</body>
+</html>
+"""
