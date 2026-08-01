@@ -139,8 +139,8 @@ class StaticSitePublisher:
   <div class="site-shell site-index">
     <main id="main">
     <h1 class="brand">摩拉維亞每日經文</h1>
-    <p class="lede">以神的話開始每一天</p>
     <p class="subtitle">Moravian Daily Texts • 中文版</p>
+    <p class="lede">以神的話開始每一天</p>
 {body}    </main>
     <footer class="site-foot">
       <section class="about-blurb" aria-labelledby="about-blurb-title">

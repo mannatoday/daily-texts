@@ -52,8 +52,12 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     index = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert "2026-08-01.html" in index
     assert "摩拉維亞每日經文" in index
-    assert "以神的話開始每一天" in index
     assert "Moravian Daily Texts • 中文版" in index
+    assert "以神的話開始每一天" in index
+    brand_idx = index.index("摩拉維亞每日經文")
+    subtitle_idx = index.index("Moravian Daily Texts • 中文版")
+    lede_idx = index.index("以神的話開始每一天")
+    assert brand_idx < subtitle_idx < lede_idx
     assert 'href="styles.css"' in index
     assert (tmp_path / "about.html").is_file()
     about = (tmp_path / "about.html").read_text(encoding="utf-8")

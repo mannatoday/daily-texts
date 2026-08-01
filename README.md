@@ -1,120 +1,165 @@
-# Daily Texts
+# 摩拉維亞每日經文（daily-texts）
 
-Fetch [Moravian Daily Texts](https://www.moravian.org/the-daily-texts/), localize scripture to Traditional Chinese (RCUV), translate the daily prayer, and export to Markdown, HTML, plain text, and JSON.
+**Moravian Daily Texts • 中文版**  
+以神的話開始每一天
 
-## Architecture
 
-Clean Architecture with ports and adapters:
+自動抓取 [Moravian Daily Texts](https://www.moravian.org/the-daily-texts/)，將經文對應為繁體中文聖經（RCUV／和合本相關資源），翻譯當日禱告，並輸出 Markdown、HTML、純文字、JSON；可選擇產生靜態網站並部署到 GitHub Pages。
 
-- **Providers** — fetch raw English content (HTML sidebar scraper)
-- **BibleService** — RCUV lookup via FHL API
-- **Translators** — prayer translation (composite chain)
-- **Formatters** — Markdown / HTML / text / JSON file outputs
-- **Publishers** — `static_site` (GitHub Pages); stubs for LINE, Email, Telegram, Website (S3/CMS)
+> 本專案為個人靈修整理用途，**非官方出版物**。
 
-Conceptual publisher registry:
+## 功能摘要
 
-```text
-PublisherRegistry
-├── File outputs (formatters → output/{date}/)
-│      ├── Markdown / HTML / Text / JSON
-├── StaticSitePublisher   → site/{YYYY-MM-DD}.html + index.html
-├── WebsitePublisher      (stub)
-├── EmailPublisher        (stub)
-└── LinePublisher         (stub)
-```
+- 擷取當日舊約／新約守望經文、禱告與讀經進度（經文選讀）
+- 經文查詢：信望愛 FHL API（`rcuv`）
+- 禱告翻譯：可串接本機 Ollama、OpenAI、Anthropic、Google（複合備援）
+- 輸出：`output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`
+- 靜態站：`site/`（每日頁、歷日檔案、關於頁）→ GitHub Pages
 
-## Setup
+## 系統需求
+
+- Python **3.11+**
+- 可選：Ollama（本機翻譯）、OpenAI／Anthropic／Google API 金鑰
+
+## 安裝
 
 ```bash
+git clone https://github.com/jyeh14/daily-texts.git
+cd daily-texts
+
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
 pip install -e ".[dev]"
 cp .env.example .env
-# Set OPENAI_API_KEY in .env (or set TRANSLATOR=noop for offline)
 ```
 
-## Usage
+編輯 `.env`：至少設定翻譯相關選項（見下方）。離線測試可設：
 
 ```bash
-# Fetch today's daily text
-daily-texts fetch
-
-# Fetch a specific date (validates against widget date)
-daily-texts fetch --date 2026-07-31
-
-# Force overwrite existing output
-daily-texts fetch --force
-
-# Write GitHub Pages files under ./site
-PUBLISHERS=static_site daily-texts fetch --force
-
-# Offline / tests without OpenAI
-TRANSLATOR=noop daily-texts fetch
-
-# Run the daily scheduler (Asia/Taipei 00:00 by default; also retries at configured hours)
-daily-texts run-scheduler
+TRANSLATOR=noop
+# 或
+TRANSLATOR=fallback
 ```
 
-File output: `output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`.
-
-Static site: `site/{YYYY-MM-DD}.html` and `site/index.html` when `PUBLISHERS` includes `static_site`.
-
-### GitHub Pages
-
-1. Repo **Settings → Pages → Source: GitHub Actions**
-2. Commit and push updates under `site/` (or run fetch with `static_site` then push)
-3. Workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) deploys `site/` on push to `master`
-
-See [`site/README.md`](site/README.md).
-
-## Configuration
-
-See `.env.example` for all options.
-
-| Variable | Notes |
-|----------|--------|
-| `FORMATS` | Default `markdown,html,text,json` |
-| `PUBLISHERS` | `null`, `static_site`, or stubs (`website`, `line`, `email`, `telegram`) |
-| `SITE_DIR` | Default `./site` |
-
-Translation uses a **CompositeTranslator** chain by default:
-
-```
-TRANSLATOR=composite
-TRANSLATORS=local,openai,anthropic,google,fallback
-```
-
-Order: Local Ollama (`qwen2.5:7b`) → OpenAI → Anthropic → Google → Fallback (keep English). Unavailable providers are skipped; the first successful translation wins.
+### 本機翻譯（建議）
 
 ```bash
 ollama serve
 ollama pull qwen2.5:7b
 ```
 
-`.env` should include:
+`.env` 範例：
 
-```
+```env
+TRANSLATOR=composite
+TRANSLATORS=local,openai,anthropic,google,fallback
 LOCAL_TRANSLATOR_BASE_URL=http://127.0.0.1:11434/v1
 LOCAL_TRANSLATOR_MODEL=qwen2.5:7b
 ```
 
+## 使用方式
 
-## Tests
+```bash
+# 抓取「今日」每日經文（依 Moravian 網站當日內容）
+daily-texts fetch
+
+# 指定日期（會與網站 widget 日期比對）
+daily-texts fetch --date 2026-08-01
+
+# 覆蓋既有 output
+daily-texts fetch --force
+
+# 同時寫入 GitHub Pages 用的 site/
+PUBLISHERS=static_site daily-texts fetch --force
+
+# 定時執行（預設 Asia/Taipei 00:00，並依 SCHEDULE_RETRY_HOURS 重試）
+daily-texts run-scheduler
+```
+
+### 輸出位置
+
+| 路徑 | 說明 |
+|------|------|
+| `output/{YYYY-MM-DD}/daily-text.md` | Markdown |
+| `output/{YYYY-MM-DD}/daily-text.html` | 可閱讀 HTML |
+| `output/{YYYY-MM-DD}/daily-text.txt` | 純文字 |
+| `output/{YYYY-MM-DD}/daily-text.json` | JSON API 風格資料 |
+| `site/{YYYY-MM-DD}.html` | 靜態站每日頁（需 `static_site`） |
+| `site/index.html` | 今日入口＋歷日檔案 |
+| `site/about.html` | 關於頁 |
+
+## GitHub Pages
+
+1. Repo **Settings → Pages → Source: GitHub Actions**
+2. 本機產生站點後提交並推送（預設分支為 `master`）：
+
+```bash
+PUBLISHERS=static_site daily-texts fetch --force
+git add site/
+git commit -m "Update daily texts site"
+git push origin master
+```
+
+3. 工作流程：[`.github/workflows/pages.yml`](.github/workflows/pages.yml)  
+   站點說明：[`site/README.md`](site/README.md)
+
+公開網址範例：`https://jyeh14.github.io/daily-texts/`
+
+## 設定重點
+
+完整變數見 [`.env.example`](.env.example)。
+
+| 變數 | 說明 |
+|------|------|
+| `PROVIDER` | 目前支援 `moravian_html` |
+| `FORMATS` | 預設 `markdown,html,text,json` |
+| `PUBLISHERS` | `null`、`static_site`；其餘 `line`／`email`／`telegram`／`website` 為 stub |
+| `SITE_DIR` | 靜態站目錄，預設 `./site` |
+| `TRANSLATOR` / `TRANSLATORS` | 單一翻譯器或複合鏈 |
+| `SCHEDULE_TIMEZONE` / `SCHEDULE_HOUR` / `SCHEDULE_RETRY_HOURS` | 排程 |
+
+## 架構（簡述）
+
+Clean Architecture（ports & adapters）：
+
+```text
+Provider → BibleService + Translator → Formatters → output/
+                                         └→ Publishers（如 StaticSitePublisher → site/）
+```
+
+Publisher 概念分組：
+
+```text
+PublisherRegistry
+├── File outputs（formatters → output/）
+│     Markdown / HTML / Text / JSON
+├── StaticSitePublisher   → GitHub Pages
+├── WebsitePublisher      （stub，未來 S3／CMS）
+├── EmailPublisher        （stub）
+└── LinePublisher         （stub）
+```
+
+## 測試
 
 ```bash
 pytest
 ```
 
-## License & Attribution (Milestone 2 — pending)
+## 版本紀錄
 
-Phase 1 is for personal / development use. Before any production publish:
+見 [CHANGELOG.md](CHANGELOG.md)。
 
-1. Confirm Moravian / IBOC content reuse terms (contact [moravianiboc@mcnp.org](mailto:moravianiboc@mcnp.org) as needed).
-2. Review FHL / RCUV licensing: [信望愛版權說明](https://www.fhl.net/main/fhl/fhl8.html).
-3. Add formal attribution, robots / rate-limit policy, and a `REQUIRE_LICENSE_ACK` gate for publishers.
+## 授權與出處（請注意）
 
-Sources used by this project:
+對外公開前請自行確認：
 
-- Daily Texts widget: [moravian.org/the-daily-texts](https://www.moravian.org/the-daily-texts/)
-- Scripture text: FHL Bible API (`version=rcuv`, Traditional Chinese)
+1. Moravian / IBOC 內容使用條款（必要時聯繫 [moravianiboc@mcnp.org](mailto:moravianiboc@mcnp.org)）
+2. 聖經譯本／FHL 授權：[信望愛版權說明](https://www.fhl.net/main/fhl/fhl8.html)
+3. 站內已標示非官方整理；正式轉載或商業用途請洽原文出版單位
+
+**資料來源**
+
+- 每日內容：[Moravian Daily Texts](https://www.moravian.org/the-daily-texts/)
+- 中文經文：FHL Bible API（`version=rcuv` 等）
+- 讀經連結：Bible Gateway（和合本 `CUV`）
