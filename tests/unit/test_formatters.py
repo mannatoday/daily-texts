@@ -58,10 +58,13 @@ def test_html_formatter() -> None:
     assert "<h1>2026 年 8 月 1 日（星期六）</h1>" in out.content
     assert "<h2>舊約</h2>" in out.content
     assert "<h2>經文選讀</h2>" in out.content
-    assert "<p>詩篇 91:1–8</p>" in out.content
-    assert "<p>約書亞記 8:30–9:27</p>" in out.content
-    assert "<p>路加福音 12:49–59</p>" in out.content
+    assert 'class="verse"' in out.content
+    assert "<p class=\"reading\">詩篇 91:1–8</p>" in out.content
+    assert "<p class=\"reading\">約書亞記 8:30–9:27</p>" in out.content
+    assert "<p class=\"reading\">路加福音 12:49–59</p>" in out.content
     assert "原文連結" not in out.content
+    assert "color-scheme" in out.content
+    assert "data-copy-scripture" in out.content
     prayer_idx = out.content.index("<h2>今日禱告</h2>")
     lectionary_idx = out.content.index("<h2>經文選讀</h2>")
     assert prayer_idx < lectionary_idx

@@ -39,15 +39,31 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
 
     assert result.success
     assert result.channel == "static_site"
+    assert (tmp_path / "styles.css").is_file()
     day_page = tmp_path / "2026-08-01.html"
     assert day_page.is_file()
     html = day_page.read_text(encoding="utf-8")
     assert "我要熬煉他們。" in html
     assert "經文選讀" in html
+    assert 'href="styles.css"' in html
+    assert "day-nav" in html
+    assert "index.html" in html
 
     index = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert "2026-08-01.html" in index
     assert "每日經文" in index
+    assert 'href="styles.css"' in index
+
+
+def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:
+    publisher = StaticSitePublisher(tmp_path)
+    asyncio.run(publisher.publish([], _sample(date(2026, 7, 31))))
+    asyncio.run(publisher.publish([], _sample(date(2026, 8, 1))))
+
+    aug = (tmp_path / "2026-08-01.html").read_text(encoding="utf-8")
+    jul = (tmp_path / "2026-07-31.html").read_text(encoding="utf-8")
+    assert 'href="2026-07-31.html"' in aug
+    assert 'href="2026-08-01.html"' in jul
 
 
 def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:

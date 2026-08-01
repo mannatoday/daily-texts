@@ -1,0 +1,338 @@
+/* Daily Texts — quiet reading styles */
+
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #2c2c2a;
+  --text-muted: #6b6b66;
+  --text-soft: #8a8a84;
+  --scripture: #1a1a18;
+  --rule: #e8e6e1;
+  --link: #4a5560;
+  --link-hover: #1a1a18;
+  --focus: #5c6b7a;
+  --font-sans: "Noto Sans TC", "PingFang TC", "Helvetica Neue", "Arial", sans-serif;
+  --font-serif: "Noto Serif TC", "Songti TC", "Source Han Serif TC", "Georgia", serif;
+  --measure: 40rem;
+  --space: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141413;
+    --surface: #1c1c1a;
+    --text: #e6e4df;
+    --text-muted: #a3a39c;
+    --text-soft: #7a7a74;
+    --scripture: #f2f0ea;
+    --rule: #2e2e2b;
+    --link: #b8c0c8;
+    --link-hover: #f2f0ea;
+    --focus: #9aadb8;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 48rem) {
+  body {
+    font-size: 1.0625rem;
+  }
+}
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.site-shell {
+  width: min(100% - 2 * var(--space), var(--measure));
+  margin-inline: auto;
+  padding-block: clamp(2rem, 6vw, 4rem) clamp(3rem, 8vw, 5rem);
+}
+
+.day-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+}
+
+.day-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.day-nav a:hover {
+  color: var(--link-hover);
+}
+
+.day-nav .day-nav__home {
+  flex: 0 0 auto;
+}
+
+.day-nav .day-nav__prev,
+.day-nav .day-nav__next {
+  flex: 1 1 0;
+}
+
+.day-nav .day-nav__next {
+  text-align: right;
+}
+
+.day-nav [aria-disabled="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+article > h1 {
+  margin: 0 0 2.75rem;
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 2.8vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+article > h2 {
+  margin: 2.75rem 0 0.85rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-soft);
+}
+
+article > h1 + h2 {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Keep section rhythm when copy button sits between OT and NT */
+article > .scripture-actions + h2 {
+  margin-top: 2.75rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--rule);
+}
+
+p.verse {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.6vw, 1.35rem);
+  line-height: 1.85;
+  color: var(--scripture);
+  font-weight: 400;
+}
+
+p.ref {
+  margin: 0.85rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+p.prayer {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 2.4vw, 1.2rem);
+  line-height: 1.8;
+  color: var(--text);
+}
+
+p.reading,
+p.source {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+p.reading:first-of-type,
+h2 + p.reading {
+  margin-top: 0;
+}
+
+.scripture-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.75rem 0 0;
+}
+
+.scripture-actions button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 0.35rem 0.15rem;
+}
+
+.scripture-actions button:hover {
+  color: var(--text-muted);
+}
+
+.scripture-actions button[data-copied="true"] {
+  color: var(--text-muted);
+}
+
+.site-index h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.35rem, 3vw, 1.6rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-align: center;
+}
+
+.site-index .lede {
+  margin: 0 0 2.5rem;
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+}
+
+.site-index .latest {
+  margin: 0 0 2rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--surface);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 1px var(--rule);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.site-index .latest a {
+  font-weight: 500;
+  color: var(--scripture);
+  text-decoration: none;
+}
+
+.site-index .latest a:hover {
+  text-decoration: underline;
+}
+
+.site-index ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-index li {
+  border-top: 1px solid var(--rule);
+}
+
+.site-index li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-index li a {
+  display: block;
+  padding: 0.95rem 0.25rem;
+  color: var(--text);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.site-index li a:hover {
+  color: var(--link-hover);
+}
+
+.site-index .empty {
+  text-align: center;
+  color: var(--text-muted);
+}
+
+footer.site-foot {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+@media print {
+  :root {
+    --bg: #fff;
+    --text: #000;
+    --text-muted: #333;
+    --text-soft: #444;
+    --scripture: #000;
+    --rule: #ccc;
+  }
+
+  body {
+    background: #fff;
+    font-size: 12pt;
+  }
+
+  .day-nav,
+  .scripture-actions,
+  footer.site-foot {
+    display: none !important;
+  }
+
+  .site-shell {
+    width: 100%;
+    padding: 0;
+  }
+
+  article > h2 {
+    break-after: avoid;
+  }
+
+  p.verse,
+  p.prayer {
+    orphans: 3;
+    widows: 3;
+  }
+}
+
