@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.models import LocalizedDailyText
-from daily_texts.infrastructure.formatters._common import date_title
+from daily_texts.infrastructure.formatters._common import date_title_zh, lectionary_lines
 
 
 class PlainTextFormatter:
@@ -15,7 +15,7 @@ class PlainTextFormatter:
         include_source_link: bool = True,
     ) -> FormattedOutput:
         lines = [
-            date_title(content),
+            date_title_zh(content),
             "",
             "【舊約】",
             content.ot.text_zh,
@@ -29,6 +29,9 @@ class PlainTextFormatter:
             content.prayer_zh,
             "",
         ]
+        lectionary = lectionary_lines(content)
+        if lectionary:
+            lines.extend(["【經文選讀】", *lectionary, ""])
         if include_source_link:
             lines.extend(["【原文連結】", content.source_url, ""])
 

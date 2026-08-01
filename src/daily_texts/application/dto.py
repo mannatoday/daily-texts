@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from daily_texts.domain.models import LocalizedDailyText, RawDailyText
 
-FormatName = Literal["markdown", "html", "text"]
+FormatName = Literal["markdown", "html", "text", "json"]
 
 
 class FormattedOutput(BaseModel):

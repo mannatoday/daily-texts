@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.models import LocalizedDailyText
-from daily_texts.infrastructure.formatters._common import date_title
+from daily_texts.infrastructure.formatters._common import date_title_zh, lectionary_lines
 
 
 class MarkdownFormatter:
@@ -15,7 +15,7 @@ class MarkdownFormatter:
         include_source_link: bool = True,
     ) -> FormattedOutput:
         lines = [
-            f"# {date_title(content)}",
+            f"# {date_title_zh(content)}",
             "",
             "## 舊約",
             "",
@@ -34,6 +34,12 @@ class MarkdownFormatter:
             content.prayer_zh,
             "",
         ]
+        lectionary = lectionary_lines(content)
+        if lectionary:
+            lines.extend(["## 經文選讀", ""])
+            for ref in lectionary:
+                lines.append(ref)
+                lines.append("")
         if include_source_link:
             lines.extend(["## 原文連結", "", f"[Moravian Daily Texts]({content.source_url})", ""])
 

@@ -17,6 +17,11 @@ _DATE_PATTERN = re.compile(
     r"(?P<weekday>[A-Za-z]+),\s*(?P<month>[A-Za-z]+)\s*(?P<day>\d{1,2}),\s*(?P<year>\d{4})"
 )
 _READING_LINE = re.compile(r"^(?P<label>.+?)\s*—\s*(?P<rest>.+)$", re.DOTALL)
+# Psalm 90 | Psalm 91:1–8 | Psalm 91:1–92:5 (rare cross-chapter)
+_PSALM_REF = re.compile(
+    r"(Psalm\s+\d+(?::\d+(?:[–-](?:\d+:\d+|\d+))?)?)",
+    re.IGNORECASE,
+)
 
 
 def parse_moravian_sidebar_html(
@@ -109,14 +114,8 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
     match = _READING_LINE.match(first_line)
     if match and "psalm" in match.group("rest").lower():
         metadata["day_label"] = match.group("label")
-        rest = match.group("rest")
-        psalm_match = re.search(r"(Psalm\s+\d+)", rest, re.IGNORECASE)
-        if psalm_match:
-            psalm = psalm_match.group(1)
-        after_psalm = rest[psalm_match.end() :] if psalm_match else rest
-        after_psalm = after_psalm.lstrip("; ").strip()
-        if after_psalm:
-            readings.extend(part.strip() for part in after_psalm.split(";") if part.strip())
+        psalm, inline_readings = _extract_psalm_and_inline_readings(match.group("rest"))
+        readings.extend(inline_readings)
     elif "watchword for the week" in first_line.lower():
         metadata["watchword_for_week"] = first_line
         if remaining:
@@ -124,10 +123,7 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
             label_match = _READING_LINE.match(second)
             if label_match:
                 metadata["day_label"] = label_match.group("label")
-                rest = label_match.group("rest")
-                psalm_match = re.search(r"(Psalm\s+\d+)", rest, re.IGNORECASE)
-                if psalm_match:
-                    psalm = psalm_match.group(1)
+                psalm, _ = _extract_psalm_and_inline_readings(label_match.group("rest"))
                 remaining = remaining[1:]
             else:
                 metadata["church_year_label"] = second
@@ -138,10 +134,7 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
             label_match = _READING_LINE.match(remaining[0])
             assert label_match is not None
             metadata["day_label"] = label_match.group("label")
-            rest = label_match.group("rest")
-            psalm_match = re.search(r"(Psalm\s+\d+)", rest, re.IGNORECASE)
-            if psalm_match:
-                psalm = psalm_match.group(1)
+            psalm, _ = _extract_psalm_and_inline_readings(label_match.group("rest"))
             remaining = remaining[1:]
         else:
             metadata["day_label"] = first_line
@@ -153,6 +146,16 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
         readings.extend(parts)
 
     return psalm, readings, metadata
+
+
+def _extract_psalm_and_inline_readings(rest: str) -> tuple[str | None, list[str]]:
+    psalm_match = _PSALM_REF.search(rest)
+    if not psalm_match:
+        return None, []
+    psalm = psalm_match.group(1)
+    after_psalm = rest[psalm_match.end() :].lstrip("; ").strip()
+    inline = [part.strip() for part in after_psalm.split(";") if part.strip()]
+    return psalm, inline
 
 
 def _merge_dash_continuations(lines: list[str]) -> list[str]:

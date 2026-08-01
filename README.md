@@ -1,16 +1,28 @@
 # Daily Texts
 
-Fetch [Moravian Daily Texts](https://www.moravian.org/the-daily-texts/), localize scripture to Traditional Chinese (RCUV), translate the daily prayer, and export to Markdown, HTML, and plain text.
+Fetch [Moravian Daily Texts](https://www.moravian.org/the-daily-texts/), localize scripture to Traditional Chinese (RCUV), translate the daily prayer, and export to Markdown, HTML, plain text, and JSON.
 
 ## Architecture
 
 Clean Architecture with ports and adapters:
 
-- **Providers** — fetch raw English content (Phase 1: HTML sidebar scraper)
+- **Providers** — fetch raw English content (HTML sidebar scraper)
 - **BibleService** — RCUV lookup via FHL API
-- **Translators** — prayer translation (OpenAI)
-- **Formatters** — Markdown / HTML / text output
-- **Publishers** — interface only in Phase 1 (LINE, Email, Telegram, Website stubs)
+- **Translators** — prayer translation (composite chain)
+- **Formatters** — Markdown / HTML / text / JSON file outputs
+- **Publishers** — `static_site` (GitHub Pages); stubs for LINE, Email, Telegram, Website (S3/CMS)
+
+Conceptual publisher registry:
+
+```text
+PublisherRegistry
+├── File outputs (formatters → output/{date}/)
+│      ├── Markdown / HTML / Text / JSON
+├── StaticSitePublisher   → site/{YYYY-MM-DD}.html + index.html
+├── WebsitePublisher      (stub)
+├── EmailPublisher        (stub)
+└── LinePublisher         (stub)
+```
 
 ## Setup
 
@@ -34,6 +46,9 @@ daily-texts fetch --date 2026-07-31
 # Force overwrite existing output
 daily-texts fetch --force
 
+# Write GitHub Pages files under ./site
+PUBLISHERS=static_site daily-texts fetch --force
+
 # Offline / tests without OpenAI
 TRANSLATOR=noop daily-texts fetch
 
@@ -41,20 +56,48 @@ TRANSLATOR=noop daily-texts fetch
 daily-texts run-scheduler
 ```
 
-Output is written to `output/{YYYY-MM-DD}/daily-text.{md,html,txt}`.
+File output: `output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`.
+
+Static site: `site/{YYYY-MM-DD}.html` and `site/index.html` when `PUBLISHERS` includes `static_site`.
+
+### GitHub Pages
+
+1. Repo **Settings → Pages → Source: GitHub Actions**
+2. Commit and push updates under `site/` (or run fetch with `static_site` then push)
+3. Workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) deploys `site/` on push to `main`
+
+See [`site/README.md`](site/README.md).
 
 ## Configuration
 
 See `.env.example` for all options.
 
+| Variable | Notes |
+|----------|--------|
+| `FORMATS` | Default `markdown,html,text,json` |
+| `PUBLISHERS` | `null`, `static_site`, or stubs (`website`, `line`, `email`, `telegram`) |
+| `SITE_DIR` | Default `./site` |
+
 Translation uses a **CompositeTranslator** chain by default:
 
 ```
 TRANSLATOR=composite
-TRANSLATORS=openai,anthropic,local,fallback
+TRANSLATORS=local,openai,anthropic,google,fallback
 ```
 
-Order: OpenAI → Anthropic → Local (Ollama-compatible) → Fallback (keep English). Unavailable providers are skipped; the first successful translation wins.
+Order: Local Ollama (`qwen2.5:7b`) → OpenAI → Anthropic → Google → Fallback (keep English). Unavailable providers are skipped; the first successful translation wins.
+
+```bash
+ollama serve
+ollama pull qwen2.5:7b
+```
+
+`.env` should include:
+
+```
+LOCAL_TRANSLATOR_BASE_URL=http://127.0.0.1:11434/v1
+LOCAL_TRANSLATOR_MODEL=qwen2.5:7b
+```
 
 
 ## Tests

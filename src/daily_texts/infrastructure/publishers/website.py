@@ -5,7 +5,7 @@ from daily_texts.domain.models import LocalizedDailyText
 
 
 class WebsitePublisher:
-    """Stub for future website / CMS publishing."""
+    """Stub for future S3 / CMS publishing (distinct from StaticSitePublisher)."""
 
     channel = "website"
 
@@ -14,4 +14,4 @@ class WebsitePublisher:
         outputs: list[FormattedOutput],
         content: LocalizedDailyText,
     ) -> PublishResult:
-        raise NotImplementedError("WebsitePublisher is reserved for Milestone 3")
+        raise NotImplementedError("WebsitePublisher is reserved for future S3/CMS publish")

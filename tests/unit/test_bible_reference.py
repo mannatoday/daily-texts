@@ -21,6 +21,16 @@ def test_parse_range_and_en_dash() -> None:
     assert parsed.verse == "35-48"
 
 
+def test_parse_comma_verses() -> None:
+    parsed = parse_reference("Galatians 5:16,17")
+    assert parsed.chineses == "加"
+    assert parsed.chapter == 5
+    assert parsed.verse == "16-17"
+
+    parsed = parse_reference("Galatians 5:16, 17")
+    assert parsed.verse == "16-17"
+
+
 def test_parse_numbered_book() -> None:
     parsed = parse_reference("1 John 3:16")
     assert parsed.chineses == "約一"

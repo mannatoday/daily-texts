@@ -22,7 +22,7 @@ def test_parse_moravian_sidebar_html() -> None:
 
     assert result.date == date(2026, 7, 31)
     assert result.date_display == "Friday, July 31, 2026"
-    assert result.psalm == "Psalm 90"
+    assert result.psalm == "Psalm 90:1–17"
     assert result.readings == ["Joshua 8:1–29", "Luke 12:35–48"]
     assert result.ot.reference == "Jeremiah 9:7"
     assert result.ot.text_en == "I will now refine and test them."

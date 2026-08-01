@@ -7,7 +7,13 @@ from pathlib import Path
 
 _REF_PATTERN = re.compile(
     r"^(?P<book>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
-    r"(?P<chapter>\d+):(?P<verse>\d+)(?:[–-](?P<end>\d+))?$",
+    r"(?P<chapter>\d+)"
+    r"(?::(?P<verse>\d+)"
+    r"(?:(?:[–-]|,\s*)"
+    r"(?:(?P<end_chapter>\d+):(?P<end_verse>\d+)|(?P<end>\d+))"
+    r")?"
+    r")?"
+    r"$",
 )
 
 
@@ -31,7 +37,17 @@ def localize_reference(reference: str) -> str:
         return reference
 
     chapter = match.group("chapter")
-    start = match.group("verse")
+    verse = match.group("verse")
+    if verse is None:
+        return f"{name} {chapter}"
+
+    end_chapter = match.group("end_chapter")
+    end_verse = match.group("end_verse")
     end = match.group("end")
-    verse = f"{start}–{end}" if end else start
-    return f"{name} {chapter}:{verse}"
+    if end_chapter and end_verse:
+        span = f"{chapter}:{verse}–{end_chapter}:{end_verse}"
+    elif end:
+        span = f"{chapter}:{verse}–{end}"
+    else:
+        span = f"{chapter}:{verse}"
+    return f"{name} {span}"

@@ -16,6 +16,7 @@ from daily_texts.application.use_cases.fetch_and_localize import FetchAndLocaliz
 from daily_texts.infrastructure.bible.fhl_rcuv import FhlRcuvBibleService
 from daily_texts.infrastructure.config import Settings
 from daily_texts.infrastructure.formatters.html import HtmlFormatter
+from daily_texts.infrastructure.formatters.json_formatter import JsonFormatter
 from daily_texts.infrastructure.formatters.markdown import MarkdownFormatter
 from daily_texts.infrastructure.formatters.plain_text import PlainTextFormatter
 from daily_texts.infrastructure.http import create_http_client
@@ -26,11 +27,13 @@ from daily_texts.infrastructure.providers.moravian_html_sidebar import (
 from daily_texts.infrastructure.publishers.email import EmailPublisher
 from daily_texts.infrastructure.publishers.line import LinePublisher
 from daily_texts.infrastructure.publishers.null_publisher import NullPublisher
+from daily_texts.infrastructure.publishers.static_site import StaticSitePublisher
 from daily_texts.infrastructure.publishers.telegram import TelegramPublisher
 from daily_texts.infrastructure.publishers.website import WebsitePublisher
 from daily_texts.infrastructure.translators.anthropic_translator import AnthropicTranslator
 from daily_texts.infrastructure.translators.composite_translator import CompositeTranslator
 from daily_texts.infrastructure.translators.fallback_translator import FallbackTranslator
+from daily_texts.infrastructure.translators.google_translator import GoogleTranslator
 from daily_texts.infrastructure.translators.local_translator import LocalTranslator
 from daily_texts.infrastructure.translators.openai_translator import OpenAITranslator
 
@@ -40,6 +43,7 @@ _FORMATTERS: dict[FormatName, type] = {
     "markdown": MarkdownFormatter,
     "html": HtmlFormatter,
     "text": PlainTextFormatter,
+    "json": JsonFormatter,
 }
 
 _PUBLISHERS: dict[str, type[Publisher]] = {
@@ -48,6 +52,7 @@ _PUBLISHERS: dict[str, type[Publisher]] = {
     "email": EmailPublisher,
     "telegram": TelegramPublisher,
     "website": WebsitePublisher,
+    "static_site": StaticSitePublisher,
 }
 
 
@@ -111,6 +116,8 @@ def _build_translator(settings: Settings) -> TextTranslator:
         return OpenAITranslator(settings)
     if settings.translator == "anthropic":
         return AnthropicTranslator(settings)
+    if settings.translator == "google":
+        return GoogleTranslator(settings)
     if settings.translator == "local":
         return LocalTranslator(settings)
     if settings.translator == "composite":
@@ -126,6 +133,8 @@ def _build_translator_chain(settings: Settings) -> list[TextTranslator]:
             chain.append(OpenAITranslator(settings))
         elif key == "anthropic":
             chain.append(AnthropicTranslator(settings))
+        elif key == "google":
+            chain.append(GoogleTranslator(settings))
         elif key == "local":
             chain.append(LocalTranslator(settings))
         elif key == "fallback":
@@ -155,7 +164,10 @@ def _build_publishers(settings: Settings) -> list[Publisher]:
         cls = _PUBLISHERS.get(name)
         if cls is None:
             raise ValueError(f"Unknown publisher: {name}")
-        result.append(cls())
+        if name == "static_site":
+            result.append(StaticSitePublisher(settings.site_dir))
+        else:
+            result.append(cls())
     if not result:
         result.append(NullPublisher())
     return result

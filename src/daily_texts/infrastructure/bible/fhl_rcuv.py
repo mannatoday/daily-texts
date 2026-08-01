@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 _REF_PATTERN = re.compile(
     r"^(?P<book>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
-    r"(?P<chapter>\d+):(?P<verse>\d+)(?:[–-](?P<end>\d+))?$",
+    r"(?P<chapter>\d+):(?P<verse>\d+)(?:(?:[–-]|,\s*)(?P<end>\d+))?$",
 )
 
 
@@ -57,6 +57,8 @@ def parse_reference(reference: str) -> ParsedReference:
 
 def _strip_html(text: str) -> str:
     soup = BeautifulSoup(text, "html.parser")
+    for tag in soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"]):
+        tag.decompose()
     cleaned = soup.get_text(" ", strip=True)
     return re.sub(r"\s+", " ", cleaned).strip()
 

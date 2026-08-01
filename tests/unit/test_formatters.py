@@ -10,10 +10,10 @@ from daily_texts.infrastructure.formatters.plain_text import PlainTextFormatter
 
 def _sample() -> LocalizedDailyText:
     return LocalizedDailyText(
-        date=date(2026, 7, 31),
-        date_display="Friday, July 31, 2026",
-        psalm="Psalm 90",
-        readings=["Joshua 8:1–29", "Luke 12:35–48"],
+        date=date(2026, 8, 1),
+        date_display="Saturday, August 1, 2026",
+        psalm="Psalm 91:1–8",
+        readings=["Joshua 8:30–9:27", "Luke 12:49–59"],
         ot=LocalizedWatchword(
             reference="Jeremiah 9:7",
             reference_zh="耶利米書 9:7",
@@ -35,23 +35,50 @@ def _sample() -> LocalizedDailyText:
 def test_markdown_formatter_includes_sections() -> None:
     out = MarkdownFormatter().format(_sample(), include_source_link=True)
     assert out.filename == "daily-text.md"
+    assert out.content.startswith("# 2026 年 8 月 1 日（星期六）\n")
     assert "## 舊約" in out.content
     assert "## 新約" in out.content
     assert "## 今日禱告" in out.content
-    assert "Jeremiah 9:7" in out.content or "耶利米書 9:7" in out.content
+    assert "## 經文選讀" in out.content
+    assert "詩篇 91:1–8" in out.content
+    assert "約書亞記 8:30–9:27" in out.content
+    assert "路加福音 12:49–59" in out.content
     assert "耶利米書 9:7" in out.content
     assert "moravian.org" in out.content
+    prayer_idx = out.content.index("## 今日禱告")
+    lectionary_idx = out.content.index("## 經文選讀")
+    source_idx = out.content.index("## 原文連結")
+    assert prayer_idx < lectionary_idx < source_idx
 
 
 def test_html_formatter() -> None:
     out = HtmlFormatter().format(_sample(), include_source_link=False)
     assert out.filename == "daily-text.html"
+    assert "<title>2026 年 8 月 1 日（星期六）</title>" in out.content
+    assert "<h1>2026 年 8 月 1 日（星期六）</h1>" in out.content
     assert "<h2>舊約</h2>" in out.content
+    assert "<h2>經文選讀</h2>" in out.content
+    assert "<p>詩篇 91:1–8</p>" in out.content
+    assert "<p>約書亞記 8:30–9:27</p>" in out.content
+    assert "<p>路加福音 12:49–59</p>" in out.content
     assert "原文連結" not in out.content
+    prayer_idx = out.content.index("<h2>今日禱告</h2>")
+    lectionary_idx = out.content.index("<h2>經文選讀</h2>")
+    assert prayer_idx < lectionary_idx
 
 
 def test_plain_text_formatter() -> None:
     out = PlainTextFormatter().format(_sample(), include_source_link=True)
     assert out.filename == "daily-text.txt"
+    assert out.content.startswith("2026 年 8 月 1 日（星期六）\n")
     assert "【舊約】" in out.content
     assert "【今日禱告】" in out.content
+    assert "【經文選讀】" in out.content
+    assert "詩篇 91:1–8" in out.content
+    assert "約書亞記 8:30–9:27" in out.content
+    assert "路加福音 12:49–59" in out.content
+    # Lectionary comes after prayer, before source link
+    prayer_idx = out.content.index("【今日禱告】")
+    lectionary_idx = out.content.index("【經文選讀】")
+    source_idx = out.content.index("【原文連結】")
+    assert prayer_idx < lectionary_idx < source_idx

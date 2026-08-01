@@ -7,8 +7,16 @@ from pydantic import BeforeValidator, Field
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 ProviderName = Literal["moravian_html", "email"]
-TranslatorName = Literal["openai", "anthropic", "local", "fallback", "noop", "composite"]
-FormatName = Literal["markdown", "html", "text"]
+TranslatorName = Literal[
+    "openai",
+    "anthropic",
+    "google",
+    "local",
+    "fallback",
+    "noop",
+    "composite",
+]
+FormatName = Literal["markdown", "html", "text", "json"]
 
 
 def _split_csv(value: object) -> list[str]:
@@ -44,16 +52,20 @@ class Settings(BaseSettings):
     moravian_widget_selector: str = "#text-2 .textwidget"
 
     output_dir: Path = Path("./output")
-    formats: CsvFormats = Field(default_factory=lambda: ["markdown", "html", "text"])
+    formats: CsvFormats = Field(
+        default_factory=lambda: ["markdown", "html", "text", "json"]
+    )
     include_source_link: bool = True
+
+    site_dir: Path = Path("./site")
 
     bible_version: str = "rcuv"
     fhl_api_base: str = "https://bible.fhl.net/json"
 
     # Preferred: ordered chain used by CompositeTranslator.
-    # Example: openai,anthropic,local,fallback
+    # Example: google,openai,anthropic,fallback
     translators: CsvStrings = Field(
-        default_factory=lambda: ["openai", "anthropic", "local", "fallback"]
+        default_factory=lambda: ["local", "openai", "anthropic", "google", "fallback"]
     )
     # Legacy single-translator override. If set (and not "composite"), uses that only.
     translator: TranslatorName = "composite"
@@ -64,8 +76,10 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-haiku-4-5"
 
+    google_translate_api_key: str = ""
+
     local_translator_base_url: str = ""
-    local_translator_model: str = "llama3.2"
+    local_translator_model: str = "qwen2.5:7b"
     local_translator_api_key: str = "local"
 
     schedule_timezone: str = "Asia/Taipei"
