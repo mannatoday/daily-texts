@@ -17,4 +17,4 @@ git commit -m "Update daily texts site"
 git push
 ```
 
-The workflow [`.github/workflows/pages.yml`](../.github/workflows/pages.yml) deploys this directory on push to `main`.
+The workflow [`.github/workflows/pages.yml`](../.github/workflows/pages.yml) deploys this directory on push to `master`.

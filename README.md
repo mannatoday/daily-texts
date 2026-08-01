@@ -64,7 +64,7 @@ Static site: `site/{YYYY-MM-DD}.html` and `site/index.html` when `PUBLISHERS` in
 
 1. Repo **Settings → Pages → Source: GitHub Actions**
 2. Commit and push updates under `site/` (or run fetch with `static_site` then push)
-3. Workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) deploys `site/` on push to `main`
+3. Workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) deploys `site/` on push to `master`
 
 See [`site/README.md`](site/README.md).
 
