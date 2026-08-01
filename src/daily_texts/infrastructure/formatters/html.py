@@ -32,10 +32,10 @@ class HtmlFormatter:
     <h1>{date_title(content)}</h1>
     <h2>舊約</h2>
     <p>{content.ot.text_zh}</p>
-    <p>— {content.ot.reference}</p>
+    <p>— {content.ot.reference_zh}</p>
     <h2>新約</h2>
     <p>{content.nt.text_zh}</p>
-    <p>— {content.nt.reference}</p>
+    <p>— {content.nt.reference_zh}</p>
     <h2>今日禱告</h2>
     <p>{content.prayer_zh}</p>
     {source_block}

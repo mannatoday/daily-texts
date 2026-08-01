@@ -31,6 +31,7 @@ class RawDailyText(BaseModel):
 
 class LocalizedWatchword(BaseModel):
     reference: str
+    reference_zh: str
     text_en: str
     text_zh: str
     bible_url: str | None = None

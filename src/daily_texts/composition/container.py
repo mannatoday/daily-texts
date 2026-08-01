@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -27,8 +28,13 @@ from daily_texts.infrastructure.publishers.line import LinePublisher
 from daily_texts.infrastructure.publishers.null_publisher import NullPublisher
 from daily_texts.infrastructure.publishers.telegram import TelegramPublisher
 from daily_texts.infrastructure.publishers.website import WebsitePublisher
-from daily_texts.infrastructure.translators.noop_translator import NoopTranslator
+from daily_texts.infrastructure.translators.anthropic_translator import AnthropicTranslator
+from daily_texts.infrastructure.translators.composite_translator import CompositeTranslator
+from daily_texts.infrastructure.translators.fallback_translator import FallbackTranslator
+from daily_texts.infrastructure.translators.local_translator import LocalTranslator
 from daily_texts.infrastructure.translators.openai_translator import OpenAITranslator
+
+logger = logging.getLogger(__name__)
 
 _FORMATTERS: dict[FormatName, type] = {
     "markdown": MarkdownFormatter,
@@ -99,11 +105,38 @@ def _build_provider(settings: Settings, client: httpx.AsyncClient) -> DailyTextP
 
 
 def _build_translator(settings: Settings) -> TextTranslator:
+    if settings.translator in {"noop", "fallback"}:
+        return FallbackTranslator()
     if settings.translator == "openai":
         return OpenAITranslator(settings)
-    if settings.translator == "noop":
-        return NoopTranslator()
+    if settings.translator == "anthropic":
+        return AnthropicTranslator(settings)
+    if settings.translator == "local":
+        return LocalTranslator(settings)
+    if settings.translator == "composite":
+        return CompositeTranslator(_build_translator_chain(settings))
     raise ValueError(f"Unknown translator: {settings.translator}")
+
+
+def _build_translator_chain(settings: Settings) -> list[TextTranslator]:
+    chain: list[TextTranslator] = []
+    for name in settings.translators:
+        key = "fallback" if name == "noop" else name
+        if key == "openai":
+            chain.append(OpenAITranslator(settings))
+        elif key == "anthropic":
+            chain.append(AnthropicTranslator(settings))
+        elif key == "local":
+            chain.append(LocalTranslator(settings))
+        elif key == "fallback":
+            chain.append(FallbackTranslator())
+        else:
+            raise ValueError(f"Unknown translator in TRANSLATORS chain: {name}")
+    if not chain:
+        chain.append(FallbackTranslator())
+    elif not any(isinstance(t, FallbackTranslator) for t in chain):
+        chain.append(FallbackTranslator())
+    return chain
 
 
 def _build_formatters(settings: Settings) -> list[ContentFormatter]:

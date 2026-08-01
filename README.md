@@ -47,6 +47,16 @@ Output is written to `output/{YYYY-MM-DD}/daily-text.{md,html,txt}`.
 
 See `.env.example` for all options.
 
+Translation uses a **CompositeTranslator** chain by default:
+
+```
+TRANSLATOR=composite
+TRANSLATORS=openai,anthropic,local,fallback
+```
+
+Order: OpenAI → Anthropic → Local (Ollama-compatible) → Fallback (keep English). Unavailable providers are skipped; the first successful translation wins.
+
+
 ## Tests
 
 ```bash

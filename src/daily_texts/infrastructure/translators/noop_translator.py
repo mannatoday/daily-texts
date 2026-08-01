@@ -1,18 +1,8 @@
-from __future__ import annotations
+"""Backward-compatible re-export."""
 
-from daily_texts.domain.exceptions import TranslationError
+from daily_texts.infrastructure.translators.fallback_translator import (
+    FallbackTranslator,
+    NoopTranslator,
+)
 
-
-class NoopTranslator:
-    """Pass-through translator for tests and offline runs."""
-
-    async def translate(
-        self,
-        text: str,
-        *,
-        source_lang: str = "en",
-        target_lang: str = "zh-TW",
-    ) -> str:
-        if not text.strip():
-            raise TranslationError("Cannot translate empty text")
-        return text
+__all__ = ["FallbackTranslator", "NoopTranslator"]

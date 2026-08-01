@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from openai import AsyncOpenAI
+from anthropic import AsyncAnthropic
 
 from daily_texts.domain.exceptions import TranslationError
 from daily_texts.infrastructure.config import Settings
@@ -11,21 +11,21 @@ from daily_texts.infrastructure.translators.prompt import SYSTEM_PROMPT
 logger = logging.getLogger(__name__)
 
 
-class OpenAITranslator:
-    name = "openai"
+class AnthropicTranslator:
+    name = "anthropic"
 
-    def __init__(self, settings: Settings, client: AsyncOpenAI | None = None) -> None:
+    def __init__(self, settings: Settings, client: AsyncAnthropic | None = None) -> None:
         self._settings = settings
         self._client = client
 
     def available(self) -> bool:
-        return bool(self._settings.openai_api_key.strip())
+        return bool(self._settings.anthropic_api_key.strip())
 
-    def _get_client(self) -> AsyncOpenAI:
+    def _get_client(self) -> AsyncAnthropic:
         if self._client is None:
             if not self.available():
-                raise TranslationError("OPENAI_API_KEY is not configured")
-            self._client = AsyncOpenAI(api_key=self._settings.openai_api_key)
+                raise TranslationError("ANTHROPIC_API_KEY is not configured")
+            self._client = AsyncAnthropic(api_key=self._settings.anthropic_api_key)
         return self._client
 
     async def translate(
@@ -40,10 +40,11 @@ class OpenAITranslator:
 
         client = self._get_client()
         try:
-            response = await client.chat.completions.create(
-                model=self._settings.openai_model,
+            response = await client.messages.create(
+                model=self._settings.anthropic_model,
+                max_tokens=1024,
+                system=SYSTEM_PROMPT,
                 messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
                     {
                         "role": "user",
                         "content": (
@@ -51,16 +52,16 @@ class OpenAITranslator:
                             f"Target language: {target_lang}\n\n"
                             f"{text}"
                         ),
-                    },
+                    }
                 ],
-                temperature=0.2,
             )
         except TranslationError:
             raise
         except Exception as exc:  # noqa: BLE001
-            raise TranslationError(f"OpenAI translation failed: {exc}") from exc
+            raise TranslationError(f"Anthropic translation failed: {exc}") from exc
 
-        content = response.choices[0].message.content
-        if not content or not content.strip():
-            raise TranslationError("OpenAI returned empty translation")
-        return content.strip()
+        parts = [block.text for block in response.content if getattr(block, "type", None) == "text"]
+        content = "".join(parts).strip()
+        if not content:
+            raise TranslationError("Anthropic returned empty translation")
+        return content

@@ -11,8 +11,10 @@ from daily_texts.application.ports.formatter import ContentFormatter
 from daily_texts.application.ports.provider import DailyTextProvider
 from daily_texts.application.ports.publisher import Publisher
 from daily_texts.application.ports.translator import TextTranslator
-from daily_texts.domain.exceptions import BibleLookupError
+from daily_texts.domain.exceptions import BibleLookupError, TranslationError
 from daily_texts.domain.models import LocalizedDailyText, LocalizedWatchword, RawDailyText
+from daily_texts.domain.references import localize_reference
+
 
 logger = logging.getLogger(__name__)
 
@@ -104,11 +106,7 @@ class FetchAndLocalizeDailyText:
     async def _localize(self, raw: RawDailyText) -> LocalizedDailyText:
         ot_zh = await self._lookup_or_fallback(raw.ot.reference, raw.ot.text_en)
         nt_zh = await self._lookup_or_fallback(raw.nt.reference, raw.nt.text_en)
-        prayer_zh = await self._translator.translate(
-            raw.prayer_en,
-            source_lang="en",
-            target_lang="zh-TW",
-        )
+        prayer_zh = await self._translate_or_fallback(raw.prayer_en)
         return LocalizedDailyText(
             date=raw.date,
             date_display=raw.date_display,
@@ -116,12 +114,14 @@ class FetchAndLocalizeDailyText:
             readings=list(raw.readings),
             ot=LocalizedWatchword(
                 reference=raw.ot.reference,
+                reference_zh=localize_reference(raw.ot.reference),
                 text_en=raw.ot.text_en,
                 text_zh=ot_zh,
                 bible_url=raw.ot.bible_url,
             ),
             nt=LocalizedWatchword(
                 reference=raw.nt.reference,
+                reference_zh=localize_reference(raw.nt.reference),
                 text_en=raw.nt.text_en,
                 text_zh=nt_zh,
                 bible_url=raw.nt.bible_url,
@@ -138,6 +138,17 @@ class FetchAndLocalizeDailyText:
         except BibleLookupError as exc:
             logger.warning("Bible lookup failed for %s: %s; using English fallback", reference, exc)
             return english
+
+    async def _translate_or_fallback(self, prayer_en: str) -> str:
+        try:
+            return await self._translator.translate(
+                prayer_en,
+                source_lang="en",
+                target_lang="zh-TW",
+            )
+        except TranslationError as exc:
+            logger.warning("Prayer translation failed: %s; keeping English", exc)
+            return prayer_en
 
     def _day_dir(self, day: date) -> Path:
         return self._output_dir / day.isoformat()
@@ -172,7 +183,7 @@ def _placeholder_raw(day: date) -> RawDailyText:
 
 
 def _placeholder_localized(day: date) -> LocalizedDailyText:
-    empty = LocalizedWatchword(reference="", text_en="", text_zh="")
+    empty = LocalizedWatchword(reference="", reference_zh="", text_en="", text_zh="")
     return LocalizedDailyText(
         date=day,
         date_display=day.isoformat(),

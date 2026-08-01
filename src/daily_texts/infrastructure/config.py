@@ -7,7 +7,7 @@ from pydantic import BeforeValidator, Field
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 ProviderName = Literal["moravian_html", "email"]
-TranslatorName = Literal["openai", "noop"]
+TranslatorName = Literal["openai", "anthropic", "local", "fallback", "noop", "composite"]
 FormatName = Literal["markdown", "html", "text"]
 
 
@@ -50,9 +50,23 @@ class Settings(BaseSettings):
     bible_version: str = "rcuv"
     fhl_api_base: str = "https://bible.fhl.net/json"
 
-    translator: TranslatorName = "openai"
+    # Preferred: ordered chain used by CompositeTranslator.
+    # Example: openai,anthropic,local,fallback
+    translators: CsvStrings = Field(
+        default_factory=lambda: ["openai", "anthropic", "local", "fallback"]
+    )
+    # Legacy single-translator override. If set (and not "composite"), uses that only.
+    translator: TranslatorName = "composite"
+
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
+
+    anthropic_api_key: str = ""
+    anthropic_model: str = "claude-haiku-4-5"
+
+    local_translator_base_url: str = ""
+    local_translator_model: str = "llama3.2"
+    local_translator_api_key: str = "local"
 
     schedule_timezone: str = "Asia/Taipei"
     schedule_hour: int = 0

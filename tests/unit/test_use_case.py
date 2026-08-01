@@ -77,3 +77,39 @@ async def test_use_case_skips_existing(tmp_path: Path) -> None:
     )
     result = await uc.run(day)
     assert result.skipped
+
+
+class FailingTranslator:
+    async def translate(
+        self,
+        text: str,
+        *,
+        source_lang: str = "en",
+        target_lang: str = "zh-TW",
+    ) -> str:
+        from daily_texts.domain.exceptions import TranslationError
+
+        raise TranslationError("quota exceeded")
+
+
+@pytest.mark.asyncio
+async def test_use_case_falls_back_when_translation_fails(tmp_path: Path) -> None:
+    raw = RawDailyText(
+        date=date(2026, 7, 31),
+        date_display="Friday, July 31, 2026",
+        ot=Watchword(reference="Jeremiah 9:7", text_en="refine"),
+        nt=Watchword(reference="Luke 22:40", text_en="pray"),
+        prayer_en="Hear our prayer. Amen.",
+        source_url="https://example.com",
+    )
+    uc = FetchAndLocalizeDailyText(
+        provider=FakeProvider(raw),
+        bible=FakeBible(),
+        translator=FailingTranslator(),
+        formatters=[MarkdownFormatter()],
+        publishers=[NullPublisher()],
+        output_dir=tmp_path,
+    )
+    result = await uc.run(force=True)
+    assert not result.skipped
+    assert result.localized.prayer_zh == "Hear our prayer. Amen."

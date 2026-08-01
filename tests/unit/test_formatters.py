@@ -16,11 +16,13 @@ def _sample() -> LocalizedDailyText:
         readings=["Joshua 8:1–29", "Luke 12:35–48"],
         ot=LocalizedWatchword(
             reference="Jeremiah 9:7",
+            reference_zh="耶利米書 9:7",
             text_en="I will now refine and test them.",
             text_zh="看哪，我要熬煉他們，試驗他們。",
         ),
         nt=LocalizedWatchword(
             reference="Luke 22:40",
+            reference_zh="路加福音 22:40",
             text_en="Pray that you may not come into the time of trial.",
             text_zh="你們要禱告，免得陷入試探。",
         ),
@@ -36,7 +38,8 @@ def test_markdown_formatter_includes_sections() -> None:
     assert "## 舊約" in out.content
     assert "## 新約" in out.content
     assert "## 今日禱告" in out.content
-    assert "Jeremiah 9:7" in out.content
+    assert "Jeremiah 9:7" in out.content or "耶利米書 9:7" in out.content
+    assert "耶利米書 9:7" in out.content
     assert "moravian.org" in out.content
 
 

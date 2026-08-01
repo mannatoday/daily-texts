@@ -9,21 +9,21 @@ from daily_texts.infrastructure.bible.fhl_rcuv import parse_reference
 def test_parse_simple_reference() -> None:
     parsed = parse_reference("Jeremiah 9:7")
     assert parsed.book == "Jeremiah"
-    assert parsed.bid == 24
+    assert parsed.chineses == "耶"
     assert parsed.chapter == 9
     assert parsed.verse == "7"
 
 
 def test_parse_range_and_en_dash() -> None:
     parsed = parse_reference("Luke 12:35–48")
-    assert parsed.bid == 42
+    assert parsed.chineses == "路"
     assert parsed.chapter == 12
     assert parsed.verse == "35-48"
 
 
 def test_parse_numbered_book() -> None:
     parsed = parse_reference("1 John 3:16")
-    assert parsed.bid == 62
+    assert parsed.chineses == "約一"
     assert parsed.chapter == 3
     assert parsed.verse == "16"
 
