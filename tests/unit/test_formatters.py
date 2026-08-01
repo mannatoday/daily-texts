@@ -54,7 +54,7 @@ def test_markdown_formatter_includes_sections() -> None:
 def test_html_formatter() -> None:
     out = HtmlFormatter().format(_sample(), include_source_link=False)
     assert out.filename == "daily-text.html"
-    assert "<title>2026 年 8 月 1 日（星期六）</title>" in out.content
+    assert "<title>2026 年 8 月 1 日（星期六） · 摩拉維亞每日經文</title>" in out.content
     assert "<h1>2026 年 8 月 1 日（星期六）</h1>" in out.content
     assert "<h2>舊約</h2>" in out.content
     assert "<h2>經文選讀</h2>" in out.content

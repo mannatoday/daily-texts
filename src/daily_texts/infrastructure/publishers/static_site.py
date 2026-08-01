@@ -130,16 +130,17 @@ class StaticSitePublisher:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="每日經文檔案 · Moravian Daily Texts 中文靈修閱讀" />
-  <title>每日經文</title>
+  <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
+  <title>摩拉維亞每日經文</title>
 {_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell site-index">
     <main id="main">
-    <h1 class="brand">每日經文</h1>
-    <p class="lede">安靜閱讀 · 以神的話開始每一天</p>
+    <h1 class="brand">摩拉維亞每日經文</h1>
+    <p class="lede">以神的話開始每一天</p>
+    <p class="subtitle">Moravian Daily Texts • 中文版</p>
 {body}    </main>
     <footer class="site-foot">
       <section class="about-blurb" aria-labelledby="about-blurb-title">
@@ -149,7 +150,7 @@ class StaticSitePublisher:
       <nav class="foot-nav" aria-label="頁尾導覽">
         <a href="about.html">關於</a>
       </nav>
-      <p class="foot-credit">每日經文 · 非官方中文整理</p>
+      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     </footer>
   </div>
 </body>
@@ -209,7 +210,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="關於 Moravian Daily Texts 與本站中文版" />
-  <title>關於 · 每日經文</title>
+  <title>關於 · 摩拉維亞每日經文</title>
 {_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -250,7 +251,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <nav class="foot-nav" aria-label="頁尾導覽">
         <a href="index.html">歷日檔案</a>
       </nav>
-      <p class="foot-credit">每日經文 · 非官方中文整理</p>
+      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     </footer>
   </div>
 </body>

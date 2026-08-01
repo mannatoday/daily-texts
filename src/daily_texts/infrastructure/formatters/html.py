@@ -86,8 +86,8 @@ class HtmlFormatter:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="每日經文 · Moravian Daily Texts 中文靈修閱讀" />
-  <title>{title}</title>
+  <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
+  <title>{title} · 摩拉維亞每日經文</title>
 {_FONT_LINKS}{style_block}</head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -166,7 +166,7 @@ def _site_footer(*, site_mode: bool) -> str:
     if not site_mode:
         return (
             '  <footer class="site-foot">\n'
-            '    <p class="foot-credit">每日經文 · Daily Texts</p>\n'
+            '    <p class="foot-credit">摩拉維亞每日經文 · Daily Texts</p>\n'
             "  </footer>\n"
         )
     return f"""  <footer class="site-foot">
@@ -179,6 +179,6 @@ def _site_footer(*, site_mode: bool) -> str:
       <a href="index.html">歷日檔案</a>
       <a href="about.html">關於</a>
     </nav>
-    <p class="foot-credit">每日經文 · 非官方中文整理</p>
+    <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
   </footer>
 """
