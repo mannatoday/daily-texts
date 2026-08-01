@@ -1,0 +1,184 @@
+from __future__ import annotations
+
+import asyncio
+import logging
+from datetime import date
+from pathlib import Path
+
+from daily_texts.application.dto import FormattedOutput, PipelineResult
+from daily_texts.application.ports.bible import BibleService
+from daily_texts.application.ports.formatter import ContentFormatter
+from daily_texts.application.ports.provider import DailyTextProvider
+from daily_texts.application.ports.publisher import Publisher
+from daily_texts.application.ports.translator import TextTranslator
+from daily_texts.domain.exceptions import BibleLookupError
+from daily_texts.domain.models import LocalizedDailyText, LocalizedWatchword, RawDailyText
+
+logger = logging.getLogger(__name__)
+
+
+class FetchAndLocalizeDailyText:
+    def __init__(
+        self,
+        provider: DailyTextProvider,
+        bible: BibleService,
+        translator: TextTranslator,
+        formatters: list[ContentFormatter],
+        publishers: list[Publisher],
+        *,
+        output_dir: Path,
+        bible_version: str = "rcuv",
+        include_source_link: bool = True,
+    ) -> None:
+        self._provider = provider
+        self._bible = bible
+        self._translator = translator
+        self._formatters = formatters
+        self._publishers = publishers
+        self._output_dir = output_dir
+        self._bible_version = bible_version
+        self._include_source_link = include_source_link
+
+    async def run(
+        self,
+        target_date: date | None = None,
+        *,
+        force: bool = False,
+        expect_date: date | None = None,
+        write_files: bool = True,
+    ) -> PipelineResult:
+        """Fetch, localize, format, optionally write files, and publish.
+
+        expect_date: if set, skip when fetched date does not match (retry window).
+        """
+        if target_date is not None and not force and self._output_exists(target_date):
+            return PipelineResult(
+                raw=_placeholder_raw(target_date),
+                localized=_placeholder_localized(target_date),
+                skipped=True,
+                skip_reason=f"Output already exists for {target_date}; use --force to overwrite",
+            )
+
+        raw = await self._provider.fetch(target_date)
+
+        check_date = expect_date or target_date
+        if check_date is not None and raw.date != check_date:
+            return PipelineResult(
+                raw=raw,
+                localized=_placeholder_localized(raw.date),
+                skipped=True,
+                skip_reason=(
+                    f"Fetched date {raw.date} does not match expected {check_date}; "
+                    "will retry later"
+                ),
+            )
+
+        if not force and self._output_exists(raw.date):
+            return PipelineResult(
+                raw=raw,
+                localized=_placeholder_localized(raw.date),
+                skipped=True,
+                skip_reason=f"Output already exists for {raw.date}; use --force to overwrite",
+            )
+
+        localized = await self._localize(raw)
+        outputs = [
+            formatter.format(localized, include_source_link=self._include_source_link)
+            for formatter in self._formatters
+        ]
+
+        if write_files:
+            self._write_outputs(raw.date, outputs)
+
+        publish_results = await asyncio.gather(
+            *(publisher.publish(outputs, localized) for publisher in self._publishers)
+        )
+
+        return PipelineResult(
+            raw=raw,
+            localized=localized,
+            outputs=outputs,
+            publish_results=list(publish_results),
+        )
+
+    async def _localize(self, raw: RawDailyText) -> LocalizedDailyText:
+        ot_zh = await self._lookup_or_fallback(raw.ot.reference, raw.ot.text_en)
+        nt_zh = await self._lookup_or_fallback(raw.nt.reference, raw.nt.text_en)
+        prayer_zh = await self._translator.translate(
+            raw.prayer_en,
+            source_lang="en",
+            target_lang="zh-TW",
+        )
+        return LocalizedDailyText(
+            date=raw.date,
+            date_display=raw.date_display,
+            psalm=raw.psalm,
+            readings=list(raw.readings),
+            ot=LocalizedWatchword(
+                reference=raw.ot.reference,
+                text_en=raw.ot.text_en,
+                text_zh=ot_zh,
+                bible_url=raw.ot.bible_url,
+            ),
+            nt=LocalizedWatchword(
+                reference=raw.nt.reference,
+                text_en=raw.nt.text_en,
+                text_zh=nt_zh,
+                bible_url=raw.nt.bible_url,
+            ),
+            prayer_en=raw.prayer_en,
+            prayer_zh=prayer_zh,
+            source_url=raw.source_url,
+            metadata=dict(raw.metadata),
+        )
+
+    async def _lookup_or_fallback(self, reference: str, english: str) -> str:
+        try:
+            return await self._bible.lookup(reference, version=self._bible_version)
+        except BibleLookupError as exc:
+            logger.warning("Bible lookup failed for %s: %s; using English fallback", reference, exc)
+            return english
+
+    def _day_dir(self, day: date) -> Path:
+        return self._output_dir / day.isoformat()
+
+    def _output_exists(self, day: date) -> bool:
+        day_dir = self._day_dir(day)
+        if not day_dir.is_dir():
+            return False
+        return any(day_dir.glob("daily-text.*"))
+
+    def _write_outputs(self, day: date, outputs: list[FormattedOutput]) -> None:
+        day_dir = self._day_dir(day)
+        day_dir.mkdir(parents=True, exist_ok=True)
+        for item in outputs:
+            path = day_dir / item.filename
+            path.write_text(item.content, encoding="utf-8")
+            logger.info("Wrote %s", path)
+
+
+def _placeholder_raw(day: date) -> RawDailyText:
+    from daily_texts.domain.models import Watchword
+
+    empty = Watchword(reference="", text_en="")
+    return RawDailyText(
+        date=day,
+        date_display=day.isoformat(),
+        ot=empty,
+        nt=empty,
+        prayer_en="",
+        source_url="",
+    )
+
+
+def _placeholder_localized(day: date) -> LocalizedDailyText:
+    empty = LocalizedWatchword(reference="", text_en="", text_zh="")
+    return LocalizedDailyText(
+        date=day,
+        date_display=day.isoformat(),
+        ot=empty,
+        nt=empty,
+        prayer_en="",
+        prayer_zh="",
+        source_url="",
+    )
