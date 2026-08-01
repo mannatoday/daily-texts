@@ -17,12 +17,23 @@ def main(argv: list[str] | None = None) -> None:
 
     fetch = sub.add_parser("fetch", help="Fetch and localize today's (or a given) daily text")
     fetch.add_argument("--date", type=_parse_date, default=None, help="Target date YYYY-MM-DD")
+    fetch.add_argument(
+        "--expect-date",
+        type=_parse_date,
+        default=None,
+        help="Skip (soft) when fetched page date does not match YYYY-MM-DD",
+    )
+    fetch.add_argument(
+        "--fail-on-skip",
+        action="store_true",
+        help="Exit with status 1 when the run is skipped (useful in CI)",
+    )
     fetch.add_argument("--force", action="store_true", help="Overwrite existing output")
     fetch.add_argument(
         "--formats",
         type=str,
         default=None,
-        help="Comma-separated formats: markdown,html,text",
+        help="Comma-separated formats: markdown,html,text,json",
     )
     fetch.add_argument("-v", "--verbose", action="store_true")
 
@@ -47,13 +58,19 @@ async def _cmd_fetch(args: argparse.Namespace) -> None:
 
     container = build_container(settings)
     try:
-        result = await container.use_case.run(args.date, force=args.force)
+        result = await container.use_case.run(
+            args.date,
+            force=args.force,
+            expect_date=args.expect_date,
+        )
     finally:
         await container.aclose()
 
     if result.skipped:
         logging.getLogger(__name__).warning("Skipped: %s", result.skip_reason)
         print(result.skip_reason)
+        if args.fail_on_skip:
+            raise SystemExit(1)
         return
 
     out_dir = settings.output_dir / result.raw.date.isoformat()

@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Actions 每日發布工作流程（`.github/workflows/daily-publish.yml`）：cron + 手動觸發，產生 `site/` 後 commit／push 至 `master`
+- HTTP 請求重試（`HTTP_MAX_RETRIES`／`HTTP_RETRY_BACKOFF_SECONDS`）用於 Moravian、FHL、Google Translate
+- CLI：`--expect-date`、`--fail-on-skip`（供 CI 使用）
+
 ### Planned
 
 - 真實 `LinePublisher` / `EmailPublisher`

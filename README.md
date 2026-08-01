@@ -73,7 +73,7 @@ daily-texts fetch --force
 # 同時寫入 GitHub Pages 用的 site/
 PUBLISHERS=static_site daily-texts fetch --force
 
-# 定時執行（預設 Asia/Taipei 00:00，並依 SCHEDULE_RETRY_HOURS 重試）
+# 本機定時執行（可選；正式每日發布已改由 GitHub Actions）
 daily-texts run-scheduler
 ```
 
@@ -89,10 +89,43 @@ daily-texts run-scheduler
 | `site/index.html` | 今日入口＋歷日檔案 |
 | `site/about.html` | 關於頁 |
 
-## GitHub Pages
+## GitHub Actions：每日發布與 Pages
+
+預設分支為 **`master`**。每日管線已移到 Actions，不再依賴本機 `run-scheduler`。
+
+### 1. Daily Publish（抓取 → 產生站點 → push）
+
+工作流程：[`.github/workflows/daily-publish.yml`](.github/workflows/daily-publish.yml)
+
+| 觸發 | 說明 |
+|------|------|
+| `schedule`（cron） | 預設 `0 22 * * *` 與 `0 4 * * *`（UTC）＝台北 06:00／12:00；可直接改 YAML 內 cron |
+| `workflow_dispatch` | Actions 頁手動執行；可選 `force`、`expect_date` |
+
+步驟摘要：checkout → Python 3.12 → `pip install -e .` → `daily-texts fetch`（產生 `output/` 的 md／html／txt／json，並以 `PUBLISHERS=static_site` 更新 `site/` 含 `index.html`）→ **僅在 `site/` 有變更時** commit 並 push 回 `master`。
+
+特性：
+
+- **冪等**：內容未變則不 commit；可安全重跑
+- **翻譯失敗不中斷**：禱告維持英文（複合鏈末端 `fallback` + use case 備援）
+- **網路重試**：Moravian／FHL 等 HTTP 請求依 `HTTP_MAX_RETRIES` 重試
+- 日期比對：`--expect-date`（台北當日）＋`--fail-on-skip`；若網站尚未換日，當次失敗、由第二次 cron 重試
+
+### 2. Secrets（Settings → Secrets and variables → Actions）
+
+| Secret | 用途 |
+|--------|------|
+| `OPENAI_API_KEY` | 禱告翻譯（建議） |
+| `ANTHROPIC_API_KEY` | 備援翻譯（可選） |
+| `GOOGLE_TRANSLATE_API_KEY` | 備援翻譯（可選） |
+
+未設定任何金鑰時仍會發布：禱告保留英文原文。之後若新增其他金鑰，同樣放在 GitHub Secrets，並在 workflow `env` 對應即可。
+
+### 3. GitHub Pages 部署（不變）
 
 1. Repo **Settings → Pages → Source: GitHub Actions**
-2. 本機產生站點後提交並推送（預設分支為 `master`）：
+2. Daily Publish push `site/` 後，由 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) 自動部署
+3. 亦可本機產生後手動推送：
 
 ```bash
 PUBLISHERS=static_site daily-texts fetch --force
@@ -101,9 +134,7 @@ git commit -m "Update daily texts site"
 git push origin master
 ```
 
-3. 工作流程：[`.github/workflows/pages.yml`](.github/workflows/pages.yml)  
-   站點說明：[`site/README.md`](site/README.md)
-
+站點說明：[`site/README.md`](site/README.md)  
 公開網址範例：`https://jyeh14.github.io/daily-texts/`
 
 ## 設定重點
@@ -117,7 +148,8 @@ git push origin master
 | `PUBLISHERS` | `null`、`static_site`；其餘 `line`／`email`／`telegram`／`website` 為 stub |
 | `SITE_DIR` | 靜態站目錄，預設 `./site` |
 | `TRANSLATOR` / `TRANSLATORS` | 單一翻譯器或複合鏈 |
-| `SCHEDULE_TIMEZONE` / `SCHEDULE_HOUR` / `SCHEDULE_RETRY_HOURS` | 排程 |
+| `SCHEDULE_TIMEZONE` / `SCHEDULE_HOUR` / `SCHEDULE_RETRY_HOURS` | 本機 `run-scheduler` 排程（可選） |
+| `HTTP_MAX_RETRIES` / `HTTP_RETRY_BACKOFF_SECONDS` | HTTP 重試（預設 3 次、1s 指數退避） |
 
 ## 架構（簡述）
 

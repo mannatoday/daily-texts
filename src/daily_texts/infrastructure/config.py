@@ -89,3 +89,5 @@ class Settings(BaseSettings):
     publishers: CsvStrings = Field(default_factory=lambda: ["null"])
     http_user_agent: str = "daily-texts-bot/1.0"
     http_timeout: float = 30.0
+    http_max_retries: int = 3
+    http_retry_backoff_seconds: float = 1.0

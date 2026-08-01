@@ -7,6 +7,7 @@ import httpx
 
 from daily_texts.domain.exceptions import TranslationError
 from daily_texts.infrastructure.config import Settings
+from daily_texts.infrastructure.http import request_with_retries
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +58,12 @@ class GoogleTranslator:
 
         client = await self._get_client()
         try:
-            response = await client.post(
+            response = await request_with_retries(
+                client,
+                "POST",
                 _TRANSLATE_URL,
+                max_retries=self._settings.http_max_retries,
+                backoff_seconds=self._settings.http_retry_backoff_seconds,
                 params={"key": self._settings.google_translate_api_key},
                 json={
                     "q": text,

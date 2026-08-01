@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup, Tag
 from daily_texts.domain.exceptions import ProviderError
 from daily_texts.domain.models import RawDailyText, Watchword
 from daily_texts.infrastructure.config import Settings
+from daily_texts.infrastructure.http import request_with_retries
 
 logger = logging.getLogger(__name__)
 
@@ -198,7 +199,13 @@ class MoravianHtmlSidebarProvider:
 
     async def fetch(self, target_date: date | None = None) -> RawDailyText:
         try:
-            response = await self._client.get(self._settings.moravian_url)
+            response = await request_with_retries(
+                self._client,
+                "GET",
+                self._settings.moravian_url,
+                max_retries=self._settings.http_max_retries,
+                backoff_seconds=self._settings.http_retry_backoff_seconds,
+            )
             response.raise_for_status()
         except httpx.HTTPError as exc:
             raise ProviderError(f"Failed to fetch Moravian page: {exc}") from exc

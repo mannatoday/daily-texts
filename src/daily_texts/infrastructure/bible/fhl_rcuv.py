@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 
 from daily_texts.domain.exceptions import BibleLookupError
 from daily_texts.infrastructure.config import Settings
+from daily_texts.infrastructure.http import request_with_retries
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,14 @@ class FhlRcuvBibleService:
             "gb": 0,
         }
         try:
-            response = await self._client.get(url, params=params)
+            response = await request_with_retries(
+                self._client,
+                "GET",
+                url,
+                max_retries=self._settings.http_max_retries,
+                backoff_seconds=self._settings.http_retry_backoff_seconds,
+                params=params,
+            )
             response.raise_for_status()
             payload = response.json()
         except (httpx.HTTPError, ValueError) as exc:
