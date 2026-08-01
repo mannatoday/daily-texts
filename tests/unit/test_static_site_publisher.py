@@ -62,6 +62,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "跳至內容" in html
     assert "歷日檔案" in html
     assert "today-card" in index or "今日經文" in index
+    assert "了解更多" not in index
 
 
 def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:

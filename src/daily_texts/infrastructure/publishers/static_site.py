@@ -145,7 +145,6 @@ class StaticSitePublisher:
       <section class="about-blurb" aria-labelledby="about-blurb-title">
         <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
         <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
-        <p class="more"><a href="about.html">了解更多</a></p>
       </section>
       <nav class="foot-nav" aria-label="頁尾導覽">
         <a href="about.html">關於</a>
