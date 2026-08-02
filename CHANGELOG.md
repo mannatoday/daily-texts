@@ -11,6 +11,10 @@
 - HTTP 請求重試（`HTTP_MAX_RETRIES`／`HTTP_RETRY_BACKOFF_SECONDS`）用於 Moravian、FHL、Google Translate
 - CLI：`--expect-date`、`--fail-on-skip`（供 CI 使用）
 
+### Fixed
+
+- Moravian 解析：主日版面（教會年／Watchword for the week）不再誤把非經文段當 OT／NT；改以 BibleGateway 連結定位守望經文
+
 ### Planned
 
 - 真實 `LinePublisher` / `EmailPublisher`

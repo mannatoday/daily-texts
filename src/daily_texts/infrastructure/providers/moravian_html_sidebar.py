@@ -39,9 +39,11 @@ def parse_moravian_sidebar_html(
         raise ProviderError("Daily Text sidebar widget not found in HTML")
 
     # Date is often a direct child of .textwidget; watchwords live in an inner <div>.
+    # Sunday layouts insert church-year / "Watchword for the week" before OT/NT, so
+    # locate OT/NT by BibleGateway links instead of fixed paragraph indexes.
     paragraphs = [p for p in widget.find_all("p") if _is_content_paragraph(p)]
-    if len(paragraphs) < 5:
-        raise ProviderError(f"Expected at least 5 content paragraphs, found {len(paragraphs)}")
+    if len(paragraphs) < 4:
+        raise ProviderError(f"Expected at least 4 content paragraphs, found {len(paragraphs)}")
 
     date_display = _extract_date_display(paragraphs[0])
     parsed_date = _parse_date(date_display)
@@ -50,10 +52,25 @@ def parse_moravian_sidebar_html(
             f"Fetched date {parsed_date} does not match target date {target_date}"
         )
 
-    psalm, readings, metadata = _parse_readings_block(paragraphs[1])
-    ot = _parse_watchword_paragraph(paragraphs[2])
-    nt = _parse_watchword_paragraph(paragraphs[3])
-    prayer_en = _extract_prayer(paragraphs[4])
+    linked = [p for p in paragraphs[1:] if _biblegateway_link(p) is not None]
+    if len(linked) < 2:
+        raise ProviderError(
+            f"Expected at least 2 BibleGateway watchword links, found {len(linked)}"
+        )
+
+    ot_para, nt_para = linked[0], linked[1]
+    ot_index = paragraphs.index(ot_para)
+    nt_index = paragraphs.index(nt_para)
+    if nt_index != ot_index + 1:
+        raise ProviderError("OT/NT watchword paragraphs are not consecutive")
+    if nt_index + 1 >= len(paragraphs):
+        raise ProviderError("Missing prayer paragraph after New Testament watchword")
+
+    preamble = paragraphs[1:ot_index]
+    psalm, readings, metadata = _parse_preamble_paragraphs(preamble)
+    ot = _parse_watchword_paragraph(ot_para)
+    nt = _parse_watchword_paragraph(nt_para)
+    prayer_en = _extract_prayer(paragraphs[nt_index + 1])
 
     return RawDailyText(
         date=parsed_date,
@@ -97,6 +114,43 @@ def _parse_date(date_display: str) -> date:
     return datetime.strptime(month_day, "%B %d %Y").date()
 
 
+def _parse_preamble_paragraphs(
+    paragraphs: list[Tag],
+) -> tuple[str | None, list[str], dict[str, str]]:
+    """Parse optional church-year / weekly watchword / daily readings blocks."""
+    if not paragraphs:
+        return None, [], {}
+    if len(paragraphs) == 1:
+        return _parse_readings_block(paragraphs[0])
+
+    metadata: dict[str, str] = {}
+    psalm: str | None = None
+    readings: list[str] = []
+    for paragraph in paragraphs:
+        text = paragraph.get_text(" ", strip=True)
+        if "watchword for the week" in text.lower():
+            metadata["watchword_for_week"] = text
+            continue
+
+        block_psalm, block_readings, block_meta = _parse_readings_block(paragraph)
+        looks_like_readings = bool(block_psalm or block_readings) or (
+            "—" in paragraph.get_text() and bool(block_meta.get("day_label"))
+        )
+        if looks_like_readings:
+            if block_psalm and not psalm:
+                psalm = block_psalm
+            readings.extend(block_readings)
+            for key, value in block_meta.items():
+                if key == "day_label" or key not in metadata:
+                    metadata[key] = value
+            continue
+
+        label = block_meta.get("day_label") or text
+        metadata.setdefault("church_year_label", label)
+
+    return psalm, readings, metadata
+
+
 def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[str, str]]:
     metadata: dict[str, str] = {}
     text = paragraph.get_text("\n", strip=True)
@@ -113,7 +167,9 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
     remaining = lines[1:]
 
     match = _READING_LINE.match(first_line)
-    if match and "psalm" in match.group("rest").lower():
+    if match and (
+        "psalm" in match.group("rest").lower() or re.search(r"\d+:\d+", match.group("rest"))
+    ):
         metadata["day_label"] = match.group("label")
         psalm, inline_readings = _extract_psalm_and_inline_readings(match.group("rest"))
         readings.extend(inline_readings)
@@ -124,7 +180,8 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
             label_match = _READING_LINE.match(second)
             if label_match:
                 metadata["day_label"] = label_match.group("label")
-                psalm, _ = _extract_psalm_and_inline_readings(label_match.group("rest"))
+                psalm, inline = _extract_psalm_and_inline_readings(label_match.group("rest"))
+                readings.extend(inline)
                 remaining = remaining[1:]
             else:
                 metadata["church_year_label"] = second
@@ -135,13 +192,14 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
             label_match = _READING_LINE.match(remaining[0])
             assert label_match is not None
             metadata["day_label"] = label_match.group("label")
-            psalm, _ = _extract_psalm_and_inline_readings(label_match.group("rest"))
+            psalm, inline = _extract_psalm_and_inline_readings(label_match.group("rest"))
+            readings.extend(inline)
             remaining = remaining[1:]
         else:
             metadata["day_label"] = first_line
 
     for line in remaining:
-        if "—" in line and "psalm" in line.lower():
+        if "—" in line and "psalm" in line.lower() and _READING_LINE.match(line):
             continue
         parts = [part.strip() for part in re.split(r"[;]", line) if part.strip()]
         readings.extend(parts)
@@ -152,10 +210,23 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
 def _extract_psalm_and_inline_readings(rest: str) -> tuple[str | None, list[str]]:
     psalm_match = _PSALM_REF.search(rest)
     if not psalm_match:
-        return None, []
+        return None, [part.strip() for part in rest.split(";") if part.strip()]
+
     psalm = psalm_match.group(1)
-    after_psalm = rest[psalm_match.end() :].lstrip("; ").strip()
-    inline = [part.strip() for part in after_psalm.split(";") if part.strip()]
+    after = rest[psalm_match.end() :]
+    # Keep verse lists like ",14-21" attached to the psalm reference.
+    extra = re.match(r"(?:,\d+(?:[–-]\d+)*)+", after)
+    if extra:
+        psalm += extra.group(0)
+        after = after[extra.end() :]
+
+    before = rest[: psalm_match.start()].strip("; ").strip()
+    after = after.lstrip("; ").strip()
+    inline: list[str] = []
+    if before:
+        inline.extend(part.strip() for part in before.split(";") if part.strip())
+    if after:
+        inline.extend(part.strip() for part in after.split(";") if part.strip())
     return psalm, inline
 
 
@@ -169,13 +240,21 @@ def _merge_dash_continuations(lines: list[str]) -> list[str]:
     return merged
 
 
+def _biblegateway_link(paragraph: Tag) -> Tag | None:
+    for link in paragraph.find_all("a", href=True):
+        href = str(link["href"])
+        if "biblegateway.com" in href.lower():
+            return link
+    return None
+
+
 def _parse_watchword_paragraph(paragraph: Tag) -> Watchword:
-    link = paragraph.find("a", href=True)
+    link = _biblegateway_link(paragraph)
     if link is None:
         raise ProviderError("Watchword paragraph missing BibleGateway link")
 
     reference = link.get_text(" ", strip=True)
-    bible_url = link["href"]
+    bible_url = str(link["href"])
     full_text = paragraph.get_text(" ", strip=True)
     text_en = full_text.replace(reference, "", 1).strip()
     text_en = re.sub(r"\s+", " ", text_en)

@@ -10,7 +10,9 @@ from daily_texts.infrastructure.providers.moravian_html_sidebar import (
     parse_moravian_sidebar_html,
 )
 
-FIXTURE = Path(__file__).resolve().parents[1] / "fixtures" / "moravian_sidebar.html"
+FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
+FIXTURE = FIXTURES / "moravian_sidebar.html"
+SUNDAY_FIXTURE = FIXTURES / "moravian_sidebar_sunday.html"
 
 
 def test_parse_moravian_sidebar_html() -> None:
@@ -32,6 +34,27 @@ def test_parse_moravian_sidebar_html() -> None:
     assert "time of trial" in result.nt.text_en
     assert result.prayer_en.endswith("Amen.")
     assert result.metadata.get("day_label") == "Friday, July 31"
+
+
+def test_parse_moravian_sunday_layout() -> None:
+    html = SUNDAY_FIXTURE.read_text(encoding="utf-8")
+    result = parse_moravian_sidebar_html(
+        html,
+        source_url="https://www.moravian.org/the-daily-texts/",
+    )
+
+    assert result.date == date(2026, 8, 2)
+    assert result.metadata.get("church_year_label") == "Tenth Sunday after Pentecost"
+    assert "Watchword for the week" in (result.metadata.get("watchword_for_week") or "")
+    assert result.psalm == "Psalm 145:8-9,14-21"
+    assert "Isaiah 55:1-5" in result.readings
+    assert "Romans 9:1-5" in result.readings
+    assert "Matthew 14:13-21" in result.readings
+    assert result.ot.reference == "Deuteronomy 18:14"
+    assert "soothsayers" in result.ot.text_en
+    assert result.nt.reference == "Galatians 4:9"
+    assert result.prayer_en.endswith("Amen.")
+    assert result.metadata.get("day_label") == "Sunday, August 2"
 
 
 def test_parse_rejects_mismatched_target_date() -> None:
