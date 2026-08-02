@@ -99,7 +99,7 @@ daily-texts run-scheduler
 
 | 觸發 | 說明 |
 |------|------|
-| `schedule`（cron） | 預設 `0 22 * * *` 與 `0 4 * * *`（UTC）＝台北 06:00／12:00；可直接改 YAML 內 cron |
+| `schedule`（cron） | 預設 `0 9 * * *` 與 `0 11 * * *`（UTC）＝台北 17:00／19:00；可直接改 YAML 內 cron |
 | `workflow_dispatch` | Actions 頁手動執行；可選 `force`、`expect_date` |
 
 步驟摘要：checkout → Python 3.12 → `pip install -e .` → `daily-texts fetch`（產生 `output/` 的 md／html／txt／json，並以 `PUBLISHERS=static_site` 更新 `site/` 含 `index.html`）→ **僅在 `site/` 有變更時** commit 並 push 回 `master`。
@@ -110,18 +110,32 @@ daily-texts run-scheduler
 - **翻譯失敗不中斷**：禱告維持英文（複合鏈末端 `fallback` + use case 備援）
 - **網路重試**：Moravian／FHL 等 HTTP 請求依 `HTTP_MAX_RETRIES` 重試
 - 日期比對：`--expect-date`（台北當日）＋`--fail-on-skip`；若網站尚未換日，當次失敗、由第二次 cron 重試
+- **排程標籤**：log／commit message 會標示 `schedule:0 9 * * *`、`schedule:0 11 * * *` 或 `manual`，方便之後決定只留一個 cron
 
-### 2. Secrets（Settings → Secrets and variables → Actions）
+### 2. Daily Watchdog（兩次發布都失敗才告警）
+
+工作流程：[`.github/workflows/daily-watchdog.yml`](.github/workflows/daily-watchdog.yml)
+
+| 觸發 | 說明 |
+|------|------|
+| `schedule` | `0 13 * * *`（UTC）＝台北 21:00，在 09:00／11:00 之後 |
+| `workflow_dispatch` | 手動檢查；可選 `expect_date` |
+
+檢查 `site/{今日}.html` 是否存在，且 `index.html` 有連到該日。失敗時 Actions 顯示紅燈；若已設定下方郵件 Secrets，會額外寄信。
+
+### 3. Secrets（Settings → Secrets and variables → Actions）
 
 | Secret | 用途 |
 |--------|------|
 | `OPENAI_API_KEY` | 禱告翻譯（建議） |
 | `ANTHROPIC_API_KEY` | 備援翻譯（可選） |
 | `GOOGLE_TRANSLATE_API_KEY` | 備援翻譯（可選） |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` / `MAIL_TO` | Watchdog 失敗時寄信（三者都設才會寄） |
+| `MAIL_FROM` / `MAIL_SERVER` / `MAIL_PORT` | 郵件可選；預設 from＝username、`smtp.gmail.com:465` |
 
-未設定任何金鑰時仍會發布：禱告保留英文原文。之後若新增其他金鑰，同樣放在 GitHub Secrets，並在 workflow `env` 對應即可。
+未設定翻譯金鑰時仍會發布：禱告保留英文原文。未設定郵件 Secrets 時，Watchdog 只讓 workflow 失敗（可搭配 GitHub 失敗通知）。
 
-### 3. GitHub Pages 部署（不變）
+### 4. GitHub Pages 部署（不變）
 
 1. Repo **Settings → Pages → Source: GitHub Actions**
 2. Daily Publish push `site/` 後，由 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) 自動部署

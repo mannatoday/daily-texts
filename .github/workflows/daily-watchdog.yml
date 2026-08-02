@@ -1,0 +1,135 @@
+# Fail once per day if Daily Publish never produced today's site page.
+# Runs after both publish windows (09:00 and 11:00 UTC).
+#
+# Optional email on failure — set all of:
+#   MAIL_USERNAME, MAIL_PASSWORD, MAIL_TO
+# Optional: MAIL_FROM, MAIL_SERVER (default smtp.gmail.com), MAIL_PORT (default 465)
+
+name: Daily Watchdog
+
+on:
+  schedule:
+    # 13:00 UTC = 21:00 Asia/Taipei (after 09:00 + 11:00 publish attempts)
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+    inputs:
+      expect_date:
+        description: "Date YYYY-MM-DD to verify (empty = today in Asia/Taipei)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-watchdog
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Label schedule trigger
+        id: trigger
+        run: |
+          SCHEDULE="${{ github.event.schedule }}"
+          if [ -n "$SCHEDULE" ]; then
+            LABEL="schedule:${SCHEDULE}"
+          else
+            LABEL="manual"
+          fi
+          echo "label=${LABEL}" >> "$GITHUB_OUTPUT"
+          echo "Run trigger: ${LABEL}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Resolve expect date
+        id: dates
+        run: |
+          if [ -n "${{ inputs.expect_date }}" ]; then
+            EXPECT="${{ inputs.expect_date }}"
+          else
+            EXPECT="$(TZ=Asia/Taipei date +%Y-%m-%d)"
+          fi
+          echo "expect_date=${EXPECT}" >> "$GITHUB_OUTPUT"
+          echo "Checking publish for: ${EXPECT}"
+
+      - name: Verify today's site page was published
+        id: check
+        run: |
+          set -euo pipefail
+          DAY="${{ steps.dates.outputs.expect_date }}"
+          PAGE="site/${DAY}.html"
+          INDEX="site/index.html"
+          ok=1
+
+          if [ ! -f "$PAGE" ]; then
+            echo "::error::Missing ${PAGE} — Daily Publish did not succeed for ${DAY}."
+            ok=0
+          else
+            echo "Found ${PAGE}"
+          fi
+
+          if [ ! -f "$INDEX" ]; then
+            echo "::error::Missing ${INDEX}"
+            ok=0
+          elif ! grep -q "${DAY}.html" "$INDEX"; then
+            echo "::error::${INDEX} does not link to ${DAY}.html"
+            ok=0
+          else
+            echo "index.html links to ${DAY}.html"
+          fi
+
+          # Soft signal: last publish commit for this day (helps see 09 vs 11 UTC).
+          echo "Recent matching commits:"
+          git log -5 --oneline --grep="publish daily text ${DAY}" -- site/ || true
+          LAST="$(git log -1 --format='%h %ci %s' --grep="publish daily text ${DAY}" -- site/ || true)"
+          if [ -n "$LAST" ]; then
+            echo "Latest matching commit: ${LAST}"
+            echo "commit_summary=${LAST}" >> "$GITHUB_OUTPUT"
+          else
+            echo "No matching publish commit found in recent history (file may predate commit message convention)."
+            echo "commit_summary=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ "$ok" -ne 1 ]; then
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "missing=false" >> "$GITHUB_OUTPUT"
+          echo "Watchdog OK for ${DAY}"
+
+      - name: Notify by email (optional)
+        if: failure() && secrets.MAIL_USERNAME != '' && secrets.MAIL_PASSWORD != '' && secrets.MAIL_TO != ''
+        uses: dawidd6/action-send-mail@v18
+        with:
+          server_address: ${{ secrets.MAIL_SERVER != '' && secrets.MAIL_SERVER || 'smtp.gmail.com' }}
+          server_port: ${{ secrets.MAIL_PORT != '' && secrets.MAIL_PORT || '465' }}
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: ${{ secrets.MAIL_FROM != '' && secrets.MAIL_FROM || secrets.MAIL_USERNAME }}
+          to: ${{ secrets.MAIL_TO }}
+          subject: "[daily-texts] Watchdog failed for ${{ steps.dates.outputs.expect_date }}"
+          body: |
+            Daily Watchdog failed: today's site page is missing or incomplete.
+
+            Date (Asia/Taipei): ${{ steps.dates.outputs.expect_date }}
+            Trigger: ${{ steps.trigger.outputs.label }}
+            Repository: ${{ github.repository }}
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Expected files:
+              - site/${{ steps.dates.outputs.expect_date }}.html
+              - site/index.html linking to that day
+
+            Latest matching commit (if any):
+              ${{ steps.check.outputs.commit_summary }}
+
+            Fix: run "Daily Publish" manually (workflow_dispatch, force if needed),
+            or inspect the 09:00 / 11:00 UTC Daily Publish runs.

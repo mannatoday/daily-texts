@@ -6,7 +6,8 @@
 
 ### Added
 
-- GitHub Actions 每日發布工作流程（`.github/workflows/daily-publish.yml`）：cron + 手動觸發，產生 `site/` 後 commit／push 至 `master`
+- GitHub Actions 每日發布工作流程（`.github/workflows/daily-publish.yml`）：cron + 手動觸發，產生 `site/` 後 commit／push 至 `master`；run／commit 標示 schedule 來源
+- Daily Watchdog（`.github/workflows/daily-watchdog.yml`）：兩次 publish 之後檢查當日頁；失敗可選 SMTP 寄信
 - HTTP 請求重試（`HTTP_MAX_RETRIES`／`HTTP_RETRY_BACKOFF_SECONDS`）用於 Moravian、FHL、Google Translate
 - CLI：`--expect-date`、`--fail-on-skip`（供 CI 使用）
 
