@@ -63,6 +63,11 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert 'id="bible-version"' in html
     assert "version.js" in html
     assert "RCU17TS" in html
+    assert "data-ref=" in html
+    assert "[閱讀 · 和合本]" in html
+    js = (tmp_path / "version.js").read_text(encoding="utf-8")
+    assert "localStorage" in js
+    assert "reading__open" in js
     assert (tmp_path / "about.html").is_file()
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
     assert "1731" in about

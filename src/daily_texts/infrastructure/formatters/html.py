@@ -7,7 +7,7 @@ from pathlib import Path
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.infrastructure.formatters._common import (
-    biblegateway_cuv_url,
+    biblegateway_url,
     date_title_zh,
     lectionary_entries,
 )
@@ -97,8 +97,11 @@ class HtmlFormatter:
             week_block = (
                 "    <h2>本週守望經文</h2>\n"
                 f'    <p class="verse">{escape(content.week_watchword.text_zh)}</p>\n'
-                f'    <p class="ref">— {escape(content.week_watchword.reference_zh)}</p>\n'
+                f"    {_ref_line(content.week_watchword.reference_zh, content.week_watchword.reference, site_mode)}\n"
             )
+
+        ot_ref = _ref_line(content.ot.reference_zh, content.ot.reference, site_mode)
+        nt_ref = _ref_line(content.nt.reference_zh, content.nt.reference, site_mode)
 
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -117,10 +120,10 @@ class HtmlFormatter:
     <h1>{title}</h1>
 {week_block}    <h2>舊約</h2>
     <p class="verse">{escape(content.ot.text_zh)}</p>
-    <p class="ref">— {escape(content.ot.reference_zh)}</p>
+    {ot_ref}
     <h2>新約</h2>
     <p class="verse">{escape(content.nt.text_zh)}</p>
-    <p class="ref">— {escape(content.nt.reference_zh)}</p>
+    {nt_ref}
     <h2>今日禱告</h2>
     <p class="prayer">{escape(content.prayer_zh)}</p>
 {lectionary_block}{source_block}    </article>
@@ -146,19 +149,38 @@ def _version_picker() -> str:
     <select id="bible-version" class="version-picker__select" autocomplete="off">
 {options}
     </select>
+    <span class="version-picker__hint" id="bible-version-hint" aria-live="polite">用於下方［閱讀］連結</span>
   </div>
 """
 
 
+def _gateway_link(zh_label: str, english_ref: str) -> str:
+    cleaned = english_ref.strip().replace("–", "-").replace("—", "-")
+    url = biblegateway_url(cleaned, version=DEFAULT_BIBLE_VERSION)
+    return (
+        f'<a class="reading__open" href="{escape(url, quote=True)}" '
+        f'data-ref="{escape(cleaned, quote=True)}" '
+        f'target="_blank" rel="noopener noreferrer" '
+        f'title="在 Bible Gateway 閱讀和合本" '
+        f'aria-label="閱讀 {escape(zh_label)}（和合本）">'
+        f'<span class="reading__open-label">[閱讀 · 和合本]</span></a>'
+    )
+
+
+def _ref_line(zh_label: str, english_ref: str, site_mode: bool) -> str:
+    if site_mode:
+        return (
+            f'<p class="ref">— {escape(zh_label)} '
+            f"{_gateway_link(zh_label, english_ref)}</p>"
+        )
+    return f'<p class="ref">— {escape(zh_label)}</p>'
+
+
 def _reading_row(zh_label: str, english_ref: str) -> str:
-    url = biblegateway_cuv_url(english_ref)
     return (
         f'    <p class="reading">'
         f'<span class="reading__ref">{escape(zh_label)}</span>'
-        f'<a class="reading__open" href="{escape(url, quote=True)}" '
-        f'target="_blank" rel="noopener noreferrer" '
-        f'title="在 Bible Gateway 閱讀" '
-        f'aria-label="閱讀 {escape(zh_label)}">[閱讀]</a></p>'
+        f"{_gateway_link(zh_label, english_ref)}</p>"
     )
 
 

@@ -62,10 +62,9 @@ def test_html_formatter() -> None:
     assert "詩篇 91:1–8" in out.content
     assert "約書亞記 8:30–9:27" in out.content
     assert "路加福音 12:49–59" in out.content
-    assert "biblegateway.com/passage/" in out.content
-    assert "version=CUV" in out.content
-    assert "Psalm+91" in out.content or "Psalm%2091" in out.content
-    assert "[閱讀]" in out.content
+    # Standalone HTML (no site stylesheet) keeps plain refs without the picker.
+    assert "bible-version" not in out.content
+    assert "version.js" not in out.content
     assert "原文連結" not in out.content
     assert "color-scheme" in out.content
     assert "複製經文" not in out.content
@@ -73,6 +72,21 @@ def test_html_formatter() -> None:
     prayer_idx = out.content.index("<h2>今日禱告</h2>")
     lectionary_idx = out.content.index("<h2>經文選讀</h2>")
     assert prayer_idx < lectionary_idx
+
+
+def test_html_formatter_site_mode_has_version_aware_links() -> None:
+    out = HtmlFormatter().format(
+        _sample(),
+        include_source_link=False,
+        stylesheet_href="styles.css",
+    )
+    assert 'id="bible-version"' in out.content
+    assert "version.js" in out.content
+    assert 'data-ref="Psalm 91:1-8"' in out.content or 'data-ref="Psalm 91:1–8"' in out.content
+    assert "[閱讀 · 和合本]" in out.content
+    assert "version=CUV" in out.content
+    assert 'data-ref="Jeremiah 9:7"' in out.content
+    assert 'data-ref="Luke 22:40"' in out.content
 
 
 def test_plain_text_formatter() -> None:

@@ -36,10 +36,15 @@ def lectionary_entries(content: LocalizedDailyText) -> list[tuple[str, str]]:
     return entries
 
 
-def biblegateway_cuv_url(reference: str) -> str:
-    """Bible Gateway link for Traditional Chinese Union Version (和合本)."""
+def biblegateway_url(reference: str, *, version: str = "CUV") -> str:
+    """Bible Gateway passage URL for the given English reference and version code."""
     cleaned = reference.strip().replace("–", "-").replace("—", "-")
     return (
         "https://www.biblegateway.com/passage/"
-        f"?search={quote(cleaned)}&version=CUV"
+        f"?search={quote(cleaned)}&version={quote(version)}"
     )
+
+
+def biblegateway_cuv_url(reference: str) -> str:
+    """Bible Gateway link for Traditional Chinese Union Version (和合本)."""
+    return biblegateway_url(reference, version="CUV")
