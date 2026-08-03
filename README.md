@@ -109,7 +109,7 @@ daily-texts run-scheduler
 特性：
 
 - **冪等**：內容未變則不 commit；可安全重跑
-- **翻譯失敗不中斷**：禱告維持英文（複合鏈末端 `fallback` + use case 備援）
+- **翻譯失敗不中斷**：禱告維持英文（複合鏈末端 `fallback` + use case 備援）。Actions 鏈為 `google,openai,anthropic,fallback`（無 Ollama）；請至少設一個翻譯 Secret，否則禱告會是英文。
 - **網路重試**：Moravian／FHL 等 HTTP 請求依 `HTTP_MAX_RETRIES` 重試
 - 日期比對：`--expect-date`（台北當日）＋`--fail-on-skip`；若網站尚未換日，當次失敗、由第二次 cron 重試
 - **排程標籤**：log／commit message 會標示 `schedule:0 9 * * *`、`schedule:0 11 * * *` 或 `manual`，方便之後決定只留一個 cron
@@ -129,9 +129,9 @@ daily-texts run-scheduler
 
 | Secret | 用途 |
 |--------|------|
-| `OPENAI_API_KEY` | 禱告翻譯（建議） |
+| `OPENAI_API_KEY` | 禱告翻譯（可選） |
 | `ANTHROPIC_API_KEY` | 備援翻譯（可選） |
-| `GOOGLE_TRANSLATE_API_KEY` | 備援翻譯（可選） |
+| `GOOGLE_TRANSLATE_API_KEY` | **建議**：Cloud Translation 免費額度，Actions 無法跑 Ollama 時的主要方案 |
 | `MAIL_USERNAME` / `MAIL_PASSWORD` / `MAIL_TO` | Watchdog 失敗時寄信（三者都設才會寄） |
 | `MAIL_FROM` / `MAIL_SERVER` / `MAIL_PORT` | 郵件可選；預設 from＝username、`smtp.gmail.com:465` |
 
