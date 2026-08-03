@@ -25,7 +25,7 @@ class GoogleTranslator:
         self._owns_client = client is None
 
     def available(self) -> bool:
-        return bool(self._settings.google_translate_api_key.strip())
+        return bool(self._settings.google_api_key.strip())
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
@@ -50,7 +50,7 @@ class GoogleTranslator:
         if not text.strip():
             raise TranslationError("Cannot translate empty text")
         if not self.available():
-            raise TranslationError("GOOGLE_TRANSLATE_API_KEY is not configured")
+            raise TranslationError("GOOGLE_API_KEY is not configured")
 
         # Cloud Translation uses BCP-47-ish codes; zh-TW is supported.
         source = "en" if source_lang.lower().startswith("en") else source_lang
@@ -64,7 +64,7 @@ class GoogleTranslator:
                 _TRANSLATE_URL,
                 max_retries=self._settings.http_max_retries,
                 backoff_seconds=self._settings.http_retry_backoff_seconds,
-                params={"key": self._settings.google_translate_api_key},
+                params={"key": self._settings.google_api_key},
                 json={
                     "q": text,
                     "source": source,

@@ -24,7 +24,7 @@ async def test_google_translator_success() -> None:
             },
         )
     )
-    settings = Settings(google_translate_api_key="test-key")
+    settings = Settings(google_api_key="test-key")
     translator = GoogleTranslator(settings)
     result = await translator.translate("Great I Am, hear our prayer. Amen.")
     assert "禱告" in result
@@ -33,8 +33,8 @@ async def test_google_translator_success() -> None:
 
 @pytest.mark.asyncio
 async def test_google_translator_requires_key() -> None:
-    settings = Settings(google_translate_api_key="")
+    settings = Settings(google_api_key="")
     translator = GoogleTranslator(settings)
     assert translator.available() is False
-    with pytest.raises(TranslationError, match="GOOGLE_TRANSLATE_API_KEY"):
+    with pytest.raises(TranslationError, match="GOOGLE_API_KEY"):
         await translator.translate("Amen.")

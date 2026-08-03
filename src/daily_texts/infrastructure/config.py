@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import BeforeValidator, Field
+from pydantic import AliasChoices, BeforeValidator, Field
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 ProviderName = Literal["moravian_html", "email"]
@@ -45,6 +45,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        populate_by_name=True,
     )
 
     provider: ProviderName = "moravian_html"
@@ -76,7 +77,10 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-haiku-4-5"
 
-    google_translate_api_key: str = ""
+    google_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("GOOGLE_API_KEY", "GOOGLE_TRANSLATE_API_KEY"),
+    )
 
     local_translator_base_url: str = ""
     local_translator_model: str = "qwen2.5:7b"

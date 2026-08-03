@@ -52,6 +52,8 @@ jobs:
       OPENAI_MODEL: gpt-4o-mini
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       ANTHROPIC_MODEL: claude-haiku-4-5
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      # Backward-compatible if the old secret name is still present.
       GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
       HTTP_MAX_RETRIES: "3"
       HTTP_RETRY_BACKOFF_SECONDS: "1.0"

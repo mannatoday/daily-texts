@@ -132,7 +132,7 @@ daily-texts run-scheduler
 |--------|------|
 | `OPENAI_API_KEY` | 禱告翻譯（可選） |
 | `ANTHROPIC_API_KEY` | 備援翻譯（可選） |
-| `GOOGLE_TRANSLATE_API_KEY` | **建議**：Cloud Translation 免費額度，Actions 無法跑 Ollama 時的主要方案 |
+| `GOOGLE_API_KEY` | **建議**：Cloud Translation API key（舊名 `GOOGLE_TRANSLATE_API_KEY` 仍可讀） |
 | `MAIL_USERNAME` / `MAIL_PASSWORD` / `MAIL_TO` | Watchdog 失敗時寄信（三者都設才會寄） |
 | `MAIL_FROM` / `MAIL_SERVER` / `MAIL_PORT` | 郵件可選；預設 from＝username、`smtp.gmail.com:465` |
 
