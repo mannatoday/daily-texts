@@ -20,7 +20,7 @@ def watchword_payload(watchword: LocalizedWatchword | None) -> dict | None:
 
 def day_payload(content: LocalizedDailyText) -> dict:
     """JSON-serializable payload embedded in site HTML for client-side version switching."""
-    return {
+    payload = {
         "date": content.date.isoformat(),
         "default_version": DEFAULT_VERSION,
         "versions": [{"code": code, "label": label} for code, label in SITE_VERSIONS],
@@ -33,3 +33,7 @@ def day_payload(content: LocalizedDailyText) -> dict:
         ],
         "source_url": content.source_url,
     }
+    translation = content.metadata.get("translation")
+    if isinstance(translation, dict) and translation:
+        payload["translation"] = translation
+    return payload

@@ -34,6 +34,15 @@ def _sample() -> LocalizedDailyText:
         prayer_en="Amen.",
         prayer_zh="阿們。",
         source_url="https://www.moravian.org/the-daily-texts/",
+        metadata={
+            "translation": {
+                "provider": "google",
+                "status": "ok",
+                "kept_english": False,
+                "source_chars": 5,
+                "result_chars": 3,
+            }
+        },
     )
 
 
@@ -52,6 +61,8 @@ def test_json_formatter_shape() -> None:
     assert payload["prayer"] == "阿們。"
     assert payload["readings"][0]["reference_zh"] == "詩篇 91:1–8"
     assert payload["source_url"] == "https://www.moravian.org/the-daily-texts/"
+    assert payload["translation"]["provider"] == "google"
+    assert payload["translation"]["status"] == "ok"
 
 
 def test_json_formatter_omits_source_when_disabled() -> None:

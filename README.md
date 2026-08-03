@@ -110,6 +110,7 @@ daily-texts run-scheduler
 
 - **冪等**：內容未變則不 commit；可安全重跑
 - **翻譯失敗不中斷**：禱告維持英文（複合鏈末端 `fallback` + use case 備援）。Actions 鏈為 `google,openai,anthropic,fallback`（無 Ollama）；請至少設一個翻譯 Secret，否則禱告會是英文。
+- **翻譯可追蹤**：`-v` 會印出鏈路（ready／skipped／failed）與最終 provider；`daily-text.json` 與站點 `#day-data` 含 `translation` 欄位；workflow 有「Prayer translation summary」步驟。
 - **網路重試**：Moravian／FHL 等 HTTP 請求依 `HTTP_MAX_RETRIES` 重試
 - 日期比對：`--expect-date`（台北當日）＋`--fail-on-skip`；若網站尚未換日，當次失敗、由第二次 cron 重試
 - **排程標籤**：log／commit message 會標示 `schedule:0 9 * * *`、`schedule:0 11 * * *` 或 `manual`，方便之後決定只留一個 cron

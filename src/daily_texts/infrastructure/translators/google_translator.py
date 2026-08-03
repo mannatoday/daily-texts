@@ -87,4 +87,11 @@ class GoogleTranslator:
         result = html.unescape(str(translated)).strip()
         if not result:
             raise TranslationError("Google Translate returned empty translation")
+        logger.info(
+            "Google Translate ok (%d→%d chars, %s→%s)",
+            len(text),
+            len(result),
+            source,
+            target,
+        )
         return result

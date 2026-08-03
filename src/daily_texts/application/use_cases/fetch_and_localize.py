@@ -110,12 +110,15 @@ class FetchAndLocalizeDailyText:
         )
 
     async def _localize(self, raw: RawDailyText) -> LocalizedDailyText:
-        prayer_zh = await self._translate_or_fallback(raw.prayer_en)
+        prayer_zh, translation_report = await self._translate_or_fallback(raw.prayer_en)
         ot = await self._localize_watchword(raw.ot)
         nt = await self._localize_watchword(raw.nt)
         week = None
         if raw.week_watchword is not None:
             week = await self._localize_watchword(raw.week_watchword)
+
+        metadata = dict(raw.metadata)
+        metadata["translation"] = translation_report
 
         return LocalizedDailyText(
             date=raw.date,
@@ -128,7 +131,7 @@ class FetchAndLocalizeDailyText:
             prayer_en=raw.prayer_en,
             prayer_zh=prayer_zh,
             source_url=raw.source_url,
-            metadata=dict(raw.metadata),
+            metadata=metadata,
         )
 
     async def _localize_watchword(self, watchword) -> LocalizedWatchword:
@@ -182,16 +185,51 @@ class FetchAndLocalizeDailyText:
             logger.warning("Bible lookup failed for %s: %s; using English fallback", reference, exc)
             return english
 
-    async def _translate_or_fallback(self, prayer_en: str) -> str:
+    async def _translate_or_fallback(self, prayer_en: str) -> tuple[str, dict]:
+        provider_name = getattr(self._translator, "name", self._translator.__class__.__name__)
         try:
-            return await self._translator.translate(
+            prayer_zh = await self._translator.translate(
                 prayer_en,
                 source_lang="en",
                 target_lang="zh-TW",
             )
+            report = getattr(self._translator, "last_report", None)
+            if not isinstance(report, dict) or not report:
+                kept_english = prayer_zh.strip() == prayer_en.strip()
+                report = {
+                    "provider": provider_name,
+                    "status": (
+                        "fallback_english"
+                        if provider_name in {"fallback", "noop"} or kept_english
+                        else "ok"
+                    ),
+                    "source_chars": len(prayer_en),
+                    "result_chars": len(prayer_zh),
+                    "kept_english": kept_english,
+                }
+            else:
+                report = dict(report)
+            logger.info(
+                "Prayer translation report: provider=%s status=%s kept_english=%s",
+                report.get("provider"),
+                report.get("status"),
+                report.get("kept_english"),
+            )
+            return prayer_zh, report
         except TranslationError as exc:
             logger.warning("Prayer translation failed: %s; keeping English", exc)
-            return prayer_en
+            report = {
+                "provider": None,
+                "status": "failed_kept_english",
+                "error": str(exc),
+                "source_chars": len(prayer_en),
+                "result_chars": len(prayer_en),
+                "kept_english": True,
+            }
+            prior = getattr(self._translator, "last_report", None)
+            if isinstance(prior, dict) and prior:
+                report = {**prior, **report}
+            return prayer_en, report
 
     def _day_dir(self, day: date) -> Path:
         return self._output_dir / day.isoformat()

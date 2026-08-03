@@ -43,6 +43,10 @@ async def test_composite_uses_first_success() -> None:
     assert first.calls == 1
     assert second.calls == 1
     assert third.calls == 0
+    assert composite.last_report["provider"] == "anthropic"
+    assert composite.last_report["status"] == "ok"
+    assert composite.last_report["failed"][0]["name"] == "openai"
+    assert composite.last_report["kept_english"] is False
 
 
 @pytest.mark.asyncio
@@ -54,6 +58,10 @@ async def test_composite_skips_unavailable() -> None:
     result = await composite.translate("Amen.")
     assert result == "Amen."
     assert skipped.calls == 0
+    assert composite.last_report["provider"] == "fallback"
+    assert composite.last_report["status"] == "fallback_english"
+    assert composite.last_report["skipped"] == ["openai"]
+    assert composite.last_report["kept_english"] is True
 
 
 @pytest.mark.asyncio
@@ -66,3 +74,6 @@ async def test_composite_all_fail_raises() -> None:
     )
     with pytest.raises(TranslationError, match="All translators failed"):
         await composite.translate("Amen.")
+    assert composite.last_report["status"] == "all_failed"
+    assert composite.last_report["provider"] is None
+    assert len(composite.last_report["failed"]) == 2

@@ -110,6 +110,51 @@ jobs:
           fi
           daily-texts fetch "${args[@]}"
 
+      - name: Prayer translation summary
+        if: success()
+        run: |
+          DAY="${{ steps.dates.outputs.expect_date }}"
+          JSON="output/${DAY}/daily-text.json"
+          if [ ! -f "$JSON" ]; then
+            echo "No ${JSON}; skip translation summary."
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json, sys
+          from pathlib import Path
+          day = """${{ steps.dates.outputs.expect_date }}"""
+          path = Path(f"output/{day}/daily-text.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          report = data.get("translation") or {}
+          prayer = data.get("prayer") or ""
+          print("=== Prayer translation ===")
+          print(f"date: {day}")
+          print(f"provider: {report.get('provider')}")
+          print(f"status: {report.get('status')}")
+          print(f"kept_english: {report.get('kept_english')}")
+          print(f"source_chars: {report.get('source_chars')}")
+          print(f"result_chars: {report.get('result_chars')}")
+          if report.get("skipped"):
+              print(f"skipped: {', '.join(report['skipped'])}")
+          if report.get("failed"):
+              for item in report["failed"]:
+                  print(f"failed: {item.get('name')}: {item.get('error')}")
+          if report.get("error"):
+              print(f"error: {report['error']}")
+          preview = prayer.replace("\n", " ")
+          if len(preview) > 120:
+              preview = preview[:117] + "..."
+          print(f"prayer_preview: {preview}")
+          if report.get("kept_english") or report.get("status") in {
+              "fallback_english",
+              "failed_kept_english",
+              "all_failed",
+          }:
+              print("WARNING: prayer appears to be English fallback; check API keys/quota.")
+              sys.exit(0)
+          print("OK: prayer looks translated.")
+          PY
+
       - name: Verify site day page exists
         run: |
           DAY="${{ steps.dates.outputs.expect_date }}"

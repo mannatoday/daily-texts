@@ -54,6 +54,8 @@ async def test_use_case_writes_outputs(tmp_path: Path) -> None:
     assert result.localized.ot.translations["CSBT"] == "ZH:csb:Jeremiah 9:7"
     assert "CCBT" not in result.localized.ot.translations
     assert result.localized.prayer_zh == "Hear our prayer. Amen."
+    assert result.localized.metadata["translation"]["provider"] == "fallback"
+    assert result.localized.metadata["translation"]["kept_english"] is True
     assert (tmp_path / "2026-07-31" / "daily-text.md").is_file()
 
 
@@ -118,3 +120,5 @@ async def test_use_case_falls_back_when_translation_fails(tmp_path: Path) -> Non
     result = await uc.run(force=True)
     assert not result.skipped
     assert result.localized.prayer_zh == "Hear our prayer. Amen."
+    assert result.localized.metadata["translation"]["status"] == "failed_kept_english"
+    assert "quota exceeded" in result.localized.metadata["translation"]["error"]
