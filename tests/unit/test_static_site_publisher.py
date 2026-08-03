@@ -60,16 +60,20 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert brand_idx < subtitle_idx < lede_idx
     assert 'href="styles.css"' in index
     assert (tmp_path / "version.js").is_file()
+    assert (tmp_path / "archive.html").is_file()
     assert 'id="bible-version"' in html
     assert "version.js" in html
     assert 'id="day-data"' in html
     assert 'data-verse="ot"' in html
-    assert "data-ref=" in html
-    assert "[閱讀 · 和合本修訂版]" in html
+    assert "[閱讀" not in html
+    assert ">首頁</a>" in html
+    assert "archive.html" in html
     js = (tmp_path / "version.js").read_text(encoding="utf-8")
     assert "localStorage" in js
     assert "data-verse" in js
     assert "URLSearchParams" in js
+    assert "reading__open" not in js
+    assert "CCBT" not in js
     assert (tmp_path / "about.html").is_file()
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
     assert "1731" in about
@@ -77,9 +81,17 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "了解更多" in html
     assert "about.html" in html
     assert "跳至內容" in html
+    assert "首頁" in html
     assert "歷日檔案" in html
     assert "today-card" in index or "今日經文" in index
+    assert "最近三天" in index
+    assert 'href="archive.html"' in index
     assert "了解更多" not in index
+
+    archive = (tmp_path / "archive.html").read_text(encoding="utf-8")
+    assert "歷日檔案" in archive
+    assert "2026-08-01.html" in archive
+    assert "首頁" in archive
 
 
 def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:
@@ -103,8 +115,15 @@ def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:
     pos_jul = index.index("2026-07-31.html")
     assert pos_aug < pos_jul
     assert "今日經文" in index
-    assert "歷日檔案" in index
+    assert "最近三天" in index
     assert 'class="today-card"' in index
+    assert 'href="archive.html"' in index
+    # Index only lists up to 3 recent days in the main list section title
+    assert index.count("2026-08-01.html") >= 1
+    assert index.count("2026-07-31.html") >= 1
+    archive = (tmp_path / "archive.html").read_text(encoding="utf-8")
+    assert "2026-08-01.html" in archive
+    assert "2026-07-31.html" in archive
 
 
 def test_static_site_publisher_overwrites_same_day(tmp_path: Path) -> None:

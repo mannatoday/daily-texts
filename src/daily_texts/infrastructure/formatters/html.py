@@ -8,13 +8,10 @@ from pathlib import Path
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.bible_versions import (
     DEFAULT_VERSION,
-    SITE_VERSION_LABELS,
     SITE_VERSIONS,
-    gateway_version,
 )
 from daily_texts.domain.models import LocalizedDailyText, LocalizedWatchword
 from daily_texts.infrastructure.formatters._common import (
-    biblegateway_url,
     date_title_zh,
     lectionary_entries,
 )
@@ -54,13 +51,10 @@ class HtmlFormatter:
         title = escape(date_title_zh(content))
         entries = lectionary_entries(content)
         site_mode = stylesheet_href is not None
-        default_label = SITE_VERSION_LABELS[DEFAULT_VERSION]
 
         lectionary_block = ""
         if entries:
-            refs = "\n".join(
-                _reading_row(zh, en, default_label) for zh, en in entries
-            )
+            refs = "\n".join(_reading_row(zh) for zh, _en in entries)
             lectionary_block = f"    <h2>經文選讀</h2>\n{refs}\n"
 
         source_block = ""
@@ -99,7 +93,7 @@ class HtmlFormatter:
             week_block = (
                 "    <h2>本週守望經文</h2>\n"
                 f"    {_verse_line(content.week_watchword, 'week')}\n"
-                f"    {_ref_line(content.week_watchword, site_mode, default_label)}\n"
+                f"    {_ref_line(content.week_watchword)}\n"
             )
 
         body = f"""<!DOCTYPE html>
@@ -119,10 +113,10 @@ class HtmlFormatter:
     <h1>{title}</h1>
 {week_block}    <h2>舊約</h2>
     {_verse_line(content.ot, "ot")}
-    {_ref_line(content.ot, site_mode, default_label)}
+    {_ref_line(content.ot)}
     <h2>新約</h2>
     {_verse_line(content.nt, "nt")}
-    {_ref_line(content.nt, site_mode, default_label)}
+    {_ref_line(content.nt)}
     <h2>今日禱告</h2>
     <p class="prayer">{escape(content.prayer_zh)}</p>
 {lectionary_block}{source_block}    </article>
@@ -159,48 +153,21 @@ def _version_picker() -> str:
         f'{" selected" if code == DEFAULT_VERSION else ""}>{label}</option>'
         for code, label in SITE_VERSIONS
     )
-    default_label = SITE_VERSION_LABELS[DEFAULT_VERSION]
     return f"""  <div class="version-picker">
     <label class="version-picker__label" for="bible-version">閱讀譯本</label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
 {options}
     </select>
-    <span class="version-picker__hint" id="bible-version-hint" aria-live="polite">目前顯示：{default_label}</span>
   </div>
 """
 
 
-def _gateway_link(zh_label: str, english_ref: str, default_label: str) -> str:
-    cleaned = english_ref.strip().replace("–", "-").replace("—", "-")
-    gw = gateway_version(DEFAULT_VERSION)
-    url = biblegateway_url(cleaned, version=gw)
-    return (
-        f'<a class="reading__open" href="{escape(url, quote=True)}" '
-        f'data-ref="{escape(cleaned, quote=True)}" '
-        f'target="_blank" rel="noopener noreferrer" '
-        f'title="在 Bible Gateway 閱讀{escape(default_label)}" '
-        f'aria-label="閱讀 {escape(zh_label)}（{escape(default_label)}）">'
-        f'<span class="reading__open-label">[閱讀 · {escape(default_label)}]</span></a>'
-    )
-
-
-def _ref_line(
-    watchword: LocalizedWatchword, site_mode: bool, default_label: str
-) -> str:
-    if site_mode:
-        return (
-            f'<p class="ref">— {escape(watchword.reference_zh)} '
-            f"{_gateway_link(watchword.reference_zh, watchword.reference, default_label)}</p>"
-        )
+def _ref_line(watchword: LocalizedWatchword) -> str:
     return f'<p class="ref">— {escape(watchword.reference_zh)}</p>'
 
 
-def _reading_row(zh_label: str, english_ref: str, default_label: str) -> str:
-    return (
-        f'    <p class="reading">'
-        f'<span class="reading__ref">{escape(zh_label)}</span>'
-        f"{_gateway_link(zh_label, english_ref, default_label)}</p>"
-    )
+def _reading_row(zh_label: str) -> str:
+    return f'    <p class="reading"><span class="reading__ref">{escape(zh_label)}</span></p>'
 
 
 def _day_nav(
@@ -226,7 +193,7 @@ def _day_nav(
     if home_href:
         home = (
             f'    <a class="day-nav__home" href="{escape(home_href, quote=True)}">'
-            "歷日檔案</a>\n"
+            "首頁</a>\n"
         )
     return (
         f'  <nav class="{classes}" aria-label="日期導覽">\n'
@@ -251,7 +218,8 @@ def _site_footer(*, site_mode: bool) -> str:
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
     <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="index.html">歷日檔案</a>
+      <a href="index.html">首頁</a>
+      <a href="archive.html">歷日檔案</a>
       <a href="about.html">關於</a>
     </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>

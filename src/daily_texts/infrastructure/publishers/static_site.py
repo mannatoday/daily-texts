@@ -58,8 +58,10 @@ class StaticSitePublisher:
         self._refresh_neighbor_nav(content.date, days)
         index_path = self._site_dir / "index.html"
         index_path.write_text(self._build_index(days), encoding="utf-8")
+        archive_path = self._site_dir / "archive.html"
+        archive_path.write_text(self._build_archive(days), encoding="utf-8")
 
-        message = f"Wrote {day_path}, about.html, and updated {index_path}"
+        message = f"Wrote {day_path}, about.html, archive.html, and updated {index_path}"
         logger.info(message)
         return PublishResult(channel=self.channel, success=True, message=message)
 
@@ -109,50 +111,108 @@ class StaticSitePublisher:
         else:
             latest = days[0]
             latest_label = escape(format_date_zh(latest))
-            items = "\n".join(
-                (
-                    "      <li>"
-                    f'<a href="{d.isoformat()}.html">'
-                    f"<span>{escape(format_date_zh(d))}</span>"
-                    f'<span class="iso">{d.isoformat()}</span>'
-                    "</a></li>"
-                )
-                for d in days
-            )
+            recent = days[:3]
+            items = "\n".join(_day_list_item(d) for d in recent)
             body = (
                 f'    <a class="today-card" href="{latest.isoformat()}.html">'
                 f'<span class="today-card__label">今日經文</span>'
                 f'<span class="today-card__date">{latest_label}</span>'
                 "</a>\n"
-                '    <h2 class="archive-title">歷日檔案</h2>\n'
+                '    <h2 class="archive-title">最近三天</h2>\n'
+                f'    <ul class="archive-list">\n{items}\n    </ul>\n'
+                '    <p class="archive-more"><a href="archive.html">歷日檔案</a></p>\n'
+            )
+
+        return _shell_page(
+            title="摩拉維亞每日經文",
+            body=body,
+            extra_class="site-index",
+            foot_links=(
+                ('archive.html', "歷日檔案"),
+                ('about.html', "關於"),
+            ),
+        )
+
+    def _build_archive(self, days: list[date] | None = None) -> str:
+        days = days if days is not None else self._list_day_pages()
+        if not days:
+            body = '    <p class="empty">尚無每日經文。</p>\n'
+        else:
+            items = "\n".join(_day_list_item(d) for d in days)
+            body = (
+                '    <h1 class="archive-page-title">歷日檔案</h1>\n'
                 f'    <ul class="archive-list">\n{items}\n    </ul>\n'
             )
 
-        return f"""<!DOCTYPE html>
+        return _shell_page(
+            title="歷日檔案 · 摩拉維亞每日經文",
+            body=body,
+            extra_class="site-index archive-page",
+            top_nav=True,
+            foot_links=(
+                ('index.html', "首頁"),
+                ('about.html', "關於"),
+            ),
+        )
+
+
+def _day_list_item(day: date) -> str:
+    return (
+        "      <li>"
+        f'<a href="{day.isoformat()}.html">'
+        f"<span>{escape(format_date_zh(day))}</span>"
+        f'<span class="iso">{day.isoformat()}</span>'
+        "</a></li>"
+    )
+
+
+def _shell_page(
+    *,
+    title: str,
+    body: str,
+    extra_class: str,
+    foot_links: tuple[tuple[str, str], ...],
+    top_nav: bool = False,
+) -> str:
+    nav = ""
+    if top_nav:
+        nav = """    <nav class="day-nav" aria-label="網站導覽">
+      <a class="day-nav__prev" href="index.html">← 首頁</a>
+      <span class="day-nav__home" aria-current="page">歷日檔案</span>
+      <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+    </nav>
+"""
+    brand = ""
+    if not top_nav:
+        brand = """    <h1 class="brand">摩拉維亞每日經文</h1>
+    <p class="subtitle">Moravian Daily Texts • 中文版</p>
+    <p class="lede">以神的話開始每一天</p>
+"""
+    foot = "\n".join(
+        f'        <a href="{href}">{label}</a>' for href, label in foot_links
+    )
+    return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
-  <title>摩拉維亞每日經文</title>
+  <title>{escape(title)}</title>
 {_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
-  <div class="site-shell site-index">
-    <main id="main">
-    <h1 class="brand">摩拉維亞每日經文</h1>
-    <p class="subtitle">Moravian Daily Texts • 中文版</p>
-    <p class="lede">以神的話開始每一天</p>
-{body}    </main>
+  <div class="site-shell {extra_class}">
+{nav}    <main id="main">
+{brand}{body}    </main>
     <footer class="site-foot">
       <section class="about-blurb" aria-labelledby="about-blurb-title">
         <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
         <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       </section>
       <nav class="foot-nav" aria-label="頁尾導覽">
-        <a href="about.html">關於</a>
+{foot}
       </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     </footer>
@@ -208,23 +268,15 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
 
 
 _VERSION_JS = """\
-// Multi-version watchword renderer + Bible Gateway link sync.
+// Multi-version watchword renderer.
 // Priority: ?version= → localStorage → embedded default (RCUV).
 (function () {
   "use strict";
   var KEY = "dailyTexts.bibleVersion";
-  var GATEWAY = {
-    CUV: "CUV",
-    RCUV: "RCU17TS",
-    CNVT: "CNVT",
-    CCBT: "CCBT",
-    CSBT: "CSBT"
-  };
 
   var select = document.getElementById("bible-version");
   if (!select) return;
 
-  var hint = document.getElementById("bible-version-hint");
   var dataEl = document.getElementById("day-data");
   var day = null;
   if (dataEl) {
@@ -235,18 +287,15 @@ _VERSION_JS = """\
     }
   }
 
-  var labelsByCode = {};
-  Array.prototype.forEach.call(select.options, function (opt) {
-    labelsByCode[opt.value] = opt.textContent.trim();
+  var validCodes = Array.prototype.map.call(select.options, function (opt) {
+    return opt.value;
   });
-  var validCodes = Object.keys(labelsByCode);
   var defaultVersion =
     (day && day.default_version) || select.value || "RCUV";
 
   function fromQuery() {
     try {
-      var params = new URLSearchParams(window.location.search);
-      return params.get("version");
+      return new URLSearchParams(window.location.search).get("version");
     } catch (err) {
       return null;
     }
@@ -269,19 +318,6 @@ _VERSION_JS = """\
     return validCodes[0];
   }
 
-  function gatewayCode(siteCode) {
-    return GATEWAY[siteCode] || GATEWAY.RCUV || siteCode;
-  }
-
-  function buildUrl(ref, siteCode) {
-    return (
-      "https://www.biblegateway.com/passage/?search=" +
-      encodeURIComponent(ref) +
-      "&version=" +
-      encodeURIComponent(gatewayCode(siteCode))
-    );
-  }
-
   function textFor(block, siteCode) {
     if (!block || !block.translations) return null;
     return (
@@ -302,22 +338,6 @@ _VERSION_JS = """\
     });
   }
 
-  function applyLinks(siteCode) {
-    var label = labelsByCode[siteCode] || siteCode;
-    var links = document.querySelectorAll("a.reading__open");
-    Array.prototype.forEach.call(links, function (link) {
-      var ref = link.getAttribute("data-ref");
-      if (!ref) return;
-      link.href = buildUrl(ref, siteCode);
-      link.title = "在 Bible Gateway 閱讀" + label;
-      var openLabel = link.querySelector(".reading__open-label");
-      var text = "[閱讀 · " + label + "]";
-      if (openLabel) openLabel.textContent = text;
-      else link.textContent = text;
-      link.setAttribute("aria-label", "閱讀（" + label + "）");
-    });
-  }
-
   function syncUrl(siteCode) {
     try {
       var url = new URL(window.location.href);
@@ -328,26 +348,21 @@ _VERSION_JS = """\
     }
   }
 
-  function apply(siteCode, options) {
-    options = options || {};
+  function apply(siteCode) {
     select.value = siteCode;
     applyVerses(siteCode);
-    applyLinks(siteCode);
-    var label = labelsByCode[siteCode] || siteCode;
-    if (hint) hint.textContent = "目前顯示：" + label;
     try {
       window.localStorage.setItem(KEY, siteCode);
     } catch (err) {
       /* ignore */
     }
-    if (options.updateUrl !== false) syncUrl(siteCode);
+    syncUrl(siteCode);
   }
 
-  var initial = resolveVersion();
-  apply(initial, { updateUrl: true });
+  apply(resolveVersion());
 
   select.addEventListener("change", function () {
-    apply(select.value, { updateUrl: true });
+    apply(select.value);
   });
 })();
 """
@@ -366,7 +381,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell about-page">
     <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← 歷日檔案</a>
+      <a class="day-nav__prev" href="index.html">← 首頁</a>
       <span class="day-nav__home" aria-current="page">關於</span>
       <span class="day-nav__next" aria-disabled="true">後一日 →</span>
     </nav>
@@ -398,7 +413,8 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
     </main>
     <footer class="site-foot">
       <nav class="foot-nav" aria-label="頁尾導覽">
-        <a href="index.html">歷日檔案</a>
+        <a href="index.html">首頁</a>
+        <a href="archive.html">歷日檔案</a>
       </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     </footer>

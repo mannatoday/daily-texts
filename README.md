@@ -14,8 +14,8 @@
 - 經文查詢：信望愛 FHL API（`rcuv`）
 - 禱告翻譯：可串接本機 Ollama、OpenAI、Anthropic、Google（複合備援）
 - 輸出：`output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`
-- 靜態站：`site/`（每日頁、歷日檔案、關於頁）→ GitHub Pages
-- 靜態站譯本切換（頁面右上，預設 RCUV）：CUV／RCUV／CNVT／CCBT／CSBT；守望經文內文隨選項切換，URL 為 `?version=RCUV`，並以 localStorage 記住偏好
+- 靜態站：`site/`（每日頁、首頁、歷日檔案、關於頁）→ GitHub Pages
+- 靜態站譯本切換（頁面右上，預設 RCUV）：CUV／RCUV／CNVT／CSBT；守望經文內文隨選項切換，URL 為 `?version=RCUV`，並以 localStorage 記住偏好
 
 ## 系統需求
 
@@ -87,7 +87,8 @@ daily-texts run-scheduler
 | `output/{YYYY-MM-DD}/daily-text.txt` | 純文字 |
 | `output/{YYYY-MM-DD}/daily-text.json` | JSON API 風格資料 |
 | `site/{YYYY-MM-DD}.html` | 靜態站每日頁（需 `static_site`） |
-| `site/index.html` | 今日入口＋歷日檔案 |
+| `site/index.html` | 今日入口＋最近三天 |
+| `site/archive.html` | 歷日檔案（全部日期） |
 | `site/about.html` | 關於頁 |
 
 ## GitHub Actions：每日發布與 Pages
