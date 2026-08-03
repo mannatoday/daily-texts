@@ -163,6 +163,7 @@ jobs:
           echo "Generated site/${DAY}.html and refreshed index.html"
 
       - name: Commit and push if changed
+        id: push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -170,6 +171,7 @@ jobs:
           git add site/
           if git diff --staged --quiet; then
             echo "No site/ changes; nothing to commit (idempotent rerun)."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -182,3 +184,18 @@ jobs:
           EOF
           )"
           git push origin HEAD:master
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN pushes do not trigger other workflows; dispatch Pages explicitly.
+      - name: Trigger Pages deploy
+        if: steps.push.outputs.pushed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "pages.yml",
+              ref: "master",
+            });
+            console.log("Dispatched pages.yml workflow_dispatch");

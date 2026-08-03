@@ -104,7 +104,7 @@ daily-texts run-scheduler
 | `schedule`（cron） | 預設 `0 9 * * *` 與 `0 11 * * *`（UTC）＝台北 17:00／19:00；可直接改 YAML 內 cron |
 | `workflow_dispatch` | Actions 頁手動執行；可選 `force`、`expect_date` |
 
-步驟摘要：checkout → Python 3.12 → `pip install -e .` → `daily-texts fetch`（產生 `output/` 的 md／html／txt／json，並以 `PUBLISHERS=static_site` 更新 `site/` 含 `index.html`）→ **僅在 `site/` 有變更時** commit 並 push 回 `master`。
+步驟摘要：checkout → Python 3.12 → `pip install -e .` → `daily-texts fetch`（產生 `output/` 的 md／html／txt／json，並以 `PUBLISHERS=static_site` 更新 `site/` 含 `index.html`）→ **僅在 `site/` 有變更時** commit 並 push 回 `master` → **再 `workflow_dispatch` 觸發 Pages 部署**（因為 `GITHUB_TOKEN` 的 push 不會自動觸發其他 workflow）。
 
 特性：
 
