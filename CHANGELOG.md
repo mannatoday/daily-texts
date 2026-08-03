@@ -10,8 +10,8 @@
 - Daily Watchdog（`.github/workflows/daily-watchdog.yml`）：兩次 publish 之後檢查當日頁；失敗可選 SMTP 寄信
 - HTTP 請求重試（`HTTP_MAX_RETRIES`／`HTTP_RETRY_BACKOFF_SECONDS`）用於 Moravian、FHL、Google Translate
 - CLI：`--expect-date`、`--fail-on-skip`（供 CI 使用）
-- 靜態站譯本選擇器（右上）：CUV／RCU17TS／CNVT／CCBT／CSBT，透過 `version.js` 改寫 Bible Gateway 連結並以 localStorage 記住偏好
-- 主日「本週守望經文」（Watchword for the week）：解析、RCUV 中文化並顯示於 HTML／Markdown／純文字／JSON 輸出
+- 靜態站多譯本守望經文：fetch 時向 FHL 查 CUV／RCUV／CNVT／CSBT（CCBT 無 FHL 來源時暫用英文），嵌入 `day-data`；頁面以 `?version=`＋picker＋localStorage 切換內文（預設 RCUV）
+- 主日「本週守望經文」（Watchword for the week）：解析、多譯本中文化並顯示於 HTML／Markdown／純文字／JSON 輸出
 
 ### Fixed
 

@@ -18,12 +18,18 @@ def _sample() -> LocalizedDailyText:
             reference_zh="申命記 5:21",
             text_en="You shall not covet.",
             text_zh="不可貪戀。",
+            translations={
+                "CUV": "不可貪戀（和合）。",
+                "RCUV": "不可貪戀。",
+                "CNVT": "不可貪心。",
+            },
         ),
         nt=LocalizedWatchword(
             reference="Galatians 5:16,17",
             reference_zh="加拉太書 5:16–17",
             text_en="Live by the Spirit.",
             text_zh="你們要順着聖靈而行。",
+            translations={"RCUV": "你們要順着聖靈而行。"},
         ),
         prayer_en="Amen.",
         prayer_zh="阿們。",
@@ -37,16 +43,14 @@ def test_json_formatter_shape() -> None:
     assert out.format == "json"
     payload = json.loads(out.content)
     assert payload["date"] == "2026-08-01"
-    assert payload["ot"] == "不可貪戀。"
-    assert payload["ot_reference"] == "申命記 5:21"
-    assert payload["nt"] == "你們要順着聖靈而行。"
-    assert payload["nt_reference"] == "加拉太書 5:16–17"
+    assert payload["default_version"] == "RCUV"
+    assert payload["ot"]["reference"] == "Deuteronomy 5:21"
+    assert payload["ot"]["reference_zh"] == "申命記 5:21"
+    assert payload["ot"]["translations"]["RCUV"] == "不可貪戀。"
+    assert payload["ot"]["translations"]["CUV"] == "不可貪戀（和合）。"
+    assert payload["nt"]["reference_zh"] == "加拉太書 5:16–17"
     assert payload["prayer"] == "阿們。"
-    assert payload["readings"] == [
-        "詩篇 91:1–8",
-        "約書亞記 8:30–9:27",
-        "路加福音 12:49–59",
-    ]
+    assert payload["readings"][0]["reference_zh"] == "詩篇 91:1–8"
     assert payload["source_url"] == "https://www.moravian.org/the-daily-texts/"
 
 

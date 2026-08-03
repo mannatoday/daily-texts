@@ -1,16 +1,24 @@
 from __future__ import annotations
 
+import json
 from functools import lru_cache
 from html import escape
 from pathlib import Path
 
 from daily_texts.application.dto import FormattedOutput
-from daily_texts.domain.models import LocalizedDailyText
+from daily_texts.domain.bible_versions import (
+    DEFAULT_VERSION,
+    SITE_VERSION_LABELS,
+    SITE_VERSIONS,
+    gateway_version,
+)
+from daily_texts.domain.models import LocalizedDailyText, LocalizedWatchword
 from daily_texts.infrastructure.formatters._common import (
     biblegateway_url,
     date_title_zh,
     lectionary_entries,
 )
+from daily_texts.infrastructure.formatters.day_payload import day_payload
 
 _FONT_LINKS = """\
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,16 +30,6 @@ _ABOUT_BLURB = (
     "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
     "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
 )
-
-# Traditional Chinese versions available on Bible Gateway for the reading links.
-BIBLE_VERSIONS: list[tuple[str, str]] = [
-    ("CUV", "和合本"),
-    ("RCU17TS", "和合本修訂版"),
-    ("CNVT", "新譯本"),
-    ("CCBT", "當代譯本"),
-    ("CSBT", "中文標準譯本"),
-]
-DEFAULT_BIBLE_VERSION = "CUV"
 
 
 @lru_cache(maxsize=1)
@@ -56,10 +54,13 @@ class HtmlFormatter:
         title = escape(date_title_zh(content))
         entries = lectionary_entries(content)
         site_mode = stylesheet_href is not None
+        default_label = SITE_VERSION_LABELS[DEFAULT_VERSION]
 
         lectionary_block = ""
         if entries:
-            refs = "\n".join(_reading_row(zh, en) for zh, en in entries)
+            refs = "\n".join(
+                _reading_row(zh, en, default_label) for zh, en in entries
+            )
             lectionary_block = f"    <h2>經文選讀</h2>\n{refs}\n"
 
         source_block = ""
@@ -91,17 +92,15 @@ class HtmlFormatter:
                 css_extra="day-nav--bottom",
             )
         footer = _site_footer(site_mode=site_mode)
+        data_block = _day_data_script(content) if site_mode else ""
 
         week_block = ""
         if content.week_watchword is not None:
             week_block = (
                 "    <h2>本週守望經文</h2>\n"
-                f'    <p class="verse">{escape(content.week_watchword.text_zh)}</p>\n'
-                f"    {_ref_line(content.week_watchword.reference_zh, content.week_watchword.reference, site_mode)}\n"
+                f"    {_verse_line(content.week_watchword, 'week')}\n"
+                f"    {_ref_line(content.week_watchword, site_mode, default_label)}\n"
             )
-
-        ot_ref = _ref_line(content.ot.reference_zh, content.ot.reference, site_mode)
-        nt_ref = _ref_line(content.nt.reference_zh, content.nt.reference, site_mode)
 
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -119,17 +118,17 @@ class HtmlFormatter:
     <article>
     <h1>{title}</h1>
 {week_block}    <h2>舊約</h2>
-    <p class="verse">{escape(content.ot.text_zh)}</p>
-    {ot_ref}
+    {_verse_line(content.ot, "ot")}
+    {_ref_line(content.ot, site_mode, default_label)}
     <h2>新約</h2>
-    <p class="verse">{escape(content.nt.text_zh)}</p>
-    {nt_ref}
+    {_verse_line(content.nt, "nt")}
+    {_ref_line(content.nt, site_mode, default_label)}
     <h2>今日禱告</h2>
     <p class="prayer">{escape(content.prayer_zh)}</p>
 {lectionary_block}{source_block}    </article>
 {bottom_nav}  </main>
 {footer}  </div>
-</body>
+{data_block}</body>
 </html>
 """
         return FormattedOutput(
@@ -139,48 +138,68 @@ class HtmlFormatter:
         )
 
 
+def _day_data_script(content: LocalizedDailyText) -> str:
+    payload = day_payload(content)
+    encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    # Prevent </script> breakouts in rare edge cases.
+    encoded = encoded.replace("<", "\\u003c")
+    return f'  <script type="application/json" id="day-data">{encoded}</script>\n'
+
+
+def _verse_line(watchword: LocalizedWatchword, role: str) -> str:
+    return (
+        f'<p class="verse" data-verse="{escape(role, quote=True)}">'
+        f"{escape(watchword.text_zh)}</p>"
+    )
+
+
 def _version_picker() -> str:
     options = "\n".join(
-        f'      <option value="{code}">{label}</option>'
-        for code, label in BIBLE_VERSIONS
+        f'      <option value="{code}"'
+        f'{" selected" if code == DEFAULT_VERSION else ""}>{label}</option>'
+        for code, label in SITE_VERSIONS
     )
+    default_label = SITE_VERSION_LABELS[DEFAULT_VERSION]
     return f"""  <div class="version-picker">
     <label class="version-picker__label" for="bible-version">閱讀譯本</label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
 {options}
     </select>
-    <span class="version-picker__hint" id="bible-version-hint" aria-live="polite">用於下方［閱讀］連結</span>
+    <span class="version-picker__hint" id="bible-version-hint" aria-live="polite">目前顯示：{default_label}</span>
   </div>
 """
 
 
-def _gateway_link(zh_label: str, english_ref: str) -> str:
+def _gateway_link(zh_label: str, english_ref: str, default_label: str) -> str:
     cleaned = english_ref.strip().replace("–", "-").replace("—", "-")
-    url = biblegateway_url(cleaned, version=DEFAULT_BIBLE_VERSION)
+    gw = gateway_version(DEFAULT_VERSION)
+    url = biblegateway_url(cleaned, version=gw)
     return (
         f'<a class="reading__open" href="{escape(url, quote=True)}" '
         f'data-ref="{escape(cleaned, quote=True)}" '
         f'target="_blank" rel="noopener noreferrer" '
-        f'title="在 Bible Gateway 閱讀和合本" '
-        f'aria-label="閱讀 {escape(zh_label)}（和合本）">'
-        f'<span class="reading__open-label">[閱讀 · 和合本]</span></a>'
+        f'title="在 Bible Gateway 閱讀{escape(default_label)}" '
+        f'aria-label="閱讀 {escape(zh_label)}（{escape(default_label)}）">'
+        f'<span class="reading__open-label">[閱讀 · {escape(default_label)}]</span></a>'
     )
 
 
-def _ref_line(zh_label: str, english_ref: str, site_mode: bool) -> str:
+def _ref_line(
+    watchword: LocalizedWatchword, site_mode: bool, default_label: str
+) -> str:
     if site_mode:
         return (
-            f'<p class="ref">— {escape(zh_label)} '
-            f"{_gateway_link(zh_label, english_ref)}</p>"
+            f'<p class="ref">— {escape(watchword.reference_zh)} '
+            f"{_gateway_link(watchword.reference_zh, watchword.reference, default_label)}</p>"
         )
-    return f'<p class="ref">— {escape(zh_label)}</p>'
+    return f'<p class="ref">— {escape(watchword.reference_zh)}</p>'
 
 
-def _reading_row(zh_label: str, english_ref: str) -> str:
+def _reading_row(zh_label: str, english_ref: str, default_label: str) -> str:
     return (
         f'    <p class="reading">'
         f'<span class="reading__ref">{escape(zh_label)}</span>'
-        f"{_gateway_link(zh_label, english_ref)}</p>"
+        f"{_gateway_link(zh_label, english_ref, default_label)}</p>"
     )
 
 

@@ -75,16 +75,24 @@ def test_html_formatter() -> None:
 
 
 def test_html_formatter_site_mode_has_version_aware_links() -> None:
+    sample = _sample()
+    sample.ot.translations = {"RCUV": sample.ot.text_zh, "CUV": "和合舊約。"}
+    sample.nt.translations = {"RCUV": sample.nt.text_zh}
     out = HtmlFormatter().format(
-        _sample(),
+        sample,
         include_source_link=False,
         stylesheet_href="styles.css",
     )
     assert 'id="bible-version"' in out.content
+    assert 'value="RCUV" selected' in out.content
     assert "version.js" in out.content
+    assert 'id="day-data"' in out.content
+    assert 'data-verse="ot"' in out.content
+    assert 'data-verse="nt"' in out.content
+    assert "和合舊約。" in out.content  # embedded in day-data JSON
     assert 'data-ref="Psalm 91:1-8"' in out.content or 'data-ref="Psalm 91:1–8"' in out.content
-    assert "[閱讀 · 和合本]" in out.content
-    assert "version=CUV" in out.content
+    assert "[閱讀 · 和合本修訂版]" in out.content
+    assert "version=RCU17TS" in out.content
     assert 'data-ref="Jeremiah 9:7"' in out.content
     assert 'data-ref="Luke 22:40"' in out.content
 

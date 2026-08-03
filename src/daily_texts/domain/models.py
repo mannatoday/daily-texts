@@ -36,6 +36,8 @@ class LocalizedWatchword(BaseModel):
     reference_zh: str
     text_en: str
     text_zh: str
+    # site version code → Chinese (or English fallback) text
+    translations: dict[str, str] = Field(default_factory=dict)
     bible_url: str | None = None
 
 

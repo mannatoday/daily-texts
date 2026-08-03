@@ -4,7 +4,7 @@ import json
 
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.models import LocalizedDailyText
-from daily_texts.infrastructure.formatters._common import lectionary_lines
+from daily_texts.infrastructure.formatters.day_payload import day_payload
 
 
 class JsonFormatter:
@@ -16,20 +16,9 @@ class JsonFormatter:
         *,
         include_source_link: bool = True,
     ) -> FormattedOutput:
-        payload: dict[str, object] = {
-            "date": content.date.isoformat(),
-            "ot": content.ot.text_zh,
-            "ot_reference": content.ot.reference_zh,
-            "nt": content.nt.text_zh,
-            "nt_reference": content.nt.reference_zh,
-            "prayer": content.prayer_zh,
-            "readings": lectionary_lines(content),
-        }
-        if content.week_watchword is not None:
-            payload["week_watchword"] = content.week_watchword.text_zh
-            payload["week_watchword_reference"] = content.week_watchword.reference_zh
-        if include_source_link:
-            payload["source_url"] = content.source_url
+        payload = day_payload(content)
+        if not include_source_link:
+            payload.pop("source_url", None)
 
         return FormattedOutput(
             format="json",

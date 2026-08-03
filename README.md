@@ -15,7 +15,7 @@
 - 禱告翻譯：可串接本機 Ollama、OpenAI、Anthropic、Google（複合備援）
 - 輸出：`output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`
 - 靜態站：`site/`（每日頁、歷日檔案、關於頁）→ GitHub Pages
-- 經文選讀譯本選擇（頁面右上）：和合本／和合本修訂版／新譯本／當代譯本／中文標準譯本，偏好記錄於瀏覽器 localStorage
+- 靜態站譯本切換（頁面右上，預設 RCUV）：CUV／RCUV／CNVT／CCBT／CSBT；守望經文內文隨選項切換，URL 為 `?version=RCUV`，並以 localStorage 記住偏好
 
 ## 系統需求
 

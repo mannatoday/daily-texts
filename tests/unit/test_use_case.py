@@ -24,7 +24,7 @@ class FakeProvider:
 
 class FakeBible:
     async def lookup(self, reference: str, *, version: str = "rcuv") -> str:
-        return f"ZH:{reference}"
+        return f"ZH:{version}:{reference}"
 
 
 @pytest.mark.asyncio
@@ -47,7 +47,13 @@ async def test_use_case_writes_outputs(tmp_path: Path) -> None:
     )
     result = await uc.run()
     assert not result.skipped
-    assert result.localized.ot.text_zh == "ZH:Jeremiah 9:7"
+    assert result.localized.ot.text_zh == "ZH:rcuv:Jeremiah 9:7"
+    assert result.localized.ot.translations["RCUV"] == "ZH:rcuv:Jeremiah 9:7"
+    assert result.localized.ot.translations["CUV"] == "ZH:unv:Jeremiah 9:7"
+    assert result.localized.ot.translations["CNVT"] == "ZH:ncv:Jeremiah 9:7"
+    assert result.localized.ot.translations["CSBT"] == "ZH:csb:Jeremiah 9:7"
+    # CCBT has no FHL mapping → English fallback
+    assert result.localized.ot.translations["CCBT"] == "refine"
     assert result.localized.prayer_zh == "Hear our prayer. Amen."
     assert (tmp_path / "2026-07-31" / "daily-text.md").is_file()
 

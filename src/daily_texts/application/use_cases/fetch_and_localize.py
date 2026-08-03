@@ -11,6 +11,11 @@ from daily_texts.application.ports.formatter import ContentFormatter
 from daily_texts.application.ports.provider import DailyTextProvider
 from daily_texts.application.ports.publisher import Publisher
 from daily_texts.application.ports.translator import TextTranslator
+from daily_texts.domain.bible_versions import (
+    DEFAULT_VERSION,
+    FHL_VERSION_CODES,
+    SITE_VERSIONS,
+)
 from daily_texts.domain.exceptions import BibleLookupError, TranslationError
 from daily_texts.domain.models import LocalizedDailyText, LocalizedWatchword, RawDailyText
 from daily_texts.domain.references import localize_reference
@@ -40,6 +45,7 @@ class FetchAndLocalizeDailyText:
         self._output_dir = output_dir
         self._bible_version = bible_version
         self._include_source_link = include_source_link
+        self._site_version_codes = [code for code, _label in SITE_VERSIONS]
 
     async def run(
         self,
@@ -104,48 +110,70 @@ class FetchAndLocalizeDailyText:
         )
 
     async def _localize(self, raw: RawDailyText) -> LocalizedDailyText:
-        ot_zh = await self._lookup_or_fallback(raw.ot.reference, raw.ot.text_en)
-        nt_zh = await self._lookup_or_fallback(raw.nt.reference, raw.nt.text_en)
         prayer_zh = await self._translate_or_fallback(raw.prayer_en)
-
+        ot = await self._localize_watchword(raw.ot)
+        nt = await self._localize_watchword(raw.nt)
         week = None
         if raw.week_watchword is not None:
-            week_zh = await self._lookup_or_fallback(
-                raw.week_watchword.reference, raw.week_watchword.text_en
-            )
-            week = LocalizedWatchword(
-                reference=raw.week_watchword.reference,
-                reference_zh=localize_reference(raw.week_watchword.reference),
-                text_en=raw.week_watchword.text_en,
-                text_zh=week_zh,
-                bible_url=raw.week_watchword.bible_url,
-            )
+            week = await self._localize_watchword(raw.week_watchword)
 
         return LocalizedDailyText(
             date=raw.date,
             date_display=raw.date_display,
             psalm=raw.psalm,
             readings=list(raw.readings),
-            ot=LocalizedWatchword(
-                reference=raw.ot.reference,
-                reference_zh=localize_reference(raw.ot.reference),
-                text_en=raw.ot.text_en,
-                text_zh=ot_zh,
-                bible_url=raw.ot.bible_url,
-            ),
-            nt=LocalizedWatchword(
-                reference=raw.nt.reference,
-                reference_zh=localize_reference(raw.nt.reference),
-                text_en=raw.nt.text_en,
-                text_zh=nt_zh,
-                bible_url=raw.nt.bible_url,
-            ),
+            ot=ot,
+            nt=nt,
             week_watchword=week,
             prayer_en=raw.prayer_en,
             prayer_zh=prayer_zh,
             source_url=raw.source_url,
             metadata=dict(raw.metadata),
         )
+
+    async def _localize_watchword(self, watchword) -> LocalizedWatchword:
+        translations = await self._lookup_all_versions(
+            watchword.reference, watchword.text_en
+        )
+        text_zh = (
+            translations.get(DEFAULT_VERSION)
+            or translations.get("RCUV")
+            or next(iter(translations.values()), watchword.text_en)
+        )
+        return LocalizedWatchword(
+            reference=watchword.reference,
+            reference_zh=localize_reference(watchword.reference),
+            text_en=watchword.text_en,
+            text_zh=text_zh,
+            translations=translations,
+            bible_url=watchword.bible_url,
+        )
+
+    async def _lookup_all_versions(
+        self, reference: str, english: str
+    ) -> dict[str, str]:
+        async def one(site_code: str) -> tuple[str, str]:
+            fhl = FHL_VERSION_CODES.get(site_code)
+            if not fhl:
+                logger.info(
+                    "No FHL mapping for %s; using English for %s", site_code, reference
+                )
+                return site_code, english
+            try:
+                text = await self._bible.lookup(reference, version=fhl)
+                return site_code, text
+            except BibleLookupError as exc:
+                logger.warning(
+                    "Bible lookup failed for %s (%s/%s): %s; using English",
+                    reference,
+                    site_code,
+                    fhl,
+                    exc,
+                )
+                return site_code, english
+
+        pairs = await asyncio.gather(*(one(code) for code in self._site_version_codes))
+        return dict(pairs)
 
     async def _lookup_or_fallback(self, reference: str, english: str) -> str:
         try:
