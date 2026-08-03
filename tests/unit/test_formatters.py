@@ -92,11 +92,13 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "和合舊約。" in out.content  # embedded in day-data JSON
     assert "CCBT" not in out.content
     assert "bible-version-hint" not in out.content
-    assert "[閱讀" not in out.content
+    assert "[閱讀 ·" not in out.content
+    assert "[閱讀]" in out.content
     assert ">首頁</a>" in out.content
     assert "archive.html" in out.content
     assert "詩篇 91:1–8" in out.content
-    assert 'data-ref=' not in out.content
+    assert 'data-ref="Psalm 91:1-8"' in out.content or 'data-ref="Psalm 91:1–8"' in out.content
+    assert "version=RCU17TS" in out.content
 
 
 def test_plain_text_formatter() -> None:

@@ -268,11 +268,17 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
 
 
 _VERSION_JS = """\
-// Multi-version watchword renderer.
+// Multi-version watchword renderer + lectionary Bible Gateway links.
 // Priority: ?version= → localStorage → embedded default (RCUV).
 (function () {
   "use strict";
   var KEY = "dailyTexts.bibleVersion";
+  var GATEWAY = {
+    CUV: "CUV",
+    RCUV: "RCU17TS",
+    CNVT: "CNVT",
+    CSBT: "CSBT"
+  };
 
   var select = document.getElementById("bible-version");
   if (!select) return;
@@ -318,6 +324,10 @@ _VERSION_JS = """\
     return validCodes[0];
   }
 
+  function gatewayCode(siteCode) {
+    return GATEWAY[siteCode] || GATEWAY.RCUV || siteCode;
+  }
+
   function textFor(block, siteCode) {
     if (!block || !block.translations) return null;
     return (
@@ -338,6 +348,19 @@ _VERSION_JS = """\
     });
   }
 
+  function applyReadingLinks(siteCode) {
+    var links = document.querySelectorAll("a.reading__open");
+    Array.prototype.forEach.call(links, function (link) {
+      var ref = link.getAttribute("data-ref");
+      if (!ref) return;
+      link.href =
+        "https://www.biblegateway.com/passage/?search=" +
+        encodeURIComponent(ref) +
+        "&version=" +
+        encodeURIComponent(gatewayCode(siteCode));
+    });
+  }
+
   function syncUrl(siteCode) {
     try {
       var url = new URL(window.location.href);
@@ -351,6 +374,7 @@ _VERSION_JS = """\
   function apply(siteCode) {
     select.value = siteCode;
     applyVerses(siteCode);
+    applyReadingLinks(siteCode);
     try {
       window.localStorage.setItem(KEY, siteCode);
     } catch (err) {

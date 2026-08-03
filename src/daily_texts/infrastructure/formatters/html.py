@@ -9,9 +9,11 @@ from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.bible_versions import (
     DEFAULT_VERSION,
     SITE_VERSIONS,
+    gateway_version,
 )
 from daily_texts.domain.models import LocalizedDailyText, LocalizedWatchword
 from daily_texts.infrastructure.formatters._common import (
+    biblegateway_url,
     date_title_zh,
     lectionary_entries,
 )
@@ -54,7 +56,9 @@ class HtmlFormatter:
 
         lectionary_block = ""
         if entries:
-            refs = "\n".join(_reading_row(zh) for zh, _en in entries)
+            refs = "\n".join(
+                _reading_row(zh, en, with_link=site_mode) for zh, en in entries
+            )
             lectionary_block = f"    <h2>經文選讀</h2>\n{refs}\n"
 
         source_block = ""
@@ -166,8 +170,22 @@ def _ref_line(watchword: LocalizedWatchword) -> str:
     return f'<p class="ref">— {escape(watchword.reference_zh)}</p>'
 
 
-def _reading_row(zh_label: str) -> str:
-    return f'    <p class="reading"><span class="reading__ref">{escape(zh_label)}</span></p>'
+def _reading_row(zh_label: str, english_ref: str, *, with_link: bool) -> str:
+    if not with_link:
+        return f'    <p class="reading"><span class="reading__ref">{escape(zh_label)}</span></p>'
+
+    cleaned = english_ref.strip().replace("–", "-").replace("—", "-")
+    gw = gateway_version(DEFAULT_VERSION)
+    url = biblegateway_url(cleaned, version=gw)
+    return (
+        f'    <p class="reading">'
+        f'<span class="reading__ref">{escape(zh_label)}</span>'
+        f'<a class="reading__open" href="{escape(url, quote=True)}" '
+        f'data-ref="{escape(cleaned, quote=True)}" '
+        f'target="_blank" rel="noopener noreferrer" '
+        f'title="在 Bible Gateway 閱讀" '
+        f'aria-label="閱讀 {escape(zh_label)}">[閱讀]</a></p>'
+    )
 
 
 def _day_nav(

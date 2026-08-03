@@ -65,14 +65,16 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "version.js" in html
     assert 'id="day-data"' in html
     assert 'data-verse="ot"' in html
-    assert "[閱讀" not in html
+    assert "[閱讀 ·" not in html
+    assert "[閱讀]" in html
+    assert 'data-ref=' in html
     assert ">首頁</a>" in html
     assert "archive.html" in html
     js = (tmp_path / "version.js").read_text(encoding="utf-8")
     assert "localStorage" in js
     assert "data-verse" in js
     assert "URLSearchParams" in js
-    assert "reading__open" not in js
+    assert "reading__open" in js
     assert "CCBT" not in js
     assert (tmp_path / "about.html").is_file()
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
