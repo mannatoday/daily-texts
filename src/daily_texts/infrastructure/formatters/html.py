@@ -23,6 +23,16 @@ _ABOUT_BLURB = (
     "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
 )
 
+# Traditional Chinese versions available on Bible Gateway for the reading links.
+BIBLE_VERSIONS: list[tuple[str, str]] = [
+    ("CUV", "和合本"),
+    ("RCU17TS", "和合本修訂版"),
+    ("CNVT", "新譯本"),
+    ("CCBT", "當代譯本"),
+    ("CSBT", "中文標準譯本"),
+]
+DEFAULT_BIBLE_VERSION = "CUV"
+
 
 @lru_cache(maxsize=1)
 def load_devotional_css() -> str:
@@ -64,11 +74,13 @@ class HtmlFormatter:
         if stylesheet_href:
             style_block = (
                 f'  <link rel="stylesheet" href="{escape(stylesheet_href, quote=True)}" />\n'
+                '  <script src="version.js" defer></script>\n'
             )
         else:
             css = load_devotional_css()
             style_block = f"  <style>\n{css}\n  </style>\n"
 
+        version_picker = _version_picker() if site_mode else ""
         nav = _day_nav(prev_href=prev_href, next_href=next_href, home_href=home_href)
         bottom_nav = ""
         if nav:
@@ -79,6 +91,14 @@ class HtmlFormatter:
                 css_extra="day-nav--bottom",
             )
         footer = _site_footer(site_mode=site_mode)
+
+        week_block = ""
+        if content.week_watchword is not None:
+            week_block = (
+                "    <h2>本週守望經文</h2>\n"
+                f'    <p class="verse">{escape(content.week_watchword.text_zh)}</p>\n'
+                f'    <p class="ref">— {escape(content.week_watchword.reference_zh)}</p>\n'
+            )
 
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -92,10 +112,10 @@ class HtmlFormatter:
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">
-{nav}  <main id="main">
+{version_picker}{nav}  <main id="main">
     <article>
     <h1>{title}</h1>
-    <h2>舊約</h2>
+{week_block}    <h2>舊約</h2>
     <p class="verse">{escape(content.ot.text_zh)}</p>
     <p class="ref">— {escape(content.ot.reference_zh)}</p>
     <h2>新約</h2>
@@ -116,6 +136,20 @@ class HtmlFormatter:
         )
 
 
+def _version_picker() -> str:
+    options = "\n".join(
+        f'      <option value="{code}">{label}</option>'
+        for code, label in BIBLE_VERSIONS
+    )
+    return f"""  <div class="version-picker">
+    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <select id="bible-version" class="version-picker__select" autocomplete="off">
+{options}
+    </select>
+  </div>
+"""
+
+
 def _reading_row(zh_label: str, english_ref: str) -> str:
     url = biblegateway_cuv_url(english_ref)
     return (
@@ -123,8 +157,8 @@ def _reading_row(zh_label: str, english_ref: str) -> str:
         f'<span class="reading__ref">{escape(zh_label)}</span>'
         f'<a class="reading__open" href="{escape(url, quote=True)}" '
         f'target="_blank" rel="noopener noreferrer" '
-        f'title="在 Bible Gateway 閱讀和合本" '
-        f'aria-label="閱讀 {escape(zh_label)} 和合本">[閱讀]</a></p>'
+        f'title="在 Bible Gateway 閱讀" '
+        f'aria-label="閱讀 {escape(zh_label)}">[閱讀]</a></p>'
     )
 
 

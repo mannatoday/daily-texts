@@ -23,6 +23,8 @@ class RawDailyText(BaseModel):
     readings: list[str] = Field(default_factory=list)
     ot: Watchword
     nt: Watchword
+    # Sunday layouts add a weekly watchword above the daily ones.
+    week_watchword: Watchword | None = None
     prayer_en: str
     source_url: str
     fetched_at: datetime = Field(default_factory=_utcnow)
@@ -44,6 +46,7 @@ class LocalizedDailyText(BaseModel):
     readings: list[str] = Field(default_factory=list)
     ot: LocalizedWatchword
     nt: LocalizedWatchword
+    week_watchword: LocalizedWatchword | None = None
     prayer_en: str
     prayer_zh: str
     source_url: str

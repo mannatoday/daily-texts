@@ -14,9 +14,19 @@ class MarkdownFormatter:
         *,
         include_source_link: bool = True,
     ) -> FormattedOutput:
-        lines = [
-            f"# {date_title_zh(content)}",
-            "",
+        lines = [f"# {date_title_zh(content)}", ""]
+        if content.week_watchword is not None:
+            lines.extend(
+                [
+                    "## 本週守望經文",
+                    "",
+                    content.week_watchword.text_zh,
+                    "",
+                    f"— {content.week_watchword.reference_zh}",
+                    "",
+                ]
+            )
+        lines += [
             "## 舊約",
             "",
             f"{content.ot.text_zh}",

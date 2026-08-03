@@ -59,6 +59,10 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     lede_idx = index.index("以神的話開始每一天")
     assert brand_idx < subtitle_idx < lede_idx
     assert 'href="styles.css"' in index
+    assert (tmp_path / "version.js").is_file()
+    assert 'id="bible-version"' in html
+    assert "version.js" in html
+    assert "RCU17TS" in html
     assert (tmp_path / "about.html").is_file()
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
     assert "1731" in about

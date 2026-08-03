@@ -37,6 +37,7 @@ class StaticSitePublisher:
     ) -> PublishResult:
         self._site_dir.mkdir(parents=True, exist_ok=True)
         self._write_stylesheet()
+        self._write_version_js()
         self._write_about_page()
 
         days_before = self._list_day_pages()
@@ -65,6 +66,9 @@ class StaticSitePublisher:
     def _write_stylesheet(self) -> None:
         css_path = self._site_dir / "styles.css"
         css_path.write_text(load_devotional_css() + "\n", encoding="utf-8")
+
+    def _write_version_js(self) -> None:
+        (self._site_dir / "version.js").write_text(_VERSION_JS, encoding="utf-8")
 
     def _write_about_page(self) -> None:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
@@ -202,6 +206,57 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
     parts.append(html[last:])
     return "".join(parts)
 
+
+_VERSION_JS = """\
+// Bible version picker: rewrites Bible Gateway reading links and remembers
+// the choice in localStorage.
+(function () {
+  "use strict";
+  var KEY = "dailyTexts.bibleVersion";
+  var DEFAULT_VERSION = "CUV";
+
+  var select = document.getElementById("bible-version");
+  if (!select) return;
+
+  var validCodes = Array.prototype.map.call(select.options, function (opt) {
+    return opt.value;
+  });
+
+  var saved = null;
+  try {
+    saved = window.localStorage.getItem(KEY);
+  } catch (err) {
+    /* private mode or storage disabled */
+  }
+  var version = validCodes.indexOf(saved) >= 0 ? saved : DEFAULT_VERSION;
+
+  function apply(code) {
+    var links = document.querySelectorAll("a.reading__open");
+    Array.prototype.forEach.call(links, function (link) {
+      try {
+        var url = new URL(link.href);
+        url.searchParams.set("version", code);
+        link.href = url.toString();
+      } catch (err) {
+        /* leave link unchanged */
+      }
+    });
+  }
+
+  select.value = version;
+  apply(version);
+
+  select.addEventListener("change", function () {
+    var code = select.value;
+    try {
+      window.localStorage.setItem(KEY, code);
+    } catch (err) {
+      /* ignore */
+    }
+    apply(code);
+  });
+})();
+"""
 
 _ABOUT_HTML = f"""<!DOCTYPE html>
 <html lang="zh-Hant">

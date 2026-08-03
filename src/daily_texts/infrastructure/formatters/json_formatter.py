@@ -25,6 +25,9 @@ class JsonFormatter:
             "prayer": content.prayer_zh,
             "readings": lectionary_lines(content),
         }
+        if content.week_watchword is not None:
+            payload["week_watchword"] = content.week_watchword.text_zh
+            payload["week_watchword_reference"] = content.week_watchword.reference_zh
         if include_source_link:
             payload["source_url"] = content.source_url
 

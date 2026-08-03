@@ -5,14 +5,12 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
+# Book name followed by chapter and an optional verse spec that may contain
+# ranges, cross-chapter ranges, and comma-separated segments,
+# e.g. "Psalm 145:8-9,14-21" or "Joshua 8:30-9:27".
 _REF_PATTERN = re.compile(
     r"^(?P<book>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
-    r"(?P<chapter>\d+)"
-    r"(?::(?P<verse>\d+)"
-    r"(?:(?:[–-]|,\s*)"
-    r"(?:(?P<end_chapter>\d+):(?P<end_verse>\d+)|(?P<end>\d+))"
-    r")?"
-    r")?"
+    r"(?P<rest>\d+(?::\d+(?:-\d+(?::\d+)?)?(?:,\s*\d+(?:-\d+(?::\d+)?)?)*)?)"
     r"$",
 )
 
@@ -36,18 +34,9 @@ def localize_reference(reference: str) -> str:
     if not name:
         return reference
 
-    chapter = match.group("chapter")
-    verse = match.group("verse")
-    if verse is None:
-        return f"{name} {chapter}"
-
-    end_chapter = match.group("end_chapter")
-    end_verse = match.group("end_verse")
-    end = match.group("end")
-    if end_chapter and end_verse:
-        span = f"{chapter}:{verse}–{end_chapter}:{end_verse}"
-    elif end:
-        span = f"{chapter}:{verse}–{end}"
-    else:
-        span = f"{chapter}:{verse}"
-    return f"{name} {span}"
+    rest = re.sub(r"\s+", "", match.group("rest"))
+    # Shorthand "5:16,17" (single comma, plain verses) means the range 16–17.
+    pair = re.fullmatch(r"(\d+):(\d+),(\d+)", rest)
+    if pair:
+        rest = f"{pair.group(1)}:{pair.group(2)}-{pair.group(3)}"
+    return f"{name} {rest.replace('-', '–')}"

@@ -55,6 +55,20 @@ def test_parse_moravian_sunday_layout() -> None:
     assert result.nt.reference == "Galatians 4:9"
     assert result.prayer_en.endswith("Amen.")
     assert result.metadata.get("day_label") == "Sunday, August 2"
+    assert result.week_watchword is not None
+    assert result.week_watchword.reference == "Psalm 145:9"
+    assert result.week_watchword.text_en == (
+        "The LORD is good to all, and his compassion is over all that he has made."
+    )
+
+
+def test_weekday_layout_has_no_week_watchword() -> None:
+    html = FIXTURE.read_text(encoding="utf-8")
+    result = parse_moravian_sidebar_html(
+        html,
+        source_url="https://www.moravian.org/the-daily-texts/",
+    )
+    assert result.week_watchword is None
 
 
 def test_parse_rejects_mismatched_target_date() -> None:

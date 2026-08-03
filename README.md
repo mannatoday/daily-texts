@@ -15,6 +15,7 @@
 - 禱告翻譯：可串接本機 Ollama、OpenAI、Anthropic、Google（複合備援）
 - 輸出：`output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`
 - 靜態站：`site/`（每日頁、歷日檔案、關於頁）→ GitHub Pages
+- 經文選讀譯本選擇（頁面右上）：和合本／和合本修訂版／新譯本／當代譯本／中文標準譯本，偏好記錄於瀏覽器 localStorage
 
 ## 系統需求
 

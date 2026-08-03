@@ -112,6 +112,34 @@ button:focus-visible {
   padding-block: clamp(1.75rem, 5vw, 3.25rem) clamp(2.5rem, 8vw, 4.5rem);
 }
 
+/* Bible version picker (top right) */
+.version-picker {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--text-soft);
+}
+
+.version-picker__select {
+  min-height: 2.25rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+}
+
+.version-picker__select:hover {
+  color: var(--link-hover);
+  border-color: var(--text-soft);
+}
+
 /* Top / bottom day navigation */
 .day-nav {
   display: grid;
@@ -521,6 +549,7 @@ footer.site-foot {
 
   .skip-link,
   .day-nav,
+  .version-picker,
   .reading__open,
   .about-blurb .more,
   .foot-nav,

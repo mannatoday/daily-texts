@@ -18,6 +18,13 @@ _DATE_PATTERN = re.compile(
     r"(?P<weekday>[A-Za-z]+),\s*(?P<month>[A-Za-z]+)\s*(?P<day>\d{1,2}),\s*(?P<year>\d{4})"
 )
 _READING_LINE = re.compile(r"^(?P<label>.+?)\s*—\s*(?P<rest>.+)$", re.DOTALL)
+# "Watchword for the week — <verse text> <Book C:V>"
+_WEEK_WATCHWORD = re.compile(
+    r"^watchword for the week\s*[—–-]\s*(?P<text>.+?)\s+"
+    r"(?P<ref>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?\s+\d+(?::\d+(?:[-–,]\d+)*)?)"
+    r"\s*\.?\s*$",
+    re.IGNORECASE | re.DOTALL,
+)
 # Psalm 90 | Psalm 91:1–8 | Psalm 91:1–92:5 (rare cross-chapter)
 _PSALM_REF = re.compile(
     r"(Psalm\s+\d+(?::\d+(?:[–-](?:\d+:\d+|\d+))?)?)",
@@ -71,6 +78,7 @@ def parse_moravian_sidebar_html(
     ot = _parse_watchword_paragraph(ot_para)
     nt = _parse_watchword_paragraph(nt_para)
     prayer_en = _extract_prayer(paragraphs[nt_index + 1])
+    week_watchword = _parse_week_watchword(metadata.get("watchword_for_week"))
 
     return RawDailyText(
         date=parsed_date,
@@ -79,11 +87,24 @@ def parse_moravian_sidebar_html(
         readings=readings,
         ot=ot,
         nt=nt,
+        week_watchword=week_watchword,
         prayer_en=prayer_en,
         source_url=source_url,
         fetched_at=datetime.now(timezone.utc),
         metadata=metadata,
     )
+
+
+def _parse_week_watchword(raw: str | None) -> Watchword | None:
+    if not raw:
+        return None
+    match = _WEEK_WATCHWORD.match(raw.strip())
+    if not match:
+        logger.warning("Could not parse weekly watchword from: %r", raw)
+        return None
+    text = re.sub(r"\s+", " ", match.group("text")).strip()
+    reference = re.sub(r"\s+", " ", match.group("ref")).strip()
+    return Watchword(reference=reference, text_en=text)
 
 
 def _is_content_paragraph(tag: Tag) -> bool:

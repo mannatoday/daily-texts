@@ -10,10 +10,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="version.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">
+  <div class="version-picker">
+    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <select id="bible-version" class="version-picker__select" autocomplete="off">
+      <option value="CUV">和合本</option>
+      <option value="RCU17TS">和合本修訂版</option>
+      <option value="CNVT">新譯本</option>
+      <option value="CCBT">當代譯本</option>
+      <option value="CSBT">中文標準譯本</option>
+    </select>
+  </div>
   <nav class="day-nav" aria-label="日期導覽">
     <a class="day-nav__prev" href="2026-07-31.html">← 前一日</a>
     <a class="day-nav__home" href="index.html">歷日檔案</a>
@@ -31,9 +42,9 @@
     <h2>今日禱告</h2>
     <p class="prayer">豐盛的領袖，幫助我們不僅要順從，更要用心聆聽並實行你的教導。願我們所做的一切都根植於你和你的豐富之中。阿們。</p>
     <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 91:1–8</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%2091%3A1-8&amp;version=CUV" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀和合本" aria-label="閱讀 詩篇 91:1–8 和合本">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約書亞記 8:30–9:27</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Joshua%208%3A30-9%3A27&amp;version=CUV" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀和合本" aria-label="閱讀 約書亞記 8:30–9:27 和合本">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">路加福音 12:49–59</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Luke%2012%3A49-59&amp;version=CUV" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀和合本" aria-label="閱讀 路加福音 12:49–59 和合本">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">詩篇 91:1–8</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%2091%3A1-8&amp;version=CUV" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 91:1–8">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">約書亞記 8:30–9:27</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Joshua%208%3A30-9%3A27&amp;version=CUV" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約書亞記 8:30–9:27">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">路加福音 12:49–59</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Luke%2012%3A49-59&amp;version=CUV" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 路加福音 12:49–59">[閱讀]</a></p>
     <h2>原文連結</h2>
     <p class="source"><a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Daily Texts</a></p>
     </article>

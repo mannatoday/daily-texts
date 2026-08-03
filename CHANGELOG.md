@@ -10,10 +10,13 @@
 - Daily Watchdog（`.github/workflows/daily-watchdog.yml`）：兩次 publish 之後檢查當日頁；失敗可選 SMTP 寄信
 - HTTP 請求重試（`HTTP_MAX_RETRIES`／`HTTP_RETRY_BACKOFF_SECONDS`）用於 Moravian、FHL、Google Translate
 - CLI：`--expect-date`、`--fail-on-skip`（供 CI 使用）
+- 靜態站譯本選擇器（右上）：CUV／RCU17TS／CNVT／CCBT／CSBT，透過 `version.js` 改寫 Bible Gateway 連結並以 localStorage 記住偏好
+- 主日「本週守望經文」（Watchword for the week）：解析、RCUV 中文化並顯示於 HTML／Markdown／純文字／JSON 輸出
 
 ### Fixed
 
 - Moravian 解析：主日版面（教會年／Watchword for the week）不再誤把非經文段當 OT／NT；改以 BibleGateway 連結定位守望經文
+- 經文參考中文化支援逗號分段（如 `Psalm 145:8-9,14-21` → `詩篇 145:8–9,14–21`）
 
 ### Planned
 

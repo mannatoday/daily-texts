@@ -25,3 +25,8 @@ def test_localize_reference_psalm() -> None:
 def test_localize_reference_comma_verses() -> None:
     assert localize_reference("Galatians 5:16,17") == "加拉太書 5:16–17"
     assert localize_reference("Galatians 5:16, 17") == "加拉太書 5:16–17"
+
+
+def test_localize_reference_comma_range_segments() -> None:
+    assert localize_reference("Psalm 145:8-9,14-21") == "詩篇 145:8–9,14–21"
+    assert localize_reference("Isaiah 55:1-5") == "以賽亞書 55:1–5"

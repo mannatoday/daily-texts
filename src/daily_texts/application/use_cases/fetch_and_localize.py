@@ -107,6 +107,20 @@ class FetchAndLocalizeDailyText:
         ot_zh = await self._lookup_or_fallback(raw.ot.reference, raw.ot.text_en)
         nt_zh = await self._lookup_or_fallback(raw.nt.reference, raw.nt.text_en)
         prayer_zh = await self._translate_or_fallback(raw.prayer_en)
+
+        week = None
+        if raw.week_watchword is not None:
+            week_zh = await self._lookup_or_fallback(
+                raw.week_watchword.reference, raw.week_watchword.text_en
+            )
+            week = LocalizedWatchword(
+                reference=raw.week_watchword.reference,
+                reference_zh=localize_reference(raw.week_watchword.reference),
+                text_en=raw.week_watchword.text_en,
+                text_zh=week_zh,
+                bible_url=raw.week_watchword.bible_url,
+            )
+
         return LocalizedDailyText(
             date=raw.date,
             date_display=raw.date_display,
@@ -126,6 +140,7 @@ class FetchAndLocalizeDailyText:
                 text_zh=nt_zh,
                 bible_url=raw.nt.bible_url,
             ),
+            week_watchword=week,
             prayer_en=raw.prayer_en,
             prayer_zh=prayer_zh,
             source_url=raw.source_url,
