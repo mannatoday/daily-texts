@@ -30,6 +30,14 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # secrets cannot be referenced in step `if:` — map to env first
+    env:
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      MAIL_TO: ${{ secrets.MAIL_TO }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
+      MAIL_PORT: ${{ secrets.MAIL_PORT }}
     steps:
       - name: Label schedule trigger
         id: trigger
@@ -105,16 +113,16 @@ jobs:
           echo "Watchdog OK for ${DAY}"
 
       - name: Notify by email (optional)
-        if: failure() && secrets.MAIL_USERNAME != '' && secrets.MAIL_PASSWORD != '' && secrets.MAIL_TO != ''
+        if: failure() && env.MAIL_USERNAME != '' && env.MAIL_PASSWORD != '' && env.MAIL_TO != ''
         uses: dawidd6/action-send-mail@v18
         with:
-          server_address: ${{ secrets.MAIL_SERVER != '' && secrets.MAIL_SERVER || 'smtp.gmail.com' }}
-          server_port: ${{ secrets.MAIL_PORT != '' && secrets.MAIL_PORT || '465' }}
+          server_address: ${{ env.MAIL_SERVER != '' && env.MAIL_SERVER || 'smtp.gmail.com' }}
+          server_port: ${{ env.MAIL_PORT != '' && env.MAIL_PORT || '465' }}
           secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          from: ${{ secrets.MAIL_FROM != '' && secrets.MAIL_FROM || secrets.MAIL_USERNAME }}
-          to: ${{ secrets.MAIL_TO }}
+          username: ${{ env.MAIL_USERNAME }}
+          password: ${{ env.MAIL_PASSWORD }}
+          from: ${{ env.MAIL_FROM != '' && env.MAIL_FROM || env.MAIL_USERNAME }}
+          to: ${{ env.MAIL_TO }}
           subject: "[daily-texts] Watchdog failed for ${{ steps.dates.outputs.expect_date }}"
           body: |
             Daily Watchdog failed: today's site page is missing or incomplete.
