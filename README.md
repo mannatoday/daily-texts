@@ -25,7 +25,7 @@
 ## 安裝
 
 ```bash
-git clone https://github.com/jyeh14/daily-texts.git
+git clone https://github.com/mannatoday/daily-texts.git
 cd daily-texts
 
 python -m venv .venv
@@ -152,7 +152,7 @@ git push origin master
 ```
 
 站點說明：[`site/README.md`](site/README.md)  
-公開網址範例：`https://jyeh14.github.io/daily-texts/`
+公開網址範例：`https://mannatoday.github.io/daily-texts/`
 
 ## 設定重點
 
