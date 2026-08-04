@@ -3,8 +3,8 @@
 # Late-day alarm if neither run published: daily-watchdog.yml
 #
 # Schedule (UTC → Asia/Taipei):
-#   0 9 * * *   → 17:00 Taipei (primary)
-#   0 11 * * *  → 19:00 Taipei (retry if first run missed / Moravian late)
+#   0 8 * * *   → 16:00 Taipei (primary)
+#   0 9 * * *  → 17:00 Taipei (retry if first run missed / Moravian late)
 # If site/{today}.html already exists, the retry exits early (saves Actions minutes).
 # Edit the cron lines below to change the schedule (GitHub cron is always UTC).
 
@@ -13,8 +13,8 @@ name: Daily Publish
 on:
   schedule:
     # Configurable: change these cron expressions (UTC).
+    - cron: "0 8 * * *"
     - cron: "0 9 * * *"
-    - cron: "0 11 * * *"
   workflow_dispatch:
     inputs:
       force:
