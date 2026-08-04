@@ -101,7 +101,7 @@ daily-texts run-scheduler
 
 | 觸發 | 說明 |
 |------|------|
-| `schedule`（cron） | 預設 `0 6 * * *` 與 `0 9 * * *`（UTC）＝台北 14:00／17:00；可直接改 YAML 內 cron |
+| `schedule`（cron） | 預設 `0 9 * * *` 與 `0 11 * * *`（UTC）＝台北 17:00／19:00；可直接改 YAML 內 cron |
 | `workflow_dispatch` | Actions 頁手動執行；可選 `force`、`expect_date` |
 
 步驟摘要：checkout → 若 `site/{今日}.html` 已存在且未 `force` 則**提早成功結束**（第二次 cron 省分鐘）→ 否則 Python 3.12 → `pip install -e .` → `daily-texts fetch` → commit／push `site/` → **再 `workflow_dispatch` 觸發 Pages 部署**（因為 `GITHUB_TOKEN` 的 push 不會自動觸發其他 workflow）。
@@ -113,7 +113,7 @@ daily-texts run-scheduler
 - **翻譯可追蹤**：`-v` 會印出鏈路（ready／skipped／failed）與最終 provider；`daily-text.json` 與站點 `#day-data` 含 `translation` 欄位；workflow 有「Prayer translation summary」步驟。
 - **網路重試**：Moravian／FHL 等 HTTP 請求依 `HTTP_MAX_RETRIES` 重試
 - 日期比對：`--expect-date`（台北當日）＋`--fail-on-skip`；若網站尚未換日，當次失敗、由第二次 cron 重試
-- **排程標籤**：log／commit message 會標示 `schedule:0 6 * * *`、`schedule:0 9 * * *` 或 `manual`
+- **排程標籤**：log／commit message 會標示 `schedule:0 9 * * *`、`schedule:0 11 * * *` 或 `manual`
 
 ### 2. Daily Watchdog（兩次發布都失敗才告警）
 
@@ -121,7 +121,7 @@ daily-texts run-scheduler
 
 | 觸發 | 說明 |
 |------|------|
-| `schedule` | `0 13 * * *`（UTC）＝台北 21:00，在 06:00／09:00 發布之後 |
+| `schedule` | `0 13 * * *`（UTC）＝台北 21:00，在 09:00／11:00 發布之後 |
 | `workflow_dispatch` | 手動檢查；可選 `expect_date` |
 
 檢查 `site/{今日}.html` 是否存在，且 `index.html` 有連到該日。失敗時 Actions 顯示紅燈；若已設定下方郵件 Secrets，會額外寄信。
