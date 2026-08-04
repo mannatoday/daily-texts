@@ -3,8 +3,9 @@
 # Late-day alarm if neither run published: daily-watchdog.yml
 #
 # Schedule (UTC → Asia/Taipei):
-#   0 9 * * *   → 17:00 Taipei (primary)
-#   0 11 * * *  → 19:00 Taipei (retry if Moravian was late)
+#   0 6 * * *   → 14:00 Taipei (primary; ~1h after Eastern 01:00 EDT)
+#   0 9 * * *   → 17:00 Taipei (retry if first run missed / Moravian late)
+# If site/{today}.html already exists, the retry exits early (saves Actions minutes).
 # Edit the cron lines below to change the schedule (GitHub cron is always UTC).
 
 name: Daily Publish
@@ -12,8 +13,8 @@ name: Daily Publish
 on:
   schedule:
     # Configurable: change these cron expressions (UTC).
+    - cron: "0 6 * * *"
     - cron: "0 9 * * *"
-    - cron: "0 11 * * *"
   workflow_dispatch:
     inputs:
       force:
@@ -79,15 +80,6 @@ jobs:
           # Full history not required; token needs write for push.
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-
-      - name: Install dependencies
-        run: pip install -e .
-
       - name: Resolve expect date
         id: dates
         run: |
@@ -100,7 +92,37 @@ jobs:
           echo "Expecting Moravian date: ${EXPECT}"
           echo "Trigger: ${{ steps.trigger.outputs.label }}"
 
+      - name: Skip if already published
+        id: skip
+        run: |
+          DAY="${{ steps.dates.outputs.expect_date }}"
+          FORCE="${{ inputs.force }}"
+          if [ "$FORCE" = "true" ]; then
+            echo "Force requested; will republish ${DAY}."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -f "site/${DAY}.html" ]; then
+            echo "site/${DAY}.html already on master; skipping fetch (save Actions minutes)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "site/${DAY}.html missing; proceeding with fetch."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python
+        if: steps.skip.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        if: steps.skip.outputs.skip != 'true'
+        run: pip install -e .
+
       - name: Fetch and generate daily texts
+        if: steps.skip.outputs.skip != 'true'
         run: |
           args=(
             --expect-date "${{ steps.dates.outputs.expect_date }}"
@@ -113,7 +135,7 @@ jobs:
           daily-texts fetch "${args[@]}"
 
       - name: Prayer translation summary
-        if: success()
+        if: steps.skip.outputs.skip != 'true' && success()
         run: |
           DAY="${{ steps.dates.outputs.expect_date }}"
           JSON="output/${DAY}/daily-text.json"
@@ -158,6 +180,7 @@ jobs:
           PY
 
       - name: Verify site day page exists
+        if: steps.skip.outputs.skip != 'true'
         run: |
           DAY="${{ steps.dates.outputs.expect_date }}"
           test -f "site/${DAY}.html"
@@ -166,6 +189,7 @@ jobs:
 
       - name: Commit and push if changed
         id: push
+        if: steps.skip.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -190,7 +214,7 @@ jobs:
 
       # GITHUB_TOKEN pushes do not trigger other workflows; dispatch Pages explicitly.
       - name: Trigger Pages deploy
-        if: steps.push.outputs.pushed == 'true'
+        if: steps.skip.outputs.skip != 'true' && steps.push.outputs.pushed == 'true'
         uses: actions/github-script@v7
         with:
           script: |
