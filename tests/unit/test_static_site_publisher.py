@@ -48,6 +48,8 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert 'href="styles.css"' in html
     assert "day-nav" in html
     assert "index.html" in html
+    assert "原文連結" not in html
+    assert "Moravian Daily Texts</a>" not in html
 
     index = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert "2026-08-01.html" in index

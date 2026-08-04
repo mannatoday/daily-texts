@@ -26,9 +26,15 @@ class StaticSitePublisher:
 
     channel = "static_site"
 
-    def __init__(self, site_dir: Path | None = None) -> None:
+    def __init__(
+        self,
+        site_dir: Path | None = None,
+        *,
+        include_source_link: bool = False,
+    ) -> None:
         self._site_dir = Path(site_dir) if site_dir is not None else Path("./site")
         self._html = HtmlFormatter()
+        self._include_source_link = include_source_link
 
     async def publish(
         self,
@@ -46,7 +52,7 @@ class StaticSitePublisher:
         prev_href, next_href = _neighbors(content.date, days)
         page = self._html.format(
             content,
-            include_source_link=True,
+            include_source_link=self._include_source_link,
             stylesheet_href="styles.css",
             prev_href=prev_href,
             next_href=next_href,

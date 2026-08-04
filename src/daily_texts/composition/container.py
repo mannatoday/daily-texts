@@ -165,7 +165,12 @@ def _build_publishers(settings: Settings) -> list[Publisher]:
         if cls is None:
             raise ValueError(f"Unknown publisher: {name}")
         if name == "static_site":
-            result.append(StaticSitePublisher(settings.site_dir))
+            result.append(
+                StaticSitePublisher(
+                    settings.site_dir,
+                    include_source_link=settings.include_source_link,
+                )
+            )
         else:
             result.append(cls())
     if not result:

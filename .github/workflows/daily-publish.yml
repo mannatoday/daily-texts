@@ -45,6 +45,7 @@ jobs:
       PUBLISHERS: static_site
       SITE_DIR: ./site
       OUTPUT_DIR: ./output
+      INCLUDE_SOURCE_LINK: "false"
       # No Ollama on runners. Prefer Google Translate (free tier) then paid LLMs.
       # Without any key, fallback keeps the English prayer.
       TRANSLATOR: composite
