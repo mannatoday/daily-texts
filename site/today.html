@@ -4,71 +4,69 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="今日經文 · 摩拉維亞每日經文" />
-  <meta name="robots" content="noindex" />
-  <title>今日經文 · 摩拉維亞每日經文</title>
+  <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
+  <title>2026 年 8 月 8 日（星期六） · 摩拉維亞每日經文</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script>
-(function () {
-  "use strict";
-  var TZ = "America/Los_Angeles";
-  var LATEST = "2026-08-08";
-  function todayIso() {
-    try {
-      return new Intl.DateTimeFormat("en-CA", {
-        timeZone: TZ,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).format(new Date());
-    } catch (err) {
-      var d = new Date();
-      var y = d.getFullYear();
-      var m = String(d.getMonth() + 1).padStart(2, "0");
-      var day = String(d.getDate()).padStart(2, "0");
-      return y + "-" + m + "-" + day;
-    }
-  }
-  var iso = todayIso();
-  // Prefer calendar today in Pacific time; if that day is not published yet
-  // (or clock/timezone is ahead), fall back to the newest page on the site.
-  var pick = iso;
-  if (LATEST && pick > LATEST) pick = LATEST;
-  if (!LATEST) {
-    window.location.replace("index.html" + (window.location.search || "") + (window.location.hash || ""));
-    return;
-  }
-  var target = pick + ".html";
-  var q = window.location.search || "";
-  var h = window.location.hash || "";
-  window.location.replace(target + q + h);
-})();
-  </script>
+  <script src="version.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
-  <div class="site-shell site-index">
-    <main id="main">
-      <h1 class="brand">摩拉維亞每日經文</h1>
-      <p class="subtitle">Moravian Daily Texts • 中文版</p>
-      <p class="lede">正在前往今日經文…</p>
-      <p class="archive-more"><a href="2026-08-08.html">若未自動跳轉，請開啟最新經文</a></p>
-      <noscript>
-        <p>請開啟 JavaScript，或直接前往 <a href="2026-08-08.html">最新經文</a>／<a href="index.html">首頁</a>。</p>
-      </noscript>
-    </main>
-    <footer class="site-foot">
-      <nav class="foot-nav" aria-label="頁尾導覽">
-        <a href="index.html">首頁</a>
-        <a href="archive.html">歷日檔案</a>
-        <a href="about.html">關於</a>
-      </nav>
-      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
-      <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
-    </footer>
+  <div class="site-shell">
+  <div class="version-picker">
+    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <select id="bible-version" class="version-picker__select" autocomplete="off">
+      <option value="CUV">和合本</option>
+      <option value="RCUV" selected>和合本修訂版</option>
+      <option value="CNVT">新譯本</option>
+      <option value="CSBT">中文標準譯本</option>
+    </select>
   </div>
+  <nav class="day-nav" aria-label="日期導覽">
+    <a class="day-nav__prev" href="2026-08-07.html">← 前一日</a>
+    <a class="day-nav__home" href="index.html">首頁</a>
+    <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+  </nav>
+  <main id="main">
+    <article>
+    <h1>2026 年 8 月 8 日（星期六）</h1>
+    <h2>舊約</h2>
+    <p class="verse" data-verse="ot">求你指教我，引導我進入你的真理， 因為你是救我的上帝。 我整日等候你。</p>
+    <p class="ref">— 詩篇 25:5</p>
+    <h2>新約</h2>
+    <p class="verse" data-verse="nt">（#路 11:9-13|） 「你們祈求，就給你們；尋找，就找到；叩門，就給你們開門。</p>
+    <p class="ref">— 馬太福音 7:7</p>
+    <h2>今日禱告</h2>
+    <p class="prayer">救主，我們信賴祢的救贖之工。請教導我們等候你，聆聽祢的指引。求祢開啟我們的耳、心、眼，讓我們看見祢呼召我們去哪裡、如何成為祢慈愛的同在。阿們。</p>
+    <h2>經文選讀</h2>
+    <p class="reading"><span class="reading__ref">詩篇 94:12–23</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%2094%3A12-23&amp;version=RCU17TS" data-ref="Psalm 94:12-23" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 94:12–23">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">約書亞記 15:20–63</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Joshua%2015%3A20-63&amp;version=RCU17TS" data-ref="Joshua 15:20-63" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約書亞記 15:20–63">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">路加福音 15:1–10</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Luke%2015%3A1-10&amp;version=RCU17TS" data-ref="Luke 15:1-10" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 路加福音 15:1–10">[閱讀]</a></p>
+    </article>
+  <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
+    <a class="day-nav__prev" href="2026-08-07.html">← 前一日</a>
+    <a class="day-nav__home" href="index.html">首頁</a>
+    <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+  </nav>
+  </main>
+  <footer class="site-foot">
+    <section class="about-blurb" aria-labelledby="about-blurb-title">
+      <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
+      <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
+      <p class="more"><a href="about.html">了解更多</a></p>
+    </section>
+    <nav class="foot-nav" aria-label="頁尾導覽">
+      <a href="today.html">今日</a>
+      <a href="index.html">首頁</a>
+      <a href="archive.html">歷日檔案</a>
+      <a href="about.html">關於</a>
+    </nav>
+    <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+    <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
+  </footer>
+  </div>
+  <script type="application/json" id="day-data">{"date":"2026-08-08","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":null,"ot":{"reference":"Psalm 25:5","reference_zh":"詩篇 25:5","translations":{"CUV":"求你以你的真理引導我，教訓我，因為你是救我的 神。我終日等候你。","RCUV":"求你指教我，引導我進入你的真理， 因為你是救我的上帝。 我整日等候你。","CNVT":"求你以你的真理引導我，教訓我，因為你是拯救我的 神；我整天等候的就是你。","CSBT":"求你以你的真理引導我、教導我， 因為你是拯救我的神； 我終日等候你。"}},"nt":{"reference":"Matthew 7:7","reference_zh":"馬太福音 7:7","translations":{"CUV":"「你們祈求，就給你們；尋找，就尋見；叩門，就給你們開門。","RCUV":"（#路 11:9-13|） 「你們祈求，就給你們；尋找，就找到；叩門，就給你們開門。","CNVT":"「你們祈求，就給你們；尋找，就尋見；叩門，就給你們開門。","CSBT":"「不斷祈求吧，就會給你們；不斷尋找吧，就會找到；不斷敲門吧，就會為你們開門。"}},"prayer":"救主，我們信賴祢的救贖之工。請教導我們等候你，聆聽祢的指引。求祢開啟我們的耳、心、眼，讓我們看見祢呼召我們去哪裡、如何成為祢慈愛的同在。阿們。","readings":[{"reference":"Psalm 94:12–23","reference_zh":"詩篇 94:12–23"},{"reference":"Joshua 15:20–63","reference_zh":"約書亞記 15:20–63"},{"reference":"Luke 15:1–10","reference_zh":"路加福音 15:1–10"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":204,"result_chars":71,"kept_english":false}}</script>
 </body>
 </html>

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 import re
 from datetime import date
@@ -91,13 +90,29 @@ class StaticSitePublisher:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
 
     def _write_today_page(self, latest: date | None = None) -> None:
+        """Copy the newest day page to today.html so the URL stays stable."""
         if latest is None:
             days = self._list_day_pages()
             latest = days[0] if days else None
-        (self._site_dir / "today.html").write_text(
-            _build_today_html(latest),
-            encoding="utf-8",
-        )
+        today_path = self._site_dir / "today.html"
+        if latest is None:
+            today_path.write_text(
+                _shell_page(
+                    title="今日經文 · 摩拉維亞每日經文",
+                    body='    <p class="empty">尚無每日經文。</p>\n'
+                    '    <p class="archive-more"><a href="index.html">回首頁</a></p>\n',
+                    extra_class="site-index",
+                    foot_links=(
+                        ("index.html", "首頁"),
+                        ("archive.html", "歷日檔案"),
+                        ("about.html", "關於"),
+                    ),
+                ),
+                encoding="utf-8",
+            )
+            return
+        day_path = self._site_dir / f"{latest.isoformat()}.html"
+        today_path.write_text(day_path.read_text(encoding="utf-8"), encoding="utf-8")
 
     def _list_day_pages(self) -> list[date]:
         days: list[date] = []
@@ -469,83 +484,6 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
         <a href="today.html">今日</a>
         <a href="index.html">首頁</a>
         <a href="archive.html">歷日檔案</a>
-      </nav>
-      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
-      {LOSUNGEN_ATTRIBUTION_HTML}
-    </footer>
-  </div>
-</body>
-</html>
-"""
-
-def _build_today_html(latest: date | None) -> str:
-    """Redirect to Pacific-calendar today, but never past the latest published day."""
-    latest_js = json.dumps(latest.isoformat() if latest else None)
-    fallback_href = f"{latest.isoformat()}.html" if latest else "index.html"
-    return f"""<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="今日經文 · 摩拉維亞每日經文" />
-  <meta name="robots" content="noindex" />
-  <title>今日經文 · 摩拉維亞每日經文</title>
-{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-  <script>
-(function () {{
-  "use strict";
-  var TZ = "America/Los_Angeles";
-  var LATEST = {latest_js};
-  function todayIso() {{
-    try {{
-      return new Intl.DateTimeFormat("en-CA", {{
-        timeZone: TZ,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }}).format(new Date());
-    }} catch (err) {{
-      var d = new Date();
-      var y = d.getFullYear();
-      var m = String(d.getMonth() + 1).padStart(2, "0");
-      var day = String(d.getDate()).padStart(2, "0");
-      return y + "-" + m + "-" + day;
-    }}
-  }}
-  var iso = todayIso();
-  // Prefer calendar today in Pacific time; if that day is not published yet
-  // (or clock/timezone is ahead), fall back to the newest page on the site.
-  var pick = iso;
-  if (LATEST && pick > LATEST) pick = LATEST;
-  if (!LATEST) {{
-    window.location.replace("index.html" + (window.location.search || "") + (window.location.hash || ""));
-    return;
-  }}
-  var target = pick + ".html";
-  var q = window.location.search || "";
-  var h = window.location.hash || "";
-  window.location.replace(target + q + h);
-}})();
-  </script>
-</head>
-<body>
-  <a class="skip-link" href="#main">跳至內容</a>
-  <div class="site-shell site-index">
-    <main id="main">
-      <h1 class="brand">摩拉維亞每日經文</h1>
-      <p class="subtitle">Moravian Daily Texts • 中文版</p>
-      <p class="lede">正在前往今日經文…</p>
-      <p class="archive-more"><a href="{escape(fallback_href, quote=True)}">若未自動跳轉，請開啟最新經文</a></p>
-      <noscript>
-        <p>請開啟 JavaScript，或直接前往 <a href="{escape(fallback_href, quote=True)}">最新經文</a>／<a href="index.html">首頁</a>。</p>
-      </noscript>
-    </main>
-    <footer class="site-foot">
-      <nav class="foot-nav" aria-label="頁尾導覽">
-        <a href="index.html">首頁</a>
-        <a href="archive.html">歷日檔案</a>
-        <a href="about.html">關於</a>
       </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}

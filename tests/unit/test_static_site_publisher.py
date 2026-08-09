@@ -98,10 +98,10 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "Herrnhuter Brüdergemeine" in html
     assert (tmp_path / "today.html").is_file()
     today = (tmp_path / "today.html").read_text(encoding="utf-8")
-    assert "America/Los_Angeles" in today
-    assert "location.replace" in today
-    assert "LATEST" in today
-    assert "2026-08-01" in today
+    day = (tmp_path / "2026-08-01.html").read_text(encoding="utf-8")
+    assert today == day
+    assert "我要熬煉他們。" in today
+    assert "location.replace" not in today
     assert "losungen.de" in today
 
     archive = (tmp_path / "archive.html").read_text(encoding="utf-8")
