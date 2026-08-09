@@ -30,6 +30,20 @@ _ABOUT_BLURB = (
     "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
 )
 
+# Required by Losungen Nutzungsbedingungen (Herrnhuter Brüdergemeine, Nov 2023).
+LOSUNGEN_ATTRIBUTION_HTML = (
+    '<p class="foot-attribution" lang="de">'
+    "© "
+    '<a href="https://www.herrnhuter.de/" rel="noopener noreferrer">'
+    "Evangelische Brüder-Unität – Herrnhuter Brüdergemeine"
+    "</a>"
+    " · "
+    '<a href="https://www.losungen.de/" rel="noopener noreferrer">'
+    "Weitere Informationen finden Sie hier."
+    "</a>"
+    "</p>"
+)
+
 
 @lru_cache(maxsize=1)
 def load_devotional_css() -> str:
@@ -227,6 +241,7 @@ def _site_footer(*, site_mode: bool) -> str:
         return (
             '  <footer class="site-foot">\n'
             '    <p class="foot-credit">摩拉維亞每日經文 · Daily Texts</p>\n'
+            f"    {LOSUNGEN_ATTRIBUTION_HTML}\n"
             "  </footer>\n"
         )
     return f"""  <footer class="site-foot">
@@ -236,10 +251,12 @@ def _site_footer(*, site_mode: bool) -> str:
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
     <nav class="foot-nav" aria-label="頁尾導覽">
+      <a href="today.html">今日</a>
       <a href="index.html">首頁</a>
       <a href="archive.html">歷日檔案</a>
       <a href="about.html">關於</a>
     </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+    {LOSUNGEN_ATTRIBUTION_HTML}
   </footer>
 """

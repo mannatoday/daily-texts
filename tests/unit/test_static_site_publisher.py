@@ -82,20 +82,32 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
     assert "1731" in about
     assert "非官方出版物" in about
+    assert "losungen.de" in about
+    assert "herrnhuter.de" in about
     assert "了解更多" in html
     assert "about.html" in html
     assert "跳至內容" in html
     assert "首頁" in html
     assert "歷日檔案" in html
     assert "today-card" in index or "今日經文" in index
+    assert 'href="today.html"' in index
     assert "最近三天" in index
     assert 'href="archive.html"' in index
     assert "了解更多" not in index
+    assert "losungen.de" in html
+    assert "Herrnhuter Brüdergemeine" in html
+    assert (tmp_path / "today.html").is_file()
+    today = (tmp_path / "today.html").read_text(encoding="utf-8")
+    assert "Asia/Taipei" in today
+    assert "location.replace" in today
+    assert "losungen.de" in today
 
     archive = (tmp_path / "archive.html").read_text(encoding="utf-8")
     assert "歷日檔案" in archive
     assert "2026-08-01.html" in archive
     assert "首頁" in archive
+    assert "losungen.de" in archive
+    assert "today.html" in archive
 
 
 def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:

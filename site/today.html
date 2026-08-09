@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="今日經文 · 摩拉維亞每日經文" />
+  <meta name="robots" content="noindex" />
+  <title>今日經文 · 摩拉維亞每日經文</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+(function () {
+  "use strict";
+  var TZ = "Asia/Taipei";
+  function todayIso() {
+    try {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+    } catch (err) {
+      var d = new Date();
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, "0");
+      var day = String(d.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + day;
+    }
+  }
+  var iso = todayIso();
+  var target = iso + ".html";
+  var q = window.location.search || "";
+  var h = window.location.hash || "";
+  window.location.replace(target + q + h);
+})();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至內容</a>
+  <div class="site-shell site-index">
+    <main id="main">
+      <h1 class="brand">摩拉維亞每日經文</h1>
+      <p class="subtitle">Moravian Daily Texts • 中文版</p>
+      <p class="lede">正在前往今日經文…</p>
+      <p class="archive-more"><a href="index.html">若未自動跳轉，請回首頁</a></p>
+      <noscript>
+        <p>請開啟 JavaScript，或至 <a href="index.html">首頁</a> 選擇日期。</p>
+      </noscript>
+    </main>
+    <footer class="site-foot">
+      <nav class="foot-nav" aria-label="頁尾導覽">
+        <a href="index.html">首頁</a>
+        <a href="archive.html">歷日檔案</a>
+        <a href="about.html">關於</a>
+      </nav>
+      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+      <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -9,7 +9,11 @@ from pathlib import Path
 from daily_texts.application.dto import FormattedOutput, PublishResult
 from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.infrastructure.formatters._common import format_date_zh
-from daily_texts.infrastructure.formatters.html import HtmlFormatter, load_devotional_css
+from daily_texts.infrastructure.formatters.html import (
+    LOSUNGEN_ATTRIBUTION_HTML,
+    HtmlFormatter,
+    load_devotional_css,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +49,7 @@ class StaticSitePublisher:
         self._write_stylesheet()
         self._write_version_js()
         self._write_about_page()
+        self._write_today_page()
 
         days_before = self._list_day_pages()
         days = sorted(set(days_before) | {content.date}, reverse=True)
@@ -67,7 +72,10 @@ class StaticSitePublisher:
         archive_path = self._site_dir / "archive.html"
         archive_path.write_text(self._build_archive(days), encoding="utf-8")
 
-        message = f"Wrote {day_path}, about.html, archive.html, and updated {index_path}"
+        message = (
+            f"Wrote {day_path}, about.html, today.html, archive.html, "
+            f"and updated {index_path}"
+        )
         logger.info(message)
         return PublishResult(channel=self.channel, success=True, message=message)
 
@@ -80,6 +88,9 @@ class StaticSitePublisher:
 
     def _write_about_page(self) -> None:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
+
+    def _write_today_page(self) -> None:
+        (self._site_dir / "today.html").write_text(_TODAY_HTML, encoding="utf-8")
 
     def _list_day_pages(self) -> list[date]:
         days: list[date] = []
@@ -120,7 +131,7 @@ class StaticSitePublisher:
             recent = days[:3]
             items = "\n".join(_day_list_item(d) for d in recent)
             body = (
-                f'    <a class="today-card" href="{latest.isoformat()}.html">'
+                f'    <a class="today-card" href="today.html">'
                 f'<span class="today-card__label">今日經文</span>'
                 f'<span class="today-card__date">{latest_label}</span>'
                 "</a>\n"
@@ -134,8 +145,9 @@ class StaticSitePublisher:
             body=body,
             extra_class="site-index",
             foot_links=(
-                ('archive.html', "歷日檔案"),
-                ('about.html', "關於"),
+                ("today.html", "今日"),
+                ("archive.html", "歷日檔案"),
+                ("about.html", "關於"),
             ),
         )
 
@@ -156,8 +168,9 @@ class StaticSitePublisher:
             extra_class="site-index archive-page",
             top_nav=True,
             foot_links=(
-                ('index.html', "首頁"),
-                ('about.html', "關於"),
+                ("today.html", "今日"),
+                ("index.html", "首頁"),
+                ("about.html", "關於"),
             ),
         )
 
@@ -221,6 +234,7 @@ def _shell_page(
 {foot}
       </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+      {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
   </div>
 </body>
@@ -438,15 +452,83 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">本站依據官方每日內容整理，經文引用中文聖經版本（如和合本相關版本），禱告另行翻譯為繁體中文。本站為個人靈修整理用途，<strong>非官方出版物</strong>。</p>
 
       <h2>版權與來源</h2>
-      <p class="meta">英文原文來自 <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America — The Daily Texts</a>。中文經文文字另依公開聖經資源引用；使用前請自行確認相關授權與使用規範。</p>
+      <p class="meta">官方德文《Die Losungen》由 <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> 出版。更多資訊見 <a href="https://www.losungen.de/" rel="noopener noreferrer">www.losungen.de</a>。</p>
+      <p class="meta" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a>. <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
+      <p class="meta">英文版來自 <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America — The Daily Texts</a>。中文經文文字另依公開聖經資源引用；使用前請自行確認相關授權與使用規範。</p>
       <p class="meta">若需正式出版、轉載或商業用途，請聯繫原文出版單位，並遵守各聖經譯本之版權規定。</p>
+    </main>
+    <footer class="site-foot">
+      <nav class="foot-nav" aria-label="頁尾導覽">
+        <a href="today.html">今日</a>
+        <a href="index.html">首頁</a>
+        <a href="archive.html">歷日檔案</a>
+      </nav>
+      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+      {LOSUNGEN_ATTRIBUTION_HTML}
+    </footer>
+  </div>
+</body>
+</html>
+"""
+
+_TODAY_HTML = f"""<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="今日經文 · 摩拉維亞每日經文" />
+  <meta name="robots" content="noindex" />
+  <title>今日經文 · 摩拉維亞每日經文</title>
+{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+  <script>
+(function () {{
+  "use strict";
+  var TZ = "Asia/Taipei";
+  function todayIso() {{
+    try {{
+      return new Intl.DateTimeFormat("en-CA", {{
+        timeZone: TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }}).format(new Date());
+    }} catch (err) {{
+      var d = new Date();
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, "0");
+      var day = String(d.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + day;
+    }}
+  }}
+  var iso = todayIso();
+  var target = iso + ".html";
+  var q = window.location.search || "";
+  var h = window.location.hash || "";
+  window.location.replace(target + q + h);
+}})();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至內容</a>
+  <div class="site-shell site-index">
+    <main id="main">
+      <h1 class="brand">摩拉維亞每日經文</h1>
+      <p class="subtitle">Moravian Daily Texts • 中文版</p>
+      <p class="lede">正在前往今日經文…</p>
+      <p class="archive-more"><a href="index.html">若未自動跳轉，請回首頁</a></p>
+      <noscript>
+        <p>請開啟 JavaScript，或至 <a href="index.html">首頁</a> 選擇日期。</p>
+      </noscript>
     </main>
     <footer class="site-foot">
       <nav class="foot-nav" aria-label="頁尾導覽">
         <a href="index.html">首頁</a>
         <a href="archive.html">歷日檔案</a>
+        <a href="about.html">關於</a>
       </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+      {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
   </div>
 </body>

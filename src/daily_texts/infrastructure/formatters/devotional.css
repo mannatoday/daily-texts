@@ -555,6 +555,25 @@ footer.site-foot {
   line-height: 1.6;
 }
 
+.foot-attribution {
+  margin: 0.65rem 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.foot-attribution a {
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.foot-attribution a:hover {
+  color: var(--link-hover);
+}
+
 @media print {
   :root {
     --bg: #fff;

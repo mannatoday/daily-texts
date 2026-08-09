@@ -88,6 +88,7 @@ daily-texts run-scheduler
 | `output/{YYYY-MM-DD}/daily-text.json` | JSON API 風格資料 |
 | `site/{YYYY-MM-DD}.html` | 靜態站每日頁（需 `static_site`） |
 | `site/index.html` | 今日入口＋最近三天 |
+| `site/today.html` | 依台北時區導向當日 `YYYY-MM-DD.html` |
 | `site/archive.html` | 歷日檔案（全部日期） |
 | `site/about.html` | 關於頁 |
 
@@ -209,6 +210,7 @@ pytest
 
 **資料來源**
 
-- 每日內容：[Moravian Daily Texts](https://www.moravian.org/the-daily-texts/)
+- 官方德文《Die Losungen》：[Evangelische Brüder-Unität – Herrnhuter Brüdergemeine](https://www.herrnhuter.de/) · [www.losungen.de](https://www.losungen.de/)
+- 英文版每日內容：[Moravian Daily Texts](https://www.moravian.org/the-daily-texts/)
 - 中文經文：FHL Bible API（`version=rcuv` 等）
 - 讀經連結：Bible Gateway（和合本 `CUV`）
