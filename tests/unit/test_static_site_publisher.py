@@ -89,7 +89,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "跳至內容" in html
     assert "首頁" in html
     assert "歷日檔案" in html
-    assert "today-card" in index or "今日經文" in index
+    assert "today-card" in index or "閱讀今日經文" in index
     assert 'href="today.html"' in index
     assert "最近三天" in index
     assert 'href="archive.html"' in index
@@ -100,6 +100,8 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     today = (tmp_path / "today.html").read_text(encoding="utf-8")
     assert "America/Los_Angeles" in today
     assert "location.replace" in today
+    assert "LATEST" in today
+    assert "2026-08-01" in today
     assert "losungen.de" in today
 
     archive = (tmp_path / "archive.html").read_text(encoding="utf-8")
@@ -130,7 +132,7 @@ def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:
     pos_aug = index.index("2026-08-01.html")
     pos_jul = index.index("2026-07-31.html")
     assert pos_aug < pos_jul
-    assert "今日經文" in index
+    assert "閱讀今日經文" in index
     assert "最近三天" in index
     assert 'class="today-card"' in index
     assert 'href="archive.html"' in index

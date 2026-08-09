@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import re
 from datetime import date
@@ -49,7 +50,6 @@ class StaticSitePublisher:
         self._write_stylesheet()
         self._write_version_js()
         self._write_about_page()
-        self._write_today_page()
 
         days_before = self._list_day_pages()
         days = sorted(set(days_before) | {content.date}, reverse=True)
@@ -67,6 +67,7 @@ class StaticSitePublisher:
         day_path.write_text(page.content, encoding="utf-8")
 
         self._refresh_neighbor_nav(content.date, days)
+        self._write_today_page(days[0] if days else None)
         index_path = self._site_dir / "index.html"
         index_path.write_text(self._build_index(days), encoding="utf-8")
         archive_path = self._site_dir / "archive.html"
@@ -89,8 +90,14 @@ class StaticSitePublisher:
     def _write_about_page(self) -> None:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
 
-    def _write_today_page(self) -> None:
-        (self._site_dir / "today.html").write_text(_TODAY_HTML, encoding="utf-8")
+    def _write_today_page(self, latest: date | None = None) -> None:
+        if latest is None:
+            days = self._list_day_pages()
+            latest = days[0] if days else None
+        (self._site_dir / "today.html").write_text(
+            _build_today_html(latest),
+            encoding="utf-8",
+        )
 
     def _list_day_pages(self) -> list[date]:
         days: list[date] = []
@@ -132,7 +139,7 @@ class StaticSitePublisher:
             items = "\n".join(_day_list_item(d) for d in recent)
             body = (
                 f'    <a class="today-card" href="today.html">'
-                f'<span class="today-card__label">今日經文</span>'
+                f'<span class="today-card__label">閱讀今日經文</span>'
                 f'<span class="today-card__date">{latest_label}</span>'
                 "</a>\n"
                 '    <h2 class="archive-title">最近三天</h2>\n'
@@ -471,7 +478,11 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
 </html>
 """
 
-_TODAY_HTML = f"""<!DOCTYPE html>
+def _build_today_html(latest: date | None) -> str:
+    """Redirect to Pacific-calendar today, but never past the latest published day."""
+    latest_js = json.dumps(latest.isoformat() if latest else None)
+    fallback_href = f"{latest.isoformat()}.html" if latest else "index.html"
+    return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
@@ -485,6 +496,7 @@ _TODAY_HTML = f"""<!DOCTYPE html>
 (function () {{
   "use strict";
   var TZ = "America/Los_Angeles";
+  var LATEST = {latest_js};
   function todayIso() {{
     try {{
       return new Intl.DateTimeFormat("en-CA", {{
@@ -502,7 +514,15 @@ _TODAY_HTML = f"""<!DOCTYPE html>
     }}
   }}
   var iso = todayIso();
-  var target = iso + ".html";
+  // Prefer calendar today in Pacific time; if that day is not published yet
+  // (or clock/timezone is ahead), fall back to the newest page on the site.
+  var pick = iso;
+  if (LATEST && pick > LATEST) pick = LATEST;
+  if (!LATEST) {{
+    window.location.replace("index.html" + (window.location.search || "") + (window.location.hash || ""));
+    return;
+  }}
+  var target = pick + ".html";
   var q = window.location.search || "";
   var h = window.location.hash || "";
   window.location.replace(target + q + h);
@@ -516,9 +536,9 @@ _TODAY_HTML = f"""<!DOCTYPE html>
       <h1 class="brand">摩拉維亞每日經文</h1>
       <p class="subtitle">Moravian Daily Texts • 中文版</p>
       <p class="lede">正在前往今日經文…</p>
-      <p class="archive-more"><a href="index.html">若未自動跳轉，請回首頁</a></p>
+      <p class="archive-more"><a href="{escape(fallback_href, quote=True)}">若未自動跳轉，請開啟最新經文</a></p>
       <noscript>
-        <p>請開啟 JavaScript，或至 <a href="index.html">首頁</a> 選擇日期。</p>
+        <p>請開啟 JavaScript，或直接前往 <a href="{escape(fallback_href, quote=True)}">最新經文</a>／<a href="index.html">首頁</a>。</p>
       </noscript>
     </main>
     <footer class="site-foot">

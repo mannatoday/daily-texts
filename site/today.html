@@ -15,6 +15,7 @@
 (function () {
   "use strict";
   var TZ = "America/Los_Angeles";
+  var LATEST = "2026-08-08";
   function todayIso() {
     try {
       return new Intl.DateTimeFormat("en-CA", {
@@ -32,7 +33,15 @@
     }
   }
   var iso = todayIso();
-  var target = iso + ".html";
+  // Prefer calendar today in Pacific time; if that day is not published yet
+  // (or clock/timezone is ahead), fall back to the newest page on the site.
+  var pick = iso;
+  if (LATEST && pick > LATEST) pick = LATEST;
+  if (!LATEST) {
+    window.location.replace("index.html" + (window.location.search || "") + (window.location.hash || ""));
+    return;
+  }
+  var target = pick + ".html";
   var q = window.location.search || "";
   var h = window.location.hash || "";
   window.location.replace(target + q + h);
@@ -46,9 +55,9 @@
       <h1 class="brand">摩拉維亞每日經文</h1>
       <p class="subtitle">Moravian Daily Texts • 中文版</p>
       <p class="lede">正在前往今日經文…</p>
-      <p class="archive-more"><a href="index.html">若未自動跳轉，請回首頁</a></p>
+      <p class="archive-more"><a href="2026-08-08.html">若未自動跳轉，請開啟最新經文</a></p>
       <noscript>
-        <p>請開啟 JavaScript，或至 <a href="index.html">首頁</a> 選擇日期。</p>
+        <p>請開啟 JavaScript，或直接前往 <a href="2026-08-08.html">最新經文</a>／<a href="index.html">首頁</a>。</p>
       </noscript>
     </main>
     <footer class="site-foot">
