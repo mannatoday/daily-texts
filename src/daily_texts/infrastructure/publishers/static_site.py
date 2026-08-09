@@ -112,7 +112,8 @@ class StaticSitePublisher:
             )
             return
         day_path = self._site_dir / f"{latest.isoformat()}.html"
-        today_path.write_text(day_path.read_text(encoding="utf-8"), encoding="utf-8")
+        html = day_path.read_text(encoding="utf-8")
+        today_path.write_text(_as_today_page(html), encoding="utf-8")
 
     def _list_day_pages(self) -> list[date]:
         days: list[date] = []
@@ -262,6 +263,18 @@ def _shell_page(
 </body>
 </html>
 """
+
+
+def _as_today_page(day_html: str) -> str:
+    """Keep day content but brand the stable today.html document title."""
+    return _TITLE_TAG.sub(
+        "<title>今日經文 · 摩拉維亞每日經文</title>",
+        day_html,
+        count=1,
+    )
+
+
+_TITLE_TAG = re.compile(r"<title>.*?</title>", re.DOTALL)
 
 
 def _neighbors(day: date, days_newest_first: list[date]) -> tuple[str | None, str | None]:
