@@ -484,7 +484,7 @@ _TODAY_HTML = f"""<!DOCTYPE html>
   <script>
 (function () {{
   "use strict";
-  var TZ = "Asia/Taipei";
+  var TZ = "America/Los_Angeles";
   function todayIso() {{
     try {{
       return new Intl.DateTimeFormat("en-CA", {{

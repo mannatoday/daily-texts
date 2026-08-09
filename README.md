@@ -88,7 +88,7 @@ daily-texts run-scheduler
 | `output/{YYYY-MM-DD}/daily-text.json` | JSON API 風格資料 |
 | `site/{YYYY-MM-DD}.html` | 靜態站每日頁（需 `static_site`） |
 | `site/index.html` | 今日入口＋最近三天 |
-| `site/today.html` | 依台北時區導向當日 `YYYY-MM-DD.html` |
+| `site/today.html` | 依太平洋時區（PST/PDT）導向當日 `YYYY-MM-DD.html` |
 | `site/archive.html` | 歷日檔案（全部日期） |
 | `site/about.html` | 關於頁 |
 
