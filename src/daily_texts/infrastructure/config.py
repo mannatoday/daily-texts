@@ -86,7 +86,7 @@ class Settings(BaseSettings):
     local_translator_model: str = "qwen2.5:7b"
     local_translator_api_key: str = "local"
 
-    schedule_timezone: str = "Asia/Taipei"
+    schedule_timezone: str = "America/Los_Angeles"
     schedule_hour: int = 0
     schedule_retry_hours: CsvInts = Field(default_factory=lambda: [0, 6])
 

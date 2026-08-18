@@ -2,9 +2,9 @@
 # GitHub Pages deploy stays in pages.yml (triggered by site/** pushes).
 # Late-day alarm if neither run published: daily-watchdog.yml
 #
-# Schedule (UTC → Asia/Taipei):
-#   0 8 * * *   → 16:00 Taipei (primary)
-#   0 9 * * *  → 17:00 Taipei (retry if first run missed / Moravian late)
+# Schedule (UTC → America/Los_Angeles):
+#   0 15 * * *  → 08:00 PDT / 07:00 PST (primary; after Moravian US morning)
+#   0 17 * * *  → 10:00 PDT / 09:00 PST (retry if first run missed / Moravian late)
 # If site/{today}.html already exists, the retry exits early (saves Actions minutes).
 # Edit the cron lines below to change the schedule (GitHub cron is always UTC).
 
@@ -13,8 +13,8 @@ name: Daily Publish
 on:
   schedule:
     # Configurable: change these cron expressions (UTC).
-    - cron: "0 8 * * *"
-    - cron: "0 9 * * *"
+    - cron: "0 15 * * *"
+    - cron: "0 17 * * *"
   workflow_dispatch:
     inputs:
       force:
@@ -22,7 +22,7 @@ on:
         type: boolean
         default: false
       expect_date:
-        description: "Expected page date YYYY-MM-DD (empty = today in Asia/Taipei)"
+        description: "Expected page date YYYY-MM-DD (empty = today in America/Los_Angeles)"
         type: string
         required: false
         default: ""
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      TZ: Asia/Taipei
+      TZ: America/Los_Angeles
       PROVIDER: moravian_html
       FORMATS: markdown,html,text,json
       PUBLISHERS: static_site
@@ -88,7 +88,7 @@ jobs:
           if [ -n "${{ inputs.expect_date }}" ]; then
             EXPECT="${{ inputs.expect_date }}"
           else
-            EXPECT="$(TZ=Asia/Taipei date +%Y-%m-%d)"
+            EXPECT="$(TZ=America/Los_Angeles date +%Y-%m-%d)"
           fi
           echo "expect_date=${EXPECT}" >> "$GITHUB_OUTPUT"
           echo "Expecting Moravian date: ${EXPECT}"

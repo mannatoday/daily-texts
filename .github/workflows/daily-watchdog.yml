@@ -1,5 +1,5 @@
 # Fail once per day if Daily Publish never produced today's site page.
-# Runs after both publish windows (09:00 and 11:00 UTC).
+# Runs after both publish windows (15:00 and 17:00 UTC).
 #
 # Optional email on failure — set all of:
 #   MAIL_USERNAME, MAIL_PASSWORD, MAIL_TO
@@ -9,12 +9,12 @@ name: Daily Watchdog
 
 on:
   schedule:
-    # 13:00 UTC = 21:00 Asia/Taipei (after 09:00 + 11:00 publish attempts)
-    - cron: "0 13 * * *"
+    # 20:00 UTC = 13:00 PDT / 12:00 PST (after 15:00 + 17:00 UTC publish attempts)
+    - cron: "0 20 * * *"
   workflow_dispatch:
     inputs:
       expect_date:
-        description: "Date YYYY-MM-DD to verify (empty = today in Asia/Taipei)"
+        description: "Date YYYY-MM-DD to verify (empty = today in America/Los_Angeles)"
         type: string
         required: false
         default: ""
@@ -62,7 +62,7 @@ jobs:
           if [ -n "${{ inputs.expect_date }}" ]; then
             EXPECT="${{ inputs.expect_date }}"
           else
-            EXPECT="$(TZ=Asia/Taipei date +%Y-%m-%d)"
+            EXPECT="$(TZ=America/Los_Angeles date +%Y-%m-%d)"
           fi
           echo "expect_date=${EXPECT}" >> "$GITHUB_OUTPUT"
           echo "Checking publish for: ${EXPECT}"
@@ -93,7 +93,7 @@ jobs:
             echo "index.html links to ${DAY}.html"
           fi
 
-          # Soft signal: last publish commit for this day (helps see 09 vs 11 UTC).
+          # Soft signal: last publish commit for this day (helps see which cron succeeded).
           echo "Recent matching commits:"
           git log -5 --oneline --grep="publish daily text ${DAY}" -- site/ || true
           LAST="$(git log -1 --format='%h %ci %s' --grep="publish daily text ${DAY}" -- site/ || true)"
@@ -127,7 +127,7 @@ jobs:
           body: |
             Daily Watchdog failed: today's site page is missing or incomplete.
 
-            Date (Asia/Taipei): ${{ steps.dates.outputs.expect_date }}
+            Date (America/Los_Angeles): ${{ steps.dates.outputs.expect_date }}
             Trigger: ${{ steps.trigger.outputs.label }}
             Repository: ${{ github.repository }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -140,4 +140,4 @@ jobs:
               ${{ steps.check.outputs.commit_summary }}
 
             Fix: run "Daily Publish" manually (workflow_dispatch, force if needed),
-            or inspect the 09:00 / 11:00 UTC Daily Publish runs.
+            or inspect the 15:00 / 17:00 UTC Daily Publish runs.
