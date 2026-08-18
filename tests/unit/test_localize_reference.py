@@ -30,3 +30,15 @@ def test_localize_reference_comma_verses() -> None:
 def test_localize_reference_comma_range_segments() -> None:
     assert localize_reference("Psalm 145:8-9,14-21") == "詩篇 145:8–9,14–21"
     assert localize_reference("Isaiah 55:1-5") == "以賽亞書 55:1–5"
+
+
+def test_localize_reference_cross_book_span() -> None:
+    assert (
+        localize_reference("Joshua 24:14–Judges 1:16")
+        == "約書亞記 24:14–士師記 1:16"
+    )
+    assert (
+        localize_reference("Joshua 24:14-Judges 1:16")
+        == "約書亞記 24:14–士師記 1:16"
+    )
+

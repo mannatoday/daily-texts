@@ -13,6 +13,13 @@ _REF_PATTERN = re.compile(
     r"(?P<rest>\d+(?::\d+(?:-\d+(?::\d+)?)?(?:,\s*\d+(?:-\d+(?::\d+)?)?)*)?)"
     r"$",
 )
+# Cross-book lectionary span, e.g. "Joshua 24:14–Judges 1:16".
+_CROSS_BOOK_REF = re.compile(
+    r"^(?P<book1>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
+    r"(?P<rest1>\d+:\d+)\s*[-–—]\s*"
+    r"(?P<book2>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
+    r"(?P<rest2>\d+(?::\d+)?)$",
+)
 
 
 @lru_cache(maxsize=1)
@@ -22,15 +29,30 @@ def _load_book_names_zh() -> dict[str, str]:
     return {key.lower(): value for key, value in data.items()}
 
 
+def _book_zh(book: str) -> str | None:
+    book = re.sub(r"\s+", " ", book.strip())
+    return _load_book_names_zh().get(book.lower())
+
+
 def localize_reference(reference: str) -> str:
     """Convert English reference (e.g. 'Jeremiah 9:7') to Traditional Chinese."""
     cleaned = reference.strip().replace("–", "-").replace("—", "-")
+
+    cross = _CROSS_BOOK_REF.match(cleaned)
+    if cross:
+        name1 = _book_zh(cross.group("book1"))
+        name2 = _book_zh(cross.group("book2"))
+        if name1 and name2:
+            rest1 = re.sub(r"\s+", "", cross.group("rest1"))
+            rest2 = re.sub(r"\s+", "", cross.group("rest2"))
+            return f"{name1} {rest1}–{name2} {rest2}"
+        return reference
+
     match = _REF_PATTERN.match(cleaned)
     if not match:
         return reference
 
-    book = re.sub(r"\s+", " ", match.group("book").strip())
-    name = _load_book_names_zh().get(book.lower())
+    name = _book_zh(match.group("book"))
     if not name:
         return reference
 

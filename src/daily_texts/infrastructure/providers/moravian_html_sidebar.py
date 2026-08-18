@@ -223,9 +223,28 @@ def _parse_readings_block(paragraph: Tag) -> tuple[str | None, list[str], dict[s
         if "—" in line and "psalm" in line.lower() and _READING_LINE.match(line):
             continue
         parts = [part.strip() for part in re.split(r"[;]", line) if part.strip()]
-        readings.extend(parts)
+        for part in parts:
+            psalm, readings = _absorb_reading_part(part, psalm, readings)
 
     return psalm, readings, metadata
+
+
+def _absorb_reading_part(
+    part: str,
+    psalm: str | None,
+    readings: list[str],
+) -> tuple[str | None, list[str]]:
+    """Split mashed 'Psalm N Book C:V' lines into psalm + remaining refs."""
+    found_psalm, inline = _extract_psalm_and_inline_readings(part)
+    if found_psalm:
+        if psalm is None:
+            psalm = found_psalm
+        else:
+            readings.append(found_psalm)
+        readings.extend(inline)
+        return psalm, readings
+    readings.extend(inline)
+    return psalm, readings
 
 
 def _extract_psalm_and_inline_readings(rest: str) -> tuple[str | None, list[str]]:
