@@ -1,5 +1,5 @@
 # Fail once per day if Daily Publish never produced today's site page.
-# Runs after both publish windows (16:00 and 18:00 UTC).
+# Runs after the publish windows (14:00, 16:00, and 18:00 UTC).
 #
 # Optional email on failure — set all of:
 #   MAIL_USERNAME, MAIL_PASSWORD, MAIL_TO
@@ -9,7 +9,7 @@ name: Daily Watchdog
 
 on:
   schedule:
-    # 21:00 UTC = 14:00 PDT / 13:00 PST (after 16:00 + 18:00 UTC publish attempts)
+    # 21:00 UTC = 14:00 PDT / 13:00 PST (after 14:00 + 16:00 + 18:00 UTC publish attempts)
     - cron: "0 21 * * *"
   workflow_dispatch:
     inputs:

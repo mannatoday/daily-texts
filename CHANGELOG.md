@@ -14,6 +14,10 @@
 - 首頁「最近三天」＋獨立 `archive.html` 歷日檔案；每日頁導覽改為「首頁」
 - 主日「本週守望經文」（Watchword for the week）：解析、多譯本中文化並顯示於 HTML／Markdown／純文字／JSON 輸出
 
+### Changed
+
+- Daily Publish 新增 14:00 UTC（太平洋 07:00 PDT／06:00 PST）排程，讓當日頁在清晨自動產生；09:00／11:00 PDT 改為重試
+
 ### Fixed
 
 - Moravian 解析：主日版面（教會年／Watchword for the week）不再誤把非經文段當 OT／NT；改以 BibleGateway 連結定位守望經文
