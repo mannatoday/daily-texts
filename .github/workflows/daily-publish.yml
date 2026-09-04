@@ -63,7 +63,8 @@ jobs:
       GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
       HTTP_MAX_RETRIES: "3"
       HTTP_RETRY_BACKOFF_SECONDS: "1.0"
-      HTTP_USER_AGENT: daily-texts-bot/1.0
+      # Browser-like UA: Cloudflare often omits the Daily Text widget for bot UAs.
+      HTTP_USER_AGENT: "Mozilla/5.0 (compatible; daily-texts/1.0; +https://github.com/mannatoday/daily-texts)"
 
     steps:
       - name: Label schedule trigger
