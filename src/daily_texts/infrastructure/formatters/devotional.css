@@ -486,6 +486,44 @@ h2 + p.reading {
   margin-top: 0.35rem;
 }
 
+/* Add to Home Screen */
+.install-cta {
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+.install-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 0.55rem 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.install-btn:hover {
+  color: var(--link-hover);
+  border-color: var(--text-soft);
+}
+
+.install-hint {
+  margin: 0.75rem auto 0;
+  max-width: 24rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
 /* Footer */
 footer.site-foot {
   margin-top: 3.25rem;

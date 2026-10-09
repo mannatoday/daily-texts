@@ -25,6 +25,21 @@ _FONT_LINKS = """\
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
 """
 
+# "Add to Home Screen" (PWA) support. Paths are relative so they work under the
+# GitHub Pages subpath (…/daily-texts/). Shared by every site page.
+PWA_HEAD_TAGS = """\
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
+"""
+
+INSTALL_SCRIPT_TAG = '  <script src="install.js" defer></script>\n'
+
 _ABOUT_BLURB = (
     "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
     "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
@@ -105,6 +120,8 @@ class HtmlFormatter:
             )
         footer = _site_footer(site_mode=site_mode)
         data_block = _day_data_script(content) if site_mode else ""
+        pwa_head = PWA_HEAD_TAGS if site_mode else ""
+        install_script = INSTALL_SCRIPT_TAG if site_mode else ""
 
         week_block = ""
         if content.week_watchword is not None:
@@ -122,7 +139,7 @@ class HtmlFormatter:
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>{title} · 摩拉維亞每日經文</title>
-{_FONT_LINKS}{style_block}</head>
+{pwa_head}{_FONT_LINKS}{style_block}{install_script}</head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">

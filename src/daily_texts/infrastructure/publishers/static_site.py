@@ -10,7 +10,9 @@ from daily_texts.application.dto import FormattedOutput, PublishResult
 from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.infrastructure.formatters._common import format_date_zh
 from daily_texts.infrastructure.formatters.html import (
+    INSTALL_SCRIPT_TAG,
     LOSUNGEN_ATTRIBUTION_HTML,
+    PWA_HEAD_TAGS,
     HtmlFormatter,
     load_devotional_css,
 )
@@ -18,6 +20,8 @@ from daily_texts.infrastructure.formatters.html import (
 logger = logging.getLogger(__name__)
 
 _DAY_PAGE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.html$")
+# App icon shipped with the package (src/daily_texts/inputs/icon.png).
+_ICON_SOURCE = Path(__file__).resolve().parents[2] / "inputs" / "icon.png"
 _FONT_LINKS = """\
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -48,6 +52,9 @@ class StaticSitePublisher:
         self._site_dir.mkdir(parents=True, exist_ok=True)
         self._write_stylesheet()
         self._write_version_js()
+        self._write_icons()
+        self._write_manifest()
+        self._write_install_js()
         self._write_about_page()
 
         days_before = self._list_day_pages()
@@ -85,6 +92,21 @@ class StaticSitePublisher:
 
     def _write_version_js(self) -> None:
         (self._site_dir / "version.js").write_text(_VERSION_JS, encoding="utf-8")
+
+    def _write_icons(self) -> None:
+        """Copy the app icon used by the manifest and iOS home-screen shortcut."""
+        if not _ICON_SOURCE.is_file():
+            logger.warning("App icon not found at %s; skipping icon copy.", _ICON_SOURCE)
+            return
+        data = _ICON_SOURCE.read_bytes()
+        (self._site_dir / "icon.png").write_bytes(data)
+        (self._site_dir / "apple-touch-icon.png").write_bytes(data)
+
+    def _write_manifest(self) -> None:
+        (self._site_dir / "site.webmanifest").write_text(_MANIFEST_JSON, encoding="utf-8")
+
+    def _write_install_js(self) -> None:
+        (self._site_dir / "install.js").write_text(_INSTALL_JS, encoding="utf-8")
 
     def _write_about_page(self) -> None:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
@@ -241,8 +263,8 @@ def _shell_page(
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>{escape(title)}</title>
-{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-</head>
+{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+{INSTALL_SCRIPT_TAG}</head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell {extra_class}">
@@ -446,6 +468,119 @@ _VERSION_JS = """\
 })();
 """
 
+# Web app manifest. Relative URLs resolve against the manifest's own location,
+# so start_url/scope stay correct under the GitHub Pages subpath (…/daily-texts/).
+# start_url points at today.html so the installed shortcut always opens the latest day.
+_MANIFEST_JSON = """\
+{
+  "name": "摩拉維亞每日經文",
+  "short_name": "每日經文",
+  "lang": "zh-Hant",
+  "description": "摩拉維亞每日經文 · Moravian Daily Texts 中文版",
+  "start_url": "today.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f6f2",
+  "theme_color": "#f7f6f2",
+  "icons": [
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+"""
+
+# "Add to Home Screen" helper:
+# - Android/Chromium: capture beforeinstallprompt → one-tap install button.
+# - iOS Safari: no install API, so show a short "分享 → 加入主畫面" hint.
+# - Hidden entirely when already launched as an installed app.
+_INSTALL_JS = """\
+(function () {
+  "use strict";
+
+  function isStandalone() {
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    );
+  }
+
+  if (isStandalone()) return;
+
+  var ua = window.navigator.userAgent || "";
+  var isIOS =
+    /iphone|ipad|ipod/i.test(ua) ||
+    (/Macintosh/.test(ua) && "ontouchend" in document); // iPadOS 13+
+  var deferredPrompt = null;
+  var built = false;
+
+  function buildCta() {
+    if (built) return document.querySelector(".install-cta");
+    var foot = document.querySelector(".site-foot");
+    if (!foot) return null;
+    built = true;
+
+    var cta = document.createElement("div");
+    cta.className = "install-cta";
+    cta.hidden = true;
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "install-btn";
+    btn.textContent = "加到主畫面";
+
+    var hint = document.createElement("p");
+    hint.className = "install-hint";
+    hint.hidden = true;
+
+    cta.appendChild(btn);
+    cta.appendChild(hint);
+    foot.insertBefore(cta, foot.firstChild);
+
+    btn.addEventListener("click", function () {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function () {
+          deferredPrompt = null;
+        });
+        return;
+      }
+      if (hint.hidden) {
+        hint.textContent = isIOS
+          ? "在 Safari 點最下方的「分享」，再選「加入主畫面」即可。"
+          : "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
+        hint.hidden = false;
+      } else {
+        hint.hidden = true;
+      }
+    });
+
+    return cta;
+  }
+
+  function showCta() {
+    var cta = buildCta();
+    if (cta) cta.hidden = false;
+  }
+
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    showCta();
+  });
+
+  window.addEventListener("appinstalled", function () {
+    deferredPrompt = null;
+    var cta = document.querySelector(".install-cta");
+    if (cta) cta.remove();
+  });
+
+  // iOS has no beforeinstallprompt event; surface the button so users get steps.
+  if (isIOS) showCta();
+})();
+"""
+
 _ABOUT_HTML = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -454,8 +589,8 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="關於 Moravian Daily Texts 與本站中文版" />
   <title>關於 · 摩拉維亞每日經文</title>
-{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-</head>
+{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+{INSTALL_SCRIPT_TAG}</head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell about-page">
