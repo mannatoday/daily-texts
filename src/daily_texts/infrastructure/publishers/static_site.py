@@ -247,11 +247,13 @@ def _shell_page(
     </nav>
 """
     brand = ""
+    slot = '    <div id="install-slot" class="install-slot"></div>\n'
     if not top_nav:
         brand = """    <h1 class="brand">摩拉維亞每日經文</h1>
     <p class="subtitle">Moravian Daily Texts • 中文版</p>
     <p class="lede">以神的話開始每一天</p>
-"""
+""" + slot
+        slot = ""
     foot = "\n".join(
         f'        <a href="{href}">{label}</a>' for href, label in foot_links
     )
@@ -268,7 +270,7 @@ def _shell_page(
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell {extra_class}">
-{nav}    <main id="main">
+{nav}{slot}    <main id="main">
 {brand}{body}    </main>
     <footer class="site-foot">
       <section class="about-blurb" aria-labelledby="about-blurb-title">
@@ -491,39 +493,42 @@ _MANIFEST_JSON = """\
 }
 """
 
-# "Add to Home Screen" helper:
-# - Android/Chromium: capture beforeinstallprompt → one-tap install button.
-# - iOS Safari: no install API, so show a short "分享 → 加入主畫面" hint.
-# - Hidden entirely when already launched as an installed app.
+# "Add to Home Screen" helper. The button is always shown (phones often never
+# fire beforeinstallprompt, and the old footer placement sat below the fold).
+# - Chromium: tap runs the native install prompt when the browser offers one.
+# - iPhone / others: tap shows the manual steps.
+# Hidden when the page is already open from the home-screen icon.
 _INSTALL_JS = """\
 (function () {
   "use strict";
 
   function isStandalone() {
-    return (
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true
-    );
+    try {
+      return (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+      );
+    } catch (err) {
+      return false;
+    }
   }
 
-  if (isStandalone()) return;
+  function start() {
+    if (isStandalone()) return;
 
-  var ua = window.navigator.userAgent || "";
-  var isIOS =
-    /iphone|ipad|ipod/i.test(ua) ||
-    (/Macintosh/.test(ua) && "ontouchend" in document); // iPadOS 13+
-  var deferredPrompt = null;
-  var built = false;
+    var ua = window.navigator.userAgent || "";
+    var isIOS =
+      /iphone|ipad|ipod/i.test(ua) ||
+      (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var isAndroid = /android/i.test(ua);
+    var deferredPrompt = null;
 
-  function buildCta() {
-    if (built) return document.querySelector(".install-cta");
-    var foot = document.querySelector(".site-foot");
-    if (!foot) return null;
-    built = true;
+    var host = document.getElementById("install-slot");
+    if (!host) host = document.querySelector(".site-foot");
+    if (!host) return;
 
     var cta = document.createElement("div");
     cta.className = "install-cta";
-    cta.hidden = true;
 
     var btn = document.createElement("button");
     btn.type = "button";
@@ -536,7 +541,18 @@ _INSTALL_JS = """\
 
     cta.appendChild(btn);
     cta.appendChild(hint);
-    foot.insertBefore(cta, foot.firstChild);
+    if (host.id === "install-slot") host.appendChild(cta);
+    else host.insertBefore(cta, host.firstChild);
+
+    function hintText() {
+      if (isIOS) {
+        return "請用 Safari 開啟這個網站。點畫面最下方的「分享」，再選「加入主畫面」。";
+      }
+      if (isAndroid) {
+        return "點瀏覽器右上角選單，再選「加到主畫面」或「安裝應用程式」。";
+      }
+      return "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
+    }
 
     btn.addEventListener("click", function () {
       if (deferredPrompt) {
@@ -546,38 +562,26 @@ _INSTALL_JS = """\
         });
         return;
       }
-      if (hint.hidden) {
-        hint.textContent = isIOS
-          ? "在 Safari 點最下方的「分享」，再選「加入主畫面」即可。"
-          : "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
-        hint.hidden = false;
-      } else {
-        hint.hidden = true;
-      }
+      hint.hidden = !hint.hidden;
+      if (!hint.hidden) hint.textContent = hintText();
     });
 
-    return cta;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    window.addEventListener("appinstalled", function () {
+      deferredPrompt = null;
+      cta.remove();
+    });
   }
 
-  function showCta() {
-    var cta = buildCta();
-    if (cta) cta.hidden = false;
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
   }
-
-  window.addEventListener("beforeinstallprompt", function (e) {
-    e.preventDefault();
-    deferredPrompt = e;
-    showCta();
-  });
-
-  window.addEventListener("appinstalled", function () {
-    deferredPrompt = null;
-    var cta = document.querySelector(".install-cta");
-    if (cta) cta.remove();
-  });
-
-  // iOS has no beforeinstallprompt event; surface the button so users get steps.
-  if (isIOS) showCta();
 })();
 """
 
@@ -599,6 +603,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <span class="day-nav__home" aria-current="page">關於</span>
       <span class="day-nav__next" aria-disabled="true">後一日 →</span>
     </nav>
+    <div id="install-slot" class="install-slot"></div>
     <main id="main">
       <h1>關於 Moravian Daily Texts</h1>
 
