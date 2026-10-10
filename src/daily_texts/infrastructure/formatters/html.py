@@ -122,9 +122,6 @@ class HtmlFormatter:
         data_block = _day_data_script(content) if site_mode else ""
         pwa_head = PWA_HEAD_TAGS if site_mode else ""
         install_script = INSTALL_SCRIPT_TAG if site_mode else ""
-        install_slot = (
-            '  <div id="install-slot" class="install-slot"></div>\n' if site_mode else ""
-        )
 
         week_block = ""
         if content.week_watchword is not None:
@@ -146,7 +143,7 @@ class HtmlFormatter:
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">
-{version_picker}{nav}{install_slot}  <main id="main">
+{version_picker}{nav}  <main id="main">
     <article>
     <h1>{title}</h1>
 {week_block}    <h2>舊約</h2>

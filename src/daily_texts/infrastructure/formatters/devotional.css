@@ -486,55 +486,35 @@ h2 + p.reading {
   margin-top: 0.35rem;
 }
 
-/* Add to Home Screen — kept near the top so phones see it without scrolling */
-.install-slot {
-  margin: 0 0 1.35rem;
-  text-align: center;
-}
-
-.site-index .lede + .install-slot {
-  margin-top: -0.85rem;
-}
-
-.day-nav + .install-slot {
-  margin-top: -0.65rem;
-}
-
-.install-cta {
-  margin: 0;
-  text-align: center;
-}
-
-.install-btn {
+/* Add to Home Screen — a footer link, same weight as the other nav items */
+.foot-nav .install-link {
   appearance: none;
   -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: var(--tap);
-  padding: 0.55rem 1.25rem;
-  border: 1px solid var(--rule);
-  border-radius: 0.5rem;
-  background: var(--surface);
+  min-height: 2.25rem;
   color: var(--text-muted);
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
   cursor: pointer;
 }
 
-.install-btn:hover {
+.foot-nav .install-link:hover {
   color: var(--link-hover);
-  border-color: var(--text-soft);
 }
 
 .install-hint {
-  margin: 0.75rem auto 0;
-  max-width: 24rem;
+  margin: 0.15rem auto 0;
+  max-width: 22rem;
+  text-align: center;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   line-height: 1.65;
-  color: var(--text-muted);
+  color: var(--text-soft);
 }
 
 /* Footer */
@@ -646,8 +626,7 @@ footer.site-foot {
   .skip-link,
   .day-nav,
   .version-picker,
-  .install-slot,
-  .install-cta,
+  .install-hint,
   .reading__open,
   .about-blurb .more,
   .foot-nav,

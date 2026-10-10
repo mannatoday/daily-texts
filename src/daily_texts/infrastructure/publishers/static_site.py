@@ -247,13 +247,11 @@ def _shell_page(
     </nav>
 """
     brand = ""
-    slot = '    <div id="install-slot" class="install-slot"></div>\n'
     if not top_nav:
         brand = """    <h1 class="brand">摩拉維亞每日經文</h1>
     <p class="subtitle">Moravian Daily Texts • 中文版</p>
     <p class="lede">以神的話開始每一天</p>
-""" + slot
-        slot = ""
+"""
     foot = "\n".join(
         f'        <a href="{href}">{label}</a>' for href, label in foot_links
     )
@@ -270,7 +268,7 @@ def _shell_page(
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell {extra_class}">
-{nav}{slot}    <main id="main">
+{nav}    <main id="main">
 {brand}{body}    </main>
     <footer class="site-foot">
       <section class="about-blurb" aria-labelledby="about-blurb-title">
@@ -493,11 +491,9 @@ _MANIFEST_JSON = """\
 }
 """
 
-# "Add to Home Screen" helper. The button is always shown (phones often never
-# fire beforeinstallprompt, and the old footer placement sat below the fold).
-# - Chromium: tap runs the native install prompt when the browser offers one.
-# - iPhone / others: tap shows the manual steps.
-# Hidden when the page is already open from the home-screen icon.
+# "Add to Home Screen" sits in the footer nav, same weight as the other links.
+# Chromium uses the native install prompt when the browser offers one.
+# Otherwise a short hint appears under the nav. Hidden when already installed.
 _INSTALL_JS = """\
 (function () {
   "use strict";
@@ -516,6 +512,9 @@ _INSTALL_JS = """\
   function start() {
     if (isStandalone()) return;
 
+    var nav = document.querySelector(".foot-nav");
+    if (!nav) return;
+
     var ua = window.navigator.userAgent || "";
     var isIOS =
       /iphone|ipad|ipod/i.test(ua) ||
@@ -523,26 +522,16 @@ _INSTALL_JS = """\
     var isAndroid = /android/i.test(ua);
     var deferredPrompt = null;
 
-    var host = document.getElementById("install-slot");
-    if (!host) host = document.querySelector(".site-foot");
-    if (!host) return;
-
-    var cta = document.createElement("div");
-    cta.className = "install-cta";
-
     var btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "install-btn";
+    btn.className = "install-link";
     btn.textContent = "加到主畫面";
+    nav.appendChild(btn);
 
     var hint = document.createElement("p");
     hint.className = "install-hint";
     hint.hidden = true;
-
-    cta.appendChild(btn);
-    cta.appendChild(hint);
-    if (host.id === "install-slot") host.appendChild(cta);
-    else host.insertBefore(cta, host.firstChild);
+    nav.insertAdjacentElement("afterend", hint);
 
     function hintText() {
       if (isIOS) {
@@ -573,7 +562,8 @@ _INSTALL_JS = """\
 
     window.addEventListener("appinstalled", function () {
       deferredPrompt = null;
-      cta.remove();
+      btn.remove();
+      hint.remove();
     });
   }
 
@@ -603,7 +593,6 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <span class="day-nav__home" aria-current="page">關於</span>
       <span class="day-nav__next" aria-disabled="true">後一日 →</span>
     </nav>
-    <div id="install-slot" class="install-slot"></div>
     <main id="main">
       <h1>關於 Moravian Daily Texts</h1>
 

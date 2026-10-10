@@ -15,6 +15,9 @@
   function start() {
     if (isStandalone()) return;
 
+    var nav = document.querySelector(".foot-nav");
+    if (!nav) return;
+
     var ua = window.navigator.userAgent || "";
     var isIOS =
       /iphone|ipad|ipod/i.test(ua) ||
@@ -22,26 +25,16 @@
     var isAndroid = /android/i.test(ua);
     var deferredPrompt = null;
 
-    var host = document.getElementById("install-slot");
-    if (!host) host = document.querySelector(".site-foot");
-    if (!host) return;
-
-    var cta = document.createElement("div");
-    cta.className = "install-cta";
-
     var btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "install-btn";
+    btn.className = "install-link";
     btn.textContent = "加到主畫面";
+    nav.appendChild(btn);
 
     var hint = document.createElement("p");
     hint.className = "install-hint";
     hint.hidden = true;
-
-    cta.appendChild(btn);
-    cta.appendChild(hint);
-    if (host.id === "install-slot") host.appendChild(cta);
-    else host.insertBefore(cta, host.firstChild);
+    nav.insertAdjacentElement("afterend", hint);
 
     function hintText() {
       if (isIOS) {
@@ -72,7 +65,8 @@
 
     window.addEventListener("appinstalled", function () {
       deferredPrompt = null;
-      cta.remove();
+      btn.remove();
+      hint.remove();
     });
   }
 
