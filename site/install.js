@@ -15,9 +15,10 @@
   function start() {
     if (isStandalone()) return;
 
-    var nav = document.querySelector(".foot-nav");
-    if (!nav) return;
+    var triggers = document.querySelectorAll(".install-trigger");
+    if (!triggers.length) return;
 
+    var hint = document.getElementById("install-hint");
     var ua = window.navigator.userAgent || "";
     var isIOS =
       /iphone|ipad|ipod/i.test(ua) ||
@@ -25,16 +26,9 @@
     var isAndroid = /android/i.test(ua);
     var deferredPrompt = null;
 
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "install-link";
-    btn.textContent = "加到主畫面";
-    nav.appendChild(btn);
-
-    var hint = document.createElement("p");
-    hint.className = "install-hint";
-    hint.hidden = true;
-    nav.insertAdjacentElement("afterend", hint);
+    for (var i = 0; i < triggers.length; i++) {
+      triggers[i].hidden = false;
+    }
 
     function hintText() {
       if (isIOS) {
@@ -46,7 +40,7 @@
       return "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
     }
 
-    btn.addEventListener("click", function () {
+    function onClick() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then(function () {
@@ -54,9 +48,14 @@
         });
         return;
       }
+      if (!hint) return;
       hint.hidden = !hint.hidden;
       if (!hint.hidden) hint.textContent = hintText();
-    });
+    }
+
+    for (var j = 0; j < triggers.length; j++) {
+      triggers[j].addEventListener("click", onClick);
+    }
 
     window.addEventListener("beforeinstallprompt", function (e) {
       e.preventDefault();
@@ -65,8 +64,10 @@
 
     window.addEventListener("appinstalled", function () {
       deferredPrompt = null;
-      btn.remove();
-      hint.remove();
+      for (var k = 0; k < triggers.length; k++) {
+        triggers[k].hidden = true;
+      }
+      if (hint) hint.hidden = true;
     });
   }
 

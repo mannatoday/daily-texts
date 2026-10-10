@@ -6,11 +6,20 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>2026 年 9 月 24 日（星期四） · 摩拉維亞每日經文</title>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=3" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -57,15 +66,16 @@
       <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
   </footer>
+  <p id="install-hint" class="install-hint" hidden></p>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="archive.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">歷日檔案</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+  </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-09-24","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":null,"ot":{"reference":"Ezekiel 36:36","reference_zh":"以西結書 36:36","translations":{"CUV":"那時，在你們四圍其餘的外邦人必知道我─耶和華修造那毀壞之處，培植那荒廢之地。我─耶和華說過，也必成就。","RCUV":"那時，在你們四圍其餘的列國必知道，我－耶和華修造那毀壞之處，開墾那荒蕪之地。我－耶和華說了這話，就必成就。","CNVT":"那時，在你們四圍所餘剩的列國，就必知道我是耶和華，是我重建了那些毀壞的地方，栽植了那些荒涼之地。我耶和華說了，就必實行。","CSBT":"那時你們四圍殘留的列邦就知道：是我耶和華重建了這些被拆毀的城，種植了這荒蕪之地。我耶和華發了話，就必成就。"}},"nt":{"reference":"Revelation 7:9,10","reference_zh":"啟示錄 7:9–10","translations":{"CUV":"此後，我觀看，見有許多的人，沒有人能數過來，是從各國、各族、各民、各方來的，站在寶座和羔羊面前，身穿白衣，手拿棕樹枝，大聲喊著說：「願救恩歸與坐在寶座上我們的 神，也歸與羔羊！」","RCUV":"此後，我觀看，看見有許多人，沒有人能計算，是從各邦國、各支派、各民族、各語言來的，站在寶座和羔羊面前，身穿白衣，手拿棕樹枝，大聲喊着說： 「願救恩歸於坐在寶座上我們的上帝， 也歸於羔羊！」","CNVT":"這些事以後，我觀看，見有一大群人，沒有人能數得過來，是從各邦國、各支派、各民族、各方言來的。他們都站在寶座和羊羔面前，身穿白袍，手裡拿著棕樹枝。他們大聲呼喊，說：「願救恩歸給那坐在寶座上我們的 神，也歸給羊羔！」","CSBT":"這些事以後，我觀看，看哪，有一大群人，沒有人能夠數過來。他們來自各國家、各支派、各民族、各語言群體。他們身穿白袍，手裡拿著棕櫚枝，站在寶座和羔羊面前，大聲呼喊說：「救恩屬於坐在寶座上我們的神、屬於羔羊！」"}},"prayer":"復興與救贖之主，求祢以聖靈更新我們，重建破碎的一切。願萬民聚集在祢的寶座前讚美你，使萬民都述說祢的榮耀。願我們合而為一，歡欣雀躍於祢永恆的恩典之中。阿們。","readings":[{"reference":"Psalm 109:8–20","reference_zh":"詩篇 109:8–20"},{"reference":"1 Samuel 14:41–15:23","reference_zh":"撒母耳記上 14:41–15:23"},{"reference":"John 2:12–25","reference_zh":"約翰福音 2:12–25"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":239,"result_chars":77,"kept_english":false}}</script>
 </body>

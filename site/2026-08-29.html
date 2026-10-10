@@ -6,11 +6,20 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>2026 年 8 月 29 日（星期六） · 摩拉維亞每日經文</title>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=3" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -57,15 +66,16 @@
       <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
   </footer>
+  <p id="install-hint" class="install-hint" hidden></p>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="archive.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">歷日檔案</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+  </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-08-29","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":null,"ot":{"reference":"Psalm 40:17","reference_zh":"詩篇 40:17","translations":{"CUV":"但我是困苦窮乏的，主仍顧念我；你是幫助我的，搭救我的。 神啊，求你不要耽延！","RCUV":"我本是困苦貧窮的，主卻顧念我。 你是幫助我的，搭救我的； 我的上帝啊，求你不要躭延！","CNVT":"至於我，我是困苦貧窮的；主仍顧念我。你是我的幫助，我的拯救；我的 神啊！求你不要耽延。","CSBT":"至於我，我困苦貧窮， 願主顧惜我！ 你是我的幫助、我的救主； 我的神哪，求你不要遲延！"}},"nt":{"reference":"Philippians 4:12-13","reference_zh":"腓立比書 4:12–13","translations":{"CUV":"我知道怎樣處卑賤，也知道怎樣處豐富；或飽足，或飢餓；或有餘，或缺乏，隨事隨在，我都得了祕訣。我靠著那加給我力量的，凡事都能做。","RCUV":"我知道怎樣處卑賤，也知道怎樣處豐富；或飽足或飢餓，或有餘或缺乏，任何事情，任何景況，我都得了祕訣。我靠着那加給我力量的，凡事都能做。","CNVT":"我知道怎樣處卑賤，也知道怎樣處富裕；我已經得了祕訣，無論在任何情況之下，或是飽足，或是飢餓，或是富裕，或是缺乏，都可以知足。我靠著那加給我能力的，凡事都能作。","CSBT":"我知道怎樣處卑賤，也知道怎樣處豐富；在一切事上，在一切情況下，或飽足、或飢餓，或豐富、或缺乏，我都得了祕訣。藉著使我剛強的那一位【4】，我一切都能。"}},"prayer":"我們的世界充滿變數，但上帝啊，因您關愛我們，真心眷顧我們的福祉，我們的生命才更有韌性。無論我們身處何種境地，求您指引我們與您建立聯結，使我們能忍受苦難，並感恩您的豐盛恩典。阿門。","readings":[{"reference":"Psalm 104:19–23","reference_zh":"詩篇 104:19–23"},{"reference":"Judges 11:1–27","reference_zh":"士師記 11:1–27"},{"reference":"Luke 20:41–21:4","reference_zh":"路加福音 20:41–21:4"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":288,"result_chars":89,"kept_english":false}}</script>
 </body>

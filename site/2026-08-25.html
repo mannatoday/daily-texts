@@ -6,11 +6,20 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>2026 年 8 月 25 日（星期二） · 摩拉維亞每日經文</title>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=3" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -57,15 +66,16 @@
       <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
   </footer>
+  <p id="install-hint" class="install-hint" hidden></p>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="archive.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">歷日檔案</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+  </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-08-25","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":null,"ot":{"reference":"Psalm 57:2","reference_zh":"詩篇 57:2","translations":{"CUV":"我要求告至高的 神，就是為我成全諸事的 神。","RCUV":"我要求告至高的上帝， 就是為我成全萬事的上帝。","CNVT":"我要向至高的 神呼求，就是向為我成就他旨意的 神呼求。","CSBT":"我要向至高神呼求， 向那為我成就萬事【1】的神呼求。"}},"nt":{"reference":"John 16:24","reference_zh":"約翰福音 16:24","translations":{"CUV":"向來你們沒有奉我的名求甚麼，如今你們求，就必得著，叫你們的喜樂可以滿足。」","RCUV":"直到現在，你們沒有奉我的名求甚麼，如今你們求就必得着，使你們的喜樂得以滿足。」","CNVT":"你們向來沒有奉我的名求甚麼；現在你們祈求，就必定得著，讓你們的喜樂滿溢。","CSBT":"直到如今，你們沒有奉我的名求過什麼。你們祈求吧！就會得到，好使你們的喜樂得以滿足。"}},"prayer":"主啊，祢是我們永恆而慷慨的朋友。我們哭泣，您垂聽；我們呼求，您也垂聽。有時，光是向您傾訴重擔，就能帶來安慰。願我們因您的聆聽而喜樂，願我們成為您的小羊羔而蒙福。阿門。","readings":[{"reference":"Psalm 103:6–18","reference_zh":"詩篇 103:6–18"},{"reference":"Judges 7","reference_zh":"士師記 7"},{"reference":"Luke 19:45–20:8","reference_zh":"路加福音 19:45–20:8"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":251,"result_chars":83,"kept_english":false}}</script>
 </body>

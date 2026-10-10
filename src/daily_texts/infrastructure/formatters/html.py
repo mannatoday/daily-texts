@@ -25,12 +25,15 @@ _FONT_LINKS = """\
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
 """
 
+# Bump when icon.png changes so browsers refetch the favicon / app icon.
+ICON_VERSION = "3"
+
 # "Add to Home Screen" (PWA) support. Paths are relative so they work under the
 # GitHub Pages subpath (…/daily-texts/). Shared by every site page.
-PWA_HEAD_TAGS = """\
+PWA_HEAD_TAGS = f"""\
   <link rel="manifest" href="site.webmanifest" />
-  <link rel="icon" href="icon.png" sizes="any" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" href="icon.png?v={ICON_VERSION}" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v={ICON_VERSION}" />
   <meta name="theme-color" content="#f7f6f2" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -39,6 +42,54 @@ PWA_HEAD_TAGS = """\
 """
 
 INSTALL_SCRIPT_TAG = '  <script src="install.js" defer></script>\n'
+
+# Bottom tab bar shared by every site page. Fixed on phones (icon over label),
+# a plain centered row on desktop. The last tab (加到主畫面) is revealed by
+# install.js when the page is not already running as an installed app.
+_ICON_TODAY = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+    'stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/>'
+    '<path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2'
+    'M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>'
+)
+_ICON_ARCHIVE = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/>'
+    '<circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/>'
+    '<circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/>'
+    '<circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>'
+)
+_ICON_ABOUT = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+    'stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/>'
+    '<path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>'
+)
+_ICON_ADD = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+    'stroke-linecap="round" stroke-linejoin="round">'
+    '<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg>'
+)
+
+
+def _tab(href: str, label: str, icon: str) -> str:
+    return (
+        f'    <a class="tab" href="{href}">'
+        f'<span class="tab__icon" aria-hidden="true">{icon}</span>'
+        f'<span class="tab__label">{label}</span></a>\n'
+    )
+
+
+TABBAR_HTML = (
+    '  <p id="install-hint" class="install-hint" hidden></p>\n'
+    '  <nav class="tabbar" aria-label="主要導覽">\n'
+    + _tab("today.html", "今日", _ICON_TODAY)
+    + _tab("archive.html", "歷日檔案", _ICON_ARCHIVE)
+    + _tab("about.html", "關於", _ICON_ABOUT)
+    + '    <button type="button" class="tab install-trigger" hidden>'
+    '<span class="tab__icon" aria-hidden="true">' + _ICON_ADD + "</span>"
+    '<span class="tab__label">加到主畫面</span></button>\n'
+    "  </nav>\n"
+)
 
 _ABOUT_BLURB = (
     "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
@@ -267,13 +318,7 @@ def _site_footer(*, site_mode: bool) -> str:
       <p>{_ABOUT_BLURB}</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     {LOSUNGEN_ATTRIBUTION_HTML}
   </footer>
-"""
+{TABBAR_HTML}"""

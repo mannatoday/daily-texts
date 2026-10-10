@@ -6,11 +6,20 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>2026 年 9 月 3 日（星期四） · 摩拉維亞每日經文</title>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=3" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -57,15 +66,16 @@
       <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
   </footer>
+  <p id="install-hint" class="install-hint" hidden></p>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="archive.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">歷日檔案</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+  </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-09-03","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":null,"ot":{"reference":"Psalm 141:8","reference_zh":"詩篇 141:8","translations":{"CUV":"主─耶和華啊，我的眼目仰望你；我投靠你，求你不要將我撇得孤苦！","RCUV":"主－耶和華啊，我的眼目仰望你； 我投靠你，求你不要使我的性命陷入危險！","CNVT":"主耶和華啊！我的眼睛仰望你；我投靠你，求你不要使我喪命。","CSBT":"主耶和華啊， 我的眼睛只仰望你！ 我投靠了你， 求你不要讓我暴露在危險中【3】。"}},"nt":{"reference":"1 Corinthians 15:55,57","reference_zh":"哥林多前書 15:55–57","translations":{"CUV":"死啊！你得勝的權勢在哪裡？死啊！你的毒鉤在哪裡？死的毒鉤就是罪，罪的權勢就是律法。感謝 神，使我們藉著我們的主耶穌基督得勝。","RCUV":"「死亡啊！你得勝的權勢在哪裏？ 死亡啊！你的毒刺在哪裏？」死亡的毒刺就是罪，罪的權勢就是律法。感謝上帝，他使我們藉着我們的主耶穌基督得勝。","CNVT":"死亡啊！你的勝利在哪裡？死亡啊！你的毒刺在哪裡？」死的毒刺就是罪，罪的權勢就是律法。感謝 神，他藉著我們的主耶穌基督，把勝利賜給我們。","CSBT":"「死亡啊！你的勝利【21】在哪裡？死亡啊！你的毒刺在哪裡？【22】」【23】死亡的毒刺就是罪，而罪的權勢就是律法。但感謝神，他藉著我們的主耶穌基督，賜給我們勝利！"}},"prayer":"全能的救主，戰勝死亡的主，您是我們的避難所和依靠。藉著基督，您戰勝了黑暗，賜給我們永恆的勝利。求您幫助我們的心堅定不移地信靠您永不改變的愛。我們永遠讚美您。阿們。","readings":[{"reference":"Psalm 105:8–15","reference_zh":"詩篇 105:8–15"},{"reference":"Judges 16,17","reference_zh":"Judges 16,17"},{"reference":"Luke 22:14–23","reference_zh":"路加福音 22:14–23"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":260,"result_chars":81,"kept_english":false}}</script>
 </body>

@@ -6,11 +6,20 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>2026 年 8 月 21 日（星期五） · 摩拉維亞每日經文</title>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=3" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -57,15 +66,16 @@
       <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
   </footer>
+  <p id="install-hint" class="install-hint" hidden></p>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="archive.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">歷日檔案</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+  </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-08-21","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":null,"ot":{"reference":"Isaiah 51:11","reference_zh":"以賽亞書 51:11","translations":{"CUV":"耶和華救贖的民必歸回，歌唱來到錫安；永樂必歸到他們的頭上。他們必得著歡喜快樂；憂愁歎息盡都逃避。","RCUV":"耶和華救贖的民必歸回， 歌唱來到 錫安 ； 永恆的喜樂必歸到他們頭上。 他們必得着歡喜快樂， 憂傷嘆息盡都逃避。","CNVT":"耶和華所贖的人必歸回；他們必歡呼著進入錫安；永遠的快樂要臨到他們的頭上。他們必得著歡喜快樂，憂愁歎息都必逃避。","CSBT":"蒙耶和華救贖的人必回歸， 歡呼著進入 錫安 ； 永遠的喜樂必臨到他們的頭上， 歡喜快樂要追隨他們， 悲哀嘆息卻要逃遁。"}},"nt":{"reference":"1 Peter 1:8-9","reference_zh":"彼得前書 1:8–9","translations":{"CUV":"你們雖然沒有見過他，卻是愛他；如今雖不得看見，卻因信他就有說不出來、滿有榮光的大喜樂；並且得著你們信心的果效，就是靈魂的救恩。","RCUV":"雖然你們沒有見過他，卻是愛他；如今雖看不見，你們卻因信他而有說不出來、滿有榮光的喜樂，因為你們( [ 1.9] 有古卷是「我們」。)得到信心的效果，就是靈魂的得救。","CNVT":"你們雖然沒有見過他，卻愛他；現在雖然不能看見他，卻信他。因此，你們就有無法形容、滿有榮耀的大喜樂，得到你們信心的效果，就是靈魂得救。","CSBT":"你們雖然沒有見過他，卻愛他；雖然如今看不到他，卻信他，並且懷著無法描述、充滿榮耀的喜樂而歡欣跳躍，因為你們正在領受你們信仰的結果，就是靈魂的救恩。"}},"prayer":"主啊，感謝祢賜給我們生命中的喜樂和歡笑！求您加增我們彼此分享的喜樂，並開啟我們的心扉，讓我們分享因領受和分享您的愛而來的喜樂。阿門。","readings":[{"reference":"Psalm 102:12–22","reference_zh":"詩篇 102:12–22"},{"reference":"Judges 4","reference_zh":"士師記 4"},{"reference":"Luke 19:1–10","reference_zh":"路加福音 19:1–10"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":176,"result_chars":66,"kept_english":false}}</script>
 </body>

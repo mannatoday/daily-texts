@@ -6,11 +6,20 @@
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
   <title>2026 年 8 月 30 日（星期日）（Fourteenth Sunday after Pentecost） · 摩拉維亞每日經文</title>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=3" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日經文" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -61,15 +70,16 @@
       <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       <p class="more"><a href="about.html">了解更多</a></p>
     </section>
-    <nav class="foot-nav" aria-label="頁尾導覽">
-      <a href="today.html">今日</a>
-      <a href="index.html">首頁</a>
-      <a href="archive.html">歷日檔案</a>
-      <a href="about.html">關於</a>
-    </nav>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
   </footer>
+  <p id="install-hint" class="install-hint" hidden></p>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="archive.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">歷日檔案</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+  </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-08-30","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"}],"week_watchword":{"reference":"Matthew 16:24","reference_zh":"馬太福音 16:24","translations":{"CUV":"於是耶穌對門徒說：「若有人要跟從我，就當捨己，背起他的十字架來跟從我。","RCUV":"於是耶穌對門徒說：「若有人要跟從我，就當捨己，背起自己的十字架來跟從我。","CNVT":"於是耶穌對門徒說：「如果有人願意跟從我，就當捨己，背起他的十字架來跟從我。","CSBT":"於是，耶穌對他的門徒們說： 「如果有人想要來跟從我，他就當捨棄自己，背起自己的十字架，然後跟從我。"}},"ot":{"reference":"1 Kings 19:7","reference_zh":"列王紀上 19:7","translations":{"CUV":"耶和華的使者第二次來拍他，說：「起來吃吧！因為你當走的路甚遠。」","RCUV":"耶和華的使者回來，第二次拍他，說：「起來吃吧！因為你要走的路很遠。」","CNVT":"耶和華的使者第二次回來拍他，說：「起來吃吧！因為你要走的路程太遠了。」","CSBT":"那位耶和華的使者回來第二次碰了他一下，說：「起來，吃吧，因為你的路程還很長。」"}},"nt":{"reference":"Acts 27:34","reference_zh":"使徒行傳 27:34","translations":{"CUV":"所以我勸你們吃飯，這是關乎你們救命的事；因為你們各人連一根頭髮也不至於損壞。」","RCUV":"所以我勸你們吃點東西，這是關乎你們獲救的，因為你們各人連一根頭髮也不至於掉落。」","CNVT":"所以，我勸你們吃點飯，這可以維持你們的性命！因為你們沒有人會失掉一根頭髮。」","CSBT":"所以我勸你們用飯，因為這是關於你們得救的事。要知道，你們中間，沒有一個人會失去【6】一根頭髮。」"}},"prayer":"神聖的廚師，您以您的聖言和創造滋養我們的靈魂、思想和身體。有時我們會忘記環顧四周，注意到您為我們預備的美好。願我們全然投入這場盛宴，與您的子民一同分享。阿門。","readings":[{"reference":"Psalm 26:1-8","reference_zh":"詩篇 26:1–8"},{"reference":"Jeremiah 15:15-21","reference_zh":"耶利米書 15:15–21"},{"reference":"Romans 12:9-21","reference_zh":"羅馬書 12:9–21"},{"reference":"Matthew 16:21-28","reference_zh":"馬太福音 16:21–28"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":235,"result_chars":79,"kept_english":false}}</script>
 </body>

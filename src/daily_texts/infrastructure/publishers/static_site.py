@@ -13,6 +13,7 @@ from daily_texts.infrastructure.formatters.html import (
     INSTALL_SCRIPT_TAG,
     LOSUNGEN_ATTRIBUTION_HTML,
     PWA_HEAD_TAGS,
+    TABBAR_HTML,
     HtmlFormatter,
     load_devotional_css,
 )
@@ -124,11 +125,6 @@ class StaticSitePublisher:
                     body='    <p class="empty">尚無每日經文。</p>\n'
                     '    <p class="archive-more"><a href="index.html">回首頁</a></p>\n',
                     extra_class="site-index",
-                    foot_links=(
-                        ("index.html", "首頁"),
-                        ("archive.html", "歷日檔案"),
-                        ("about.html", "關於"),
-                    ),
                 ),
                 encoding="utf-8",
             )
@@ -189,11 +185,6 @@ class StaticSitePublisher:
             title="摩拉維亞每日經文",
             body=body,
             extra_class="site-index",
-            foot_links=(
-                ("today.html", "今日"),
-                ("archive.html", "歷日檔案"),
-                ("about.html", "關於"),
-            ),
         )
 
     def _build_archive(self, days: list[date] | None = None) -> str:
@@ -212,11 +203,6 @@ class StaticSitePublisher:
             body=body,
             extra_class="site-index archive-page",
             top_nav=True,
-            foot_links=(
-                ("today.html", "今日"),
-                ("index.html", "首頁"),
-                ("about.html", "關於"),
-            ),
         )
 
 
@@ -235,7 +221,6 @@ def _shell_page(
     title: str,
     body: str,
     extra_class: str,
-    foot_links: tuple[tuple[str, str], ...],
     top_nav: bool = False,
 ) -> str:
     nav = ""
@@ -252,9 +237,6 @@ def _shell_page(
     <p class="subtitle">Moravian Daily Texts • 中文版</p>
     <p class="lede">以神的話開始每一天</p>
 """
-    foot = "\n".join(
-        f'        <a href="{href}">{label}</a>' for href, label in foot_links
-    )
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -275,13 +257,10 @@ def _shell_page(
         <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
         <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       </section>
-      <nav class="foot-nav" aria-label="頁尾導覽">
-{foot}
-      </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
-  </div>
+{TABBAR_HTML}  </div>
 </body>
 </html>
 """
@@ -484,16 +463,18 @@ _MANIFEST_JSON = """\
   "background_color": "#f7f6f2",
   "theme_color": "#f7f6f2",
   "icons": [
-    { "src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icon.png?v=3", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
 """
 
 # "Add to Home Screen" sits in the footer nav, same weight as the other links.
-# Chromium uses the native install prompt when the browser offers one.
-# Otherwise a short hint appears under the nav. Hidden when already installed.
+# The 加到主畫面 tab lives in the shared bottom tab bar but stays hidden until
+# this script confirms the page is not already running as an installed app.
+# Chromium uses the native install prompt when the browser offers one; other
+# browsers get a short platform-specific hint above the bar.
 _INSTALL_JS = """\
 (function () {
   "use strict";
@@ -512,9 +493,10 @@ _INSTALL_JS = """\
   function start() {
     if (isStandalone()) return;
 
-    var nav = document.querySelector(".foot-nav");
-    if (!nav) return;
+    var triggers = document.querySelectorAll(".install-trigger");
+    if (!triggers.length) return;
 
+    var hint = document.getElementById("install-hint");
     var ua = window.navigator.userAgent || "";
     var isIOS =
       /iphone|ipad|ipod/i.test(ua) ||
@@ -522,16 +504,9 @@ _INSTALL_JS = """\
     var isAndroid = /android/i.test(ua);
     var deferredPrompt = null;
 
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "install-link";
-    btn.textContent = "加到主畫面";
-    nav.appendChild(btn);
-
-    var hint = document.createElement("p");
-    hint.className = "install-hint";
-    hint.hidden = true;
-    nav.insertAdjacentElement("afterend", hint);
+    for (var i = 0; i < triggers.length; i++) {
+      triggers[i].hidden = false;
+    }
 
     function hintText() {
       if (isIOS) {
@@ -543,7 +518,7 @@ _INSTALL_JS = """\
       return "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
     }
 
-    btn.addEventListener("click", function () {
+    function onClick() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then(function () {
@@ -551,9 +526,14 @@ _INSTALL_JS = """\
         });
         return;
       }
+      if (!hint) return;
       hint.hidden = !hint.hidden;
       if (!hint.hidden) hint.textContent = hintText();
-    });
+    }
+
+    for (var j = 0; j < triggers.length; j++) {
+      triggers[j].addEventListener("click", onClick);
+    }
 
     window.addEventListener("beforeinstallprompt", function (e) {
       e.preventDefault();
@@ -562,8 +542,10 @@ _INSTALL_JS = """\
 
     window.addEventListener("appinstalled", function () {
       deferredPrompt = null;
-      btn.remove();
-      hint.remove();
+      for (var k = 0; k < triggers.length; k++) {
+        triggers[k].hidden = true;
+      }
+      if (hint) hint.hidden = true;
     });
   }
 
@@ -622,15 +604,10 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">若需正式出版、轉載或商業用途，請聯繫原文出版單位，並遵守各聖經譯本之版權規定。</p>
     </main>
     <footer class="site-foot">
-      <nav class="foot-nav" aria-label="頁尾導覽">
-        <a href="today.html">今日</a>
-        <a href="index.html">首頁</a>
-        <a href="archive.html">歷日檔案</a>
-      </nav>
       <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
-  </div>
+{TABBAR_HTML}  </div>
 </body>
 </html>
 """

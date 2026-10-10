@@ -16,6 +16,7 @@
   --measure: 38rem;
   --space: clamp(1.15rem, 4.5vw, 2.25rem);
   --tap: 2.75rem;
+  --tabbar-h: 4rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -486,35 +487,114 @@ h2 + p.reading {
   margin-top: 0.35rem;
 }
 
-/* Add to Home Screen — a footer link, same weight as the other nav items */
-.foot-nav .install-link {
-  appearance: none;
-  -webkit-appearance: none;
-  margin: 0;
-  padding: 0;
+/* Bottom tab bar — fixed with icons on phones, inline text row on desktop */
+.tabbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  background: var(--surface);
+  border-top: 1px solid var(--rule);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+  min-height: var(--tabbar-h);
+  padding: 0.3rem 0.2rem;
   border: 0;
   background: none;
-  font: inherit;
-  letter-spacing: inherit;
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.25rem;
-  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  color: var(--text-soft);
+  text-decoration: none;
   cursor: pointer;
 }
 
-.foot-nav .install-link:hover {
+.tab:hover,
+.tab:focus-visible {
   color: var(--link-hover);
 }
 
+.tab__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.tab__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tab__label {
+  line-height: 1;
+}
+
 .install-hint {
-  margin: 0.15rem auto 0;
-  max-width: 22rem;
-  text-align: center;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  line-height: 1.65;
-  color: var(--text-soft);
+  margin: 0;
+  color: var(--text-muted);
+}
+
+@media (max-width: 47.99rem) {
+  .site-shell {
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 1.5rem);
+  }
+
+  .install-hint {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0));
+    z-index: 19;
+    padding: 0.7rem 1.1rem;
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 48rem) {
+  .tabbar {
+    position: static;
+    justify-content: center;
+    gap: 1.25rem;
+    margin: 1.75rem 0 0.85rem;
+    padding: 0;
+    background: none;
+    border-top: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: 0.4rem;
+    min-height: 2.25rem;
+    padding: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  .tab__icon {
+    display: none;
+  }
+
+  .install-hint {
+    max-width: 24rem;
+    margin: 0.6rem auto 0;
+    text-align: center;
+    font-size: 0.8rem;
+  }
 }
 
 /* Footer */
@@ -554,28 +634,6 @@ footer.site-foot {
 
 .about-blurb .more a:hover {
   text-decoration: underline;
-}
-
-.foot-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.35rem 1.25rem;
-  margin: 1.75rem 0 0.85rem;
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
-}
-
-.foot-nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.25rem;
-  color: var(--text-muted);
-  text-decoration: none;
-}
-
-.foot-nav a:hover {
-  color: var(--link-hover);
 }
 
 .foot-credit {
@@ -627,9 +685,9 @@ footer.site-foot {
   .day-nav,
   .version-picker,
   .install-hint,
+  .tabbar,
   .reading__open,
   .about-blurb .more,
-  .foot-nav,
   footer.site-foot {
     display: none !important;
   }
