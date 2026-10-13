@@ -71,7 +71,8 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "[閱讀]" in html
     assert 'data-ref=' in html
     assert ">首頁</a>" in html
-    assert "archive.html" in html
+    assert 'class="tab__label">首頁</span>' in html
+    assert "archive.html" not in html
     js = (tmp_path / "version.js").read_text(encoding="utf-8")
     assert "localStorage" in js
     assert "data-verse" in js
@@ -88,7 +89,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "about.html" in html
     assert "跳至內容" in html
     assert "首頁" in html
-    assert "歷日檔案" in html
+    assert "歷日檔案" not in html
     assert "today-card" in index or "閱讀今日經文" in index
     assert 'href="today.html"' in index
     assert "最近三天" in index

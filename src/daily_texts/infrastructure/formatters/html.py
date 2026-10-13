@@ -52,12 +52,11 @@ _ICON_TODAY = (
     '<path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2'
     'M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>'
 )
-_ICON_ARCHIVE = (
+_ICON_HOME = (
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
-    'stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/>'
-    '<circle cx="4.6" cy="6" r="1.1" fill="currentColor" stroke="none"/>'
-    '<circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/>'
-    '<circle cx="4.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>'
+    'stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M4 11.2 12 4.5l8 6.7"/>'
+    '<path d="M7 10.2V19.5h10V10.2"/></svg>'
 )
 _ICON_ABOUT = (
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
@@ -83,7 +82,7 @@ TABBAR_HTML = (
     '  <p id="install-hint" class="install-hint" hidden></p>\n'
     '  <nav class="tabbar" aria-label="主要導覽">\n'
     + _tab("today.html", "今日", _ICON_TODAY)
-    + _tab("archive.html", "歷日檔案", _ICON_ARCHIVE)
+    + _tab("index.html", "首頁", _ICON_HOME)
     + _tab("about.html", "關於", _ICON_ABOUT)
     + '    <button type="button" class="tab install-trigger" hidden>'
     '<span class="tab__icon" aria-hidden="true">' + _ICON_ADD + "</span>"

@@ -95,7 +95,8 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "[閱讀 ·" not in out.content
     assert "[閱讀]" in out.content
     assert "today.html" in out.content
-    assert "archive.html" in out.content
+    assert 'class="tab__label">首頁</span>' in out.content
+    assert "archive.html" not in out.content
     assert "加到主畫面" in out.content
     assert "詩篇 91:1–8" in out.content
     assert 'data-ref="Psalm 91:1-8"' in out.content or 'data-ref="Psalm 91:1–8"' in out.content
