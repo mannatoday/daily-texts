@@ -103,6 +103,9 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "location.replace" not in today
     assert "<title>今日經文 · 摩拉維亞每日經文</title>" in today
     assert today != day  # title differs; body content matches
+    assert "about-blurb" not in today
+    assert "了解更多" not in today
+    assert "about-blurb" in day
     assert "我要熬煉他們。" in day
     assert "losungen.de" in today
 

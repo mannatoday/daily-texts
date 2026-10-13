@@ -267,12 +267,23 @@ def _shell_page(
 
 
 def _as_today_page(day_html: str) -> str:
-    """Keep day content but brand the stable today.html document title."""
-    return _TITLE_TAG.sub(
+    """Stable today.html: retitle, and drop the about blurb.
+
+    The homepage already introduces Moravian Daily Texts, and the tab bar
+    links to the about page, so the daily reading page stays on the texts.
+    """
+    html = _TITLE_TAG.sub(
         "<title>今日經文 · 摩拉維亞每日經文</title>",
         day_html,
         count=1,
     )
+    return _ABOUT_BLURB_SECTION.sub("", html, count=1)
+
+
+_ABOUT_BLURB_SECTION = re.compile(
+    r'[ \t]*<section class="about-blurb"[^>]*>.*?</section>\n',
+    re.DOTALL,
+)
 
 
 _TITLE_TAG = re.compile(r"<title>.*?</title>", re.DOTALL)
