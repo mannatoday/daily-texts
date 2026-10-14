@@ -148,6 +148,11 @@ def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:
     archive = (tmp_path / "archive.html").read_text(encoding="utf-8")
     assert "2026-08-01.html" in archive
     assert "2026-07-31.html" in archive
+    assert 'class="cal"' in archive
+    assert "2026 年 8 月" in archive
+    assert "2026 年 7 月" in archive
+    assert 'id="cal-2026-08" checked' in archive
+    assert "依月份" in archive
 
 
 def test_static_site_publisher_overwrites_same_day(tmp_path: Path) -> None:

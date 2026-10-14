@@ -401,6 +401,155 @@ h2 + p.reading {
   color: var(--text);
 }
 
+/* Archive month calendar. One radio per month; only the checked month is shown. */
+.cal {
+  margin: 0 auto 2.25rem;
+  max-width: 22rem;
+}
+
+.cal-pick {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.cal-sheet {
+  display: none;
+}
+
+.cal-month:has(.cal-pick:checked) .cal-sheet {
+  display: block;
+}
+
+.cal-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: var(--tap);
+  margin: 0 0 0.35rem;
+}
+
+.cal-nav__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.cal-nav__prev,
+.cal-nav__next {
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+label.cal-nav__prev,
+label.cal-nav__next {
+  cursor: pointer;
+  min-height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+}
+
+.cal-nav__prev {
+  justify-self: start;
+}
+
+.cal-nav__next {
+  justify-self: end;
+}
+
+label.cal-nav__prev:hover,
+label.cal-nav__next:hover {
+  color: var(--link-hover);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.15rem 0;
+}
+
+.cal-dow {
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--text-soft);
+  padding: 0.15rem 0 0.35rem;
+}
+
+.cal-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+a.cal-day {
+  color: var(--text);
+}
+
+a.cal-day:hover,
+a.cal-day:focus-visible {
+  background: var(--surface);
+  color: var(--link-hover);
+}
+
+.cal-day--today {
+  box-shadow: inset 0 0 0 1.5px var(--link);
+  font-weight: 500;
+}
+
+.cal-day--pad {
+  visibility: hidden;
+}
+
+.archive-months-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-soft);
+}
+
+.archive-month {
+  border-top: 1px solid var(--rule);
+}
+
+.archive-month:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.archive-month summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  cursor: pointer;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.archive-month summary:hover {
+  color: var(--link-hover);
+}
+
+.archive-month .archive-list {
+  margin: 0 0 0.5rem;
+}
+
 .site-index .archive-list {
   list-style: none;
   margin: 0;

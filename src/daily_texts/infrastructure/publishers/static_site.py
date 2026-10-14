@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import calendar
 import logging
 import re
 from datetime import date
@@ -192,11 +193,7 @@ class StaticSitePublisher:
         if not days:
             body = '    <p class="empty">尚無每日經文。</p>\n'
         else:
-            items = "\n".join(_day_list_item(d) for d in days)
-            body = (
-                '    <h1 class="archive-page-title">歷日檔案</h1>\n'
-                f'    <ul class="archive-list">\n{items}\n    </ul>\n'
-            )
+            body = _archive_markup(days)
 
         return _shell_page(
             title="歷日檔案 · 摩拉維亞每日經文",
@@ -213,6 +210,147 @@ def _day_list_item(day: date) -> str:
         f"<span>{escape(format_date_zh(day))}</span>"
         f'<span class="iso">{day.isoformat()}</span>'
         "</a></li>"
+    )
+
+
+def _archive_markup(days: list[date], *, today: date | None = None) -> str:
+    """Month calendar plus a collapsed list, newest month first in the list."""
+    published = set(days)
+    today = date.today() if today is None else today
+    months = _months_between(min(published), max(published))
+    focus = (today.year, today.month)
+    if focus not in months:
+        focus = months[-1]
+
+    panels = "\n".join(
+        _calendar_month(
+            year,
+            month,
+            published,
+            today=today,
+            checked=(year, month) == focus,
+            prev_month=months[i - 1] if i > 0 else None,
+            next_month=months[i + 1] if i + 1 < len(months) else None,
+        )
+        for i, (year, month) in enumerate(months)
+    )
+    lists = "\n".join(
+        _month_list(year, month, days, open_month=(year, month) == focus)
+        for year, month in reversed(months)
+    )
+    return (
+        '    <h1 class="archive-page-title">歷日檔案</h1>\n'
+        f'    <div class="cal">\n{panels}\n    </div>\n'
+        '    <h2 class="archive-months-title">依月份</h2>\n'
+        f'    <div class="archive-months">\n{lists}\n    </div>\n'
+    )
+
+
+def _months_between(start: date, end: date) -> list[tuple[int, int]]:
+    months: list[tuple[int, int]] = []
+    year, month = start.year, start.month
+    while (year, month) <= (end.year, end.month):
+        months.append((year, month))
+        month += 1
+        if month == 13:
+            month = 1
+            year += 1
+    return months
+
+
+def _month_id(year: int, month: int) -> str:
+    return f"cal-{year}-{month:02d}"
+
+
+def _month_label(year: int, month: int, *, with_year: bool) -> str:
+    if with_year:
+        return f"{year} 年 {month} 月"
+    return f"{month} 月"
+
+
+def _calendar_month(
+    year: int,
+    month: int,
+    published: set[date],
+    *,
+    today: date,
+    checked: bool,
+    prev_month: tuple[int, int] | None,
+    next_month: tuple[int, int] | None,
+) -> str:
+    checked_attr = " checked" if checked else ""
+    prev = _month_edge(prev_month, year, side="prev")
+    nxt = _month_edge(next_month, year, side="next")
+    title = f"{year} 年 {month} 月"
+    heads = "".join(f'<span class="cal-dow">{label}</span>' for label in ("日", "一", "二", "三", "四", "五", "六"))
+    cells = _calendar_cells(year, month, published, today)
+    return (
+        '      <div class="cal-month">\n'
+        f'        <input class="cal-pick" type="radio" name="cal-month" id="{_month_id(year, month)}"{checked_attr}>\n'
+        '        <div class="cal-sheet">\n'
+        '          <div class="cal-nav">\n'
+        f"            {prev}\n"
+        f'            <h2 class="cal-nav__title">{title}</h2>\n'
+        f"            {nxt}\n"
+        "          </div>\n"
+        f'          <div class="cal-grid" aria-label="{title}">\n'
+        f"            {heads}\n"
+        f"{cells}\n"
+        "          </div>\n"
+        "        </div>\n"
+        "      </div>"
+    )
+
+
+def _month_edge(target: tuple[int, int] | None, current_year: int, *, side: str) -> str:
+    css = "cal-nav__prev" if side == "prev" else "cal-nav__next"
+    if target is None:
+        return f'<span class="{css}"></span>'
+    year, month = target
+    mark = "‹ " if side == "prev" else " ›"
+    text = _month_label(year, month, with_year=year != current_year)
+    if side == "next":
+        text = f"{text}{mark}"
+    else:
+        text = f"{mark}{text}"
+    return f'<label class="{css}" for="{_month_id(year, month)}">{text}</label>'
+
+
+def _calendar_cells(year: int, month: int, published: set[date], today: date) -> str:
+    weeks = calendar.Calendar(firstweekday=calendar.SUNDAY).monthdayscalendar(year, month)
+    lines: list[str] = []
+    for week in weeks:
+        for day_num in week:
+            if day_num == 0:
+                lines.append('            <span class="cal-day cal-day--pad"></span>')
+                continue
+            day = date(year, month, day_num)
+            label = escape(format_date_zh(day))
+            if day not in published:
+                lines.append(f'            <span class="cal-day cal-day--empty">{day_num}</span>')
+                continue
+            classes = "cal-day"
+            current = ""
+            if day == today:
+                classes += " cal-day--today"
+                current = ' aria-current="date"'
+            lines.append(
+                f'            <a class="{classes}" href="{day.isoformat()}.html"'
+                f'{current} aria-label="{label}">{day_num}</a>'
+            )
+    return "\n".join(lines)
+
+
+def _month_list(year: int, month: int, days: list[date], *, open_month: bool) -> str:
+    in_month = [day for day in days if day.year == year and day.month == month]
+    items = "\n".join(_day_list_item(day) for day in in_month)
+    opened = " open" if open_month else ""
+    title = f"{year} 年 {month} 月"
+    return (
+        f'      <details class="archive-month"{opened}>\n'
+        f"        <summary>{title}</summary>\n"
+        f'        <ul class="archive-list">\n{items}\n        </ul>\n'
+        "      </details>"
     )
 
 
