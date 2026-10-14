@@ -11,6 +11,7 @@ from daily_texts.application.dto import FormattedOutput, PublishResult
 from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.infrastructure.formatters._common import format_date_zh
 from daily_texts.infrastructure.formatters.html import (
+    ICON_VERSION,
     INSTALL_SCRIPT_TAG,
     LOSUNGEN_ATTRIBUTION_HTML,
     PWA_HEAD_TAGS,
@@ -599,8 +600,8 @@ _VERSION_JS = """\
 # Web app manifest. Relative URLs resolve against the manifest's own location,
 # so start_url/scope stay correct under the GitHub Pages subpath (…/daily-texts/).
 # start_url points at today.html so the installed shortcut always opens the latest day.
-_MANIFEST_JSON = """\
-{
+_MANIFEST_JSON = f"""\
+{{
   "name": "摩拉維亞每日經文",
   "short_name": "每日經文",
   "lang": "zh-Hant",
@@ -612,11 +613,11 @@ _MANIFEST_JSON = """\
   "background_color": "#f7f6f2",
   "theme_color": "#f7f6f2",
   "icons": [
-    { "src": "icon.png?v=3", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {{ "src": "icon.png?v={ICON_VERSION}", "sizes": "192x192", "type": "image/png", "purpose": "any" }},
+    {{ "src": "icon.png?v={ICON_VERSION}", "sizes": "512x512", "type": "image/png", "purpose": "any" }},
+    {{ "src": "icon.png?v={ICON_VERSION}", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }}
   ]
-}
+}}
 """
 
 # "Add to Home Screen" sits in the footer nav, same weight as the other links.

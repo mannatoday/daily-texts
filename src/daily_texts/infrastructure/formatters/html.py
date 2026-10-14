@@ -26,7 +26,7 @@ _FONT_LINKS = """\
 """
 
 # Bump when icon.png changes so browsers refetch the favicon / app icon.
-ICON_VERSION = "3"
+ICON_VERSION = "4"
 
 # "Add to Home Screen" (PWA) support. Paths are relative so they work under the
 # GitHub Pages subpath (…/daily-texts/). Shared by every site page.
