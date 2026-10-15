@@ -90,11 +90,6 @@ TABBAR_HTML = (
     "  </nav>\n"
 )
 
-_ABOUT_BLURB = (
-    "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
-    "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
-)
-
 # Required by Losungen Nutzungsbedingungen (Herrnhuter Brüdergemeine, Nov 2023).
 LOSUNGEN_ATTRIBUTION_HTML = (
     '<p class="foot-attribution" lang="de">'
@@ -244,7 +239,6 @@ def _version_picker() -> str:
 {options}
     </select>
   </div>
-  <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
 """
 
 
@@ -313,12 +307,8 @@ def _site_footer(*, site_mode: bool) -> str:
             "  </footer>\n"
         )
     return f"""  <footer class="site-foot">
-    <section class="about-blurb" aria-labelledby="about-blurb-title">
-      <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
-      <p>{_ABOUT_BLURB}</p>
-      <p class="more"><a href="about.html">了解更多</a></p>
-    </section>
     <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
     {LOSUNGEN_ATTRIBUTION_HTML}
+    <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
 {TABBAR_HTML}"""

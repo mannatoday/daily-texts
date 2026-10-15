@@ -85,7 +85,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "非官方出版物" in about
     assert "losungen.de" in about
     assert "herrnhuter.de" in about
-    assert "了解更多" in html
+    assert "了解更多" not in html
     assert "about.html" in html
     assert "跳至內容" in html
     assert "首頁" in html
@@ -106,7 +106,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert today != day  # title differs; body content matches
     assert "about-blurb" not in today
     assert "了解更多" not in today
-    assert "about-blurb" in day
+    assert "about-blurb" not in day
     assert "我要熬煉他們。" in day
     assert "losungen.de" in today
 
