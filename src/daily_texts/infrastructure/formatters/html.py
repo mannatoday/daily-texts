@@ -244,6 +244,7 @@ def _version_picker() -> str:
 {options}
     </select>
   </div>
+  <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
 """
 
 

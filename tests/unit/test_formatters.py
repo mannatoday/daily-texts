@@ -101,6 +101,8 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "詩篇 91:1–8" in out.content
     assert 'data-ref="Psalm 91:1-8"' in out.content or 'data-ref="Psalm 91:1–8"' in out.content
     assert "version=RCU17TS" in out.content
+    assert "環球聖經譯本" in out.content
+    assert "經文引自《環球聖經譯本》，版權屬於環球聖經公會。" in out.content
 
 
 def test_plain_text_formatter() -> None:

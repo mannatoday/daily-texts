@@ -9,6 +9,7 @@ SITE_VERSIONS: list[tuple[str, str]] = [
     ("RCUV", "和合本修訂版"),
     ("CNVT", "新譯本"),
     ("CSBT", "中文標準譯本"),
+    ("WCB", "環球聖經譯本"),
 ]
 
 SITE_VERSION_LABELS: dict[str, str] = dict(SITE_VERSIONS)
@@ -19,6 +20,7 @@ FHL_VERSION_CODES: dict[str, str | None] = {
     "RCUV": "rcuv",
     "CNVT": "ncv",
     "CSBT": "csb",
+    "WCB": "wcb",
 }
 
 # Site code → Bible Gateway version query parameter (for optional external links).

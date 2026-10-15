@@ -52,6 +52,7 @@ async def test_use_case_writes_outputs(tmp_path: Path) -> None:
     assert result.localized.ot.translations["CUV"] == "ZH:unv:Jeremiah 9:7"
     assert result.localized.ot.translations["CNVT"] == "ZH:ncv:Jeremiah 9:7"
     assert result.localized.ot.translations["CSBT"] == "ZH:csb:Jeremiah 9:7"
+    assert result.localized.ot.translations["WCB"] == "ZH:wcb:Jeremiah 9:7"
     assert "CCBT" not in result.localized.ot.translations
     assert result.localized.prayer_zh == "Hear our prayer. Amen."
     assert result.localized.metadata["translation"]["provider"] == "fallback"

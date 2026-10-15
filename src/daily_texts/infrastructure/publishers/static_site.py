@@ -485,6 +485,7 @@ _VERSION_JS = """\
     CNVT: "CNVT",
     CSBT: "CSBT"
   };
+  var NOTICE_VERSION = "WCB";
 
   var select = document.getElementById("bible-version");
   if (!select) return;
@@ -531,7 +532,9 @@ _VERSION_JS = """\
   }
 
   function gatewayCode(siteCode) {
-    return GATEWAY[siteCode] || GATEWAY.RCUV || siteCode;
+    return Object.prototype.hasOwnProperty.call(GATEWAY, siteCode)
+      ? GATEWAY[siteCode]
+      : null;
   }
 
   function textFor(block, siteCode) {
@@ -555,16 +558,28 @@ _VERSION_JS = """\
   }
 
   function applyReadingLinks(siteCode) {
+    var code = gatewayCode(siteCode);
     var links = document.querySelectorAll("a.reading__open");
     Array.prototype.forEach.call(links, function (link) {
       var ref = link.getAttribute("data-ref");
       if (!ref) return;
+      if (!code) {
+        link.hidden = true;
+        return;
+      }
+      link.hidden = false;
       link.href =
         "https://www.biblegateway.com/passage/?search=" +
         encodeURIComponent(ref) +
         "&version=" +
-        encodeURIComponent(gatewayCode(siteCode));
+        encodeURIComponent(code);
     });
+  }
+
+  function applyNotice(siteCode) {
+    var note = document.getElementById("version-notice");
+    if (!note) return;
+    note.hidden = siteCode !== NOTICE_VERSION;
   }
 
   function syncUrl(siteCode) {
@@ -581,6 +596,7 @@ _VERSION_JS = """\
     select.value = siteCode;
     applyVerses(siteCode);
     applyReadingLinks(siteCode);
+    applyNotice(siteCode);
     try {
       window.localStorage.setItem(KEY, siteCode);
     } catch (err) {
