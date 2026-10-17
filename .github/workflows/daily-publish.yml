@@ -3,10 +3,10 @@
 # GitHub Pages deploy stays in pages.yml (triggered by site/** pushes).
 # Late-day alarm if neither run published: daily-watchdog.yml
 #
-# Schedule (UTC → America/Los_Angeles):
-#   0 8 * * *   → 01:00 PDT / 00:00 PST (primary; pick up the new calendar day)
-#   0 11 * * *  → 04:00 PDT / 03:00 PST (retry if the first run did not publish)
-#   0 14 * * *  → 07:00 PDT / 06:00 PST (retry if the first two missed)
+# Schedule (UTC → Asia/Taipei). The page follows the Taiwan calendar day.
+#   0 16 * * *  → 00:00 Taiwan (primary; pick up the new calendar day)
+#   0 19 * * *  → 03:00 Taiwan (retry if the first run did not publish)
+#   0 23 * * *  → 07:00 Taiwan (retry if the first two missed)
 # If site/{today}.html already exists, later crons exit early (saves Actions minutes).
 # Edit the cron lines below to change the schedule (GitHub cron is always UTC).
 # Note: GitHub scheduled workflows are often delayed (sometimes hours past the cron time).
@@ -16,9 +16,9 @@ name: Daily Publish
 on:
   schedule:
     # Configurable: change these cron expressions (UTC).
-    - cron: "0 8 * * *"
-    - cron: "0 11 * * *"
-    - cron: "0 14 * * *"
+    - cron: "0 16 * * *"
+    - cron: "0 19 * * *"
+    - cron: "0 23 * * *"
   workflow_dispatch:
     inputs:
       force:
@@ -26,7 +26,7 @@ on:
         type: boolean
         default: false
       expect_date:
-        description: "Expected page date YYYY-MM-DD (empty = today in America/Los_Angeles)"
+        description: "Expected page date YYYY-MM-DD (empty = today in Asia/Taipei)"
         type: string
         required: false
         default: ""
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      TZ: America/Los_Angeles
+      TZ: Asia/Taipei
       PROVIDER: dataset
       FORMATS: markdown,html,text,json
       PUBLISHERS: static_site
@@ -93,7 +93,7 @@ jobs:
           if [ -n "${{ inputs.expect_date }}" ]; then
             EXPECT="${{ inputs.expect_date }}"
           else
-            EXPECT="$(TZ=America/Los_Angeles date +%Y-%m-%d)"
+            EXPECT="$(TZ=Asia/Taipei date +%Y-%m-%d)"
           fi
           echo "expect_date=${EXPECT}" >> "$GITHUB_OUTPUT"
           echo "Expecting page date: ${EXPECT}"

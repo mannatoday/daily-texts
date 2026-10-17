@@ -1,5 +1,5 @@
 # Fail once per day if Daily Publish never produced today's site page.
-# Runs after the publish windows (08:00, 11:00, and 14:00 UTC), with delay buffer.
+# Runs after the publish windows (16:00, 19:00, and 23:00 UTC), with delay buffer.
 #
 # Optional email on failure — set all of:
 #   MAIL_USERNAME, MAIL_PASSWORD, MAIL_TO
@@ -9,12 +9,12 @@ name: Daily Watchdog
 
 on:
   schedule:
-    # 20:00 UTC = 13:00 PDT / 12:00 PST (after 08:00 + 11:00 + 14:00 UTC, with GitHub delay buffer)
-    - cron: "0 20 * * *"
+    # 05:00 UTC = 13:00 Taiwan (after 16:00 + 19:00 + 23:00 UTC, with GitHub delay buffer)
+    - cron: "0 5 * * *"
   workflow_dispatch:
     inputs:
       expect_date:
-        description: "Date YYYY-MM-DD to verify (empty = today in America/Los_Angeles)"
+        description: "Date YYYY-MM-DD to verify (empty = today in Asia/Taipei)"
         type: string
         required: false
         default: ""
@@ -62,7 +62,7 @@ jobs:
           if [ -n "${{ inputs.expect_date }}" ]; then
             EXPECT="${{ inputs.expect_date }}"
           else
-            EXPECT="$(TZ=America/Los_Angeles date +%Y-%m-%d)"
+            EXPECT="$(TZ=Asia/Taipei date +%Y-%m-%d)"
           fi
           echo "expect_date=${EXPECT}" >> "$GITHUB_OUTPUT"
           echo "Checking publish for: ${EXPECT}"
@@ -127,7 +127,7 @@ jobs:
           body: |
             Daily Watchdog failed: today's site page is missing or incomplete.
 
-            Date (America/Los_Angeles): ${{ steps.dates.outputs.expect_date }}
+            Date (Asia/Taipei): ${{ steps.dates.outputs.expect_date }}
             Trigger: ${{ steps.trigger.outputs.label }}
             Repository: ${{ github.repository }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
