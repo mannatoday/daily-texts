@@ -1,4 +1,6 @@
 date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
+2026-09-29,Tue,weekday,,Daniel 2:20,Revelation 7:12,hh-praise-confess,2026
+2026-09-30,Wed,weekday,,2 Chronicles 15:2,John 4:25-26,hh-praise-light,2026
 2026-10-01,Thu,weekday,,Psalm 71:20,2 Peter 2:9,wc-zhao-prayer,2026
 2026-10-02,Fri,weekday,,1 Samuel 3:9,Matthew 7:24,wc-wangmingdao,2026
 2026-10-03,Sat,weekday,,Isaiah 29:13,Matthew 15:11,dc-silesius,2026
@@ -14,9 +16,9 @@ date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
 2026-10-13,Tue,weekday,,Joshua 24:18,Luke 5:27-28,hh-zinzendorf-lead,2026
 2026-10-14,Wed,weekday,,Psalm 97:11,Luke 14:13-14,tx-bcp-collect,2026
 2026-10-15,Thu,weekday,,Lamentations 3:25,Revelation 3:20,tx-standing,2026
-2026-10-16,Fri,weekday,,"Psalm 85:9,10",Ephesians 5:9,tx-fathersworld,2026
-2026-10-17,Sat,weekday,,Jeremiah 22:3,Galatians 6:2,hc-whatfriend,2026
-2026-10-18,Sun,sunday,20. Sonntag nach Trinitatis,Haggai 2:9,Mark 11:17,pl-lords,2026
+2026-10-16,Fri,weekday,,"Psalm 85:9,10",Ephesians 5:9,pl-light-righteous,2026
+2026-10-17,Sat,weekday,,Jeremiah 22:3,Galatians 6:2,hh-serve-city,2026
+2026-10-18,Sun,sunday,20. Sonntag nach Trinitatis,Haggai 2:9,Mark 11:17,hh-zion-gates,2026
 2026-10-19,Mon,weekday,,Malachi 2:7,2 Timothy 4:2,pl-bcp-grace,2026
 2026-10-20,Tue,weekday,,"Exodus 32:31,32",Acts 17:23,pl-puritan,2026
 2026-10-21,Wed,weekday,,Isaiah 58:11,Matthew 6:11,hc-dayday,2026
