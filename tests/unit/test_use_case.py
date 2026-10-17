@@ -123,3 +123,29 @@ async def test_use_case_falls_back_when_translation_fails(tmp_path: Path) -> Non
     assert result.localized.prayer_zh == "Hear our prayer. Amen."
     assert result.localized.metadata["translation"]["status"] == "failed_kept_english"
     assert "quota exceeded" in result.localized.metadata["translation"]["error"]
+
+
+@pytest.mark.asyncio
+async def test_use_case_keeps_chinese_prayer_without_translator(tmp_path: Path) -> None:
+    prayer = "全能的上帝，求祢眷顧貧窮困苦的人。"
+    raw = RawDailyText(
+        date=date(2026, 10, 14),
+        date_display="Wednesday, October 14, 2026",
+        ot=Watchword(reference="Psalm 97:11", text_en=""),
+        nt=Watchword(reference="Luke 14:13-14", text_en=""),
+        prayer_en=prayer,
+        source_url="dataset://days_2026_q4/2026-10-14",
+        metadata={"provider": "dataset", "prayer_lang": "zh"},
+    )
+    uc = FetchAndLocalizeDailyText(
+        provider=FakeProvider(raw),
+        bible=FakeBible(),
+        translator=FailingTranslator(),
+        formatters=[MarkdownFormatter()],
+        publishers=[NullPublisher()],
+        output_dir=tmp_path,
+    )
+    result = await uc.run(force=True)
+    assert result.localized.prayer_zh == prayer
+    assert result.localized.metadata["translation"]["status"] == "already_zh"
+    assert result.localized.metadata["translation"]["kept_english"] is False

@@ -1,11 +1,12 @@
 # Daily fetch → localize → update site/ → commit/push to master.
+# Source is the local dataset (PROVIDER=dataset), not the Moravian HTML page.
 # GitHub Pages deploy stays in pages.yml (triggered by site/** pushes).
 # Late-day alarm if neither run published: daily-watchdog.yml
 #
 # Schedule (UTC → America/Los_Angeles):
 #   0 8 * * *   → 01:00 PDT / 00:00 PST (primary; pick up the new calendar day)
-#   0 11 * * *  → 04:00 PDT / 03:00 PST (retry if Moravian was still yesterday)
-#   0 14 * * *  → 07:00 PDT / 06:00 PST (retry if first two missed / Moravian late)
+#   0 11 * * *  → 04:00 PDT / 03:00 PST (retry if the first run did not publish)
+#   0 14 * * *  → 07:00 PDT / 06:00 PST (retry if the first two missed)
 # If site/{today}.html already exists, later crons exit early (saves Actions minutes).
 # Edit the cron lines below to change the schedule (GitHub cron is always UTC).
 # Note: GitHub scheduled workflows are often delayed (sometimes hours past the cron time).
@@ -44,7 +45,7 @@ jobs:
     timeout-minutes: 30
     env:
       TZ: America/Los_Angeles
-      PROVIDER: moravian_html
+      PROVIDER: dataset
       FORMATS: markdown,html,text,json
       PUBLISHERS: static_site
       SITE_DIR: ./site
@@ -95,7 +96,7 @@ jobs:
             EXPECT="$(TZ=America/Los_Angeles date +%Y-%m-%d)"
           fi
           echo "expect_date=${EXPECT}" >> "$GITHUB_OUTPUT"
-          echo "Expecting Moravian date: ${EXPECT}"
+          echo "Expecting page date: ${EXPECT}"
           echo "Trigger: ${{ steps.trigger.outputs.label }}"
 
       - name: Skip if already published
@@ -175,6 +176,12 @@ jobs:
           if len(preview) > 120:
               preview = preview[:117] + "..."
           print(f"prayer_preview: {preview}")
+          if report.get("status") == "already_zh":
+              if prayer.startswith("（第三段待補原文"):
+                  print("WARNING: prayer excerpt is still a placeholder.")
+              else:
+                  print("OK: prayer was already Chinese.")
+              sys.exit(0)
           if report.get("kept_english") or report.get("status") in {
               "fallback_english",
               "failed_kept_english",

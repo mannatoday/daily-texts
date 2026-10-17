@@ -8,10 +8,13 @@ from pathlib import Path
 # Book name followed by chapter and an optional verse spec that may contain
 # ranges, cross-chapter ranges, and comma-separated segments,
 # e.g. "Psalm 145:8-9,14-21" or "Joshua 8:30-9:27".
+_VERSE = r"\d+[a-z]?"
 _REF_PATTERN = re.compile(
     r"^(?P<book>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
-    r"(?P<rest>\d+(?::\d+(?:-\d+(?::\d+)?)?(?:,\s*\d+(?:-\d+(?::\d+)?)?)*)?)"
-    r"$",
+    rf"(?P<rest>\d+(?:"
+    rf":{_VERSE}(?:-{_VERSE}(?::{_VERSE})?)?(?:,\s*{_VERSE}(?:-{_VERSE}(?::{_VERSE})?)?)*"
+    rf"|(?:,\s*\d+)+"
+    r")?)$",
 )
 # Cross-book lectionary span, e.g. "Joshua 24:14–Judges 1:16".
 _CROSS_BOOK_REF = re.compile(
@@ -61,4 +64,8 @@ def localize_reference(reference: str) -> str:
     pair = re.fullmatch(r"(\d+):(\d+),(\d+)", rest)
     if pair:
         rest = f"{pair.group(1)}:{pair.group(2)}-{pair.group(3)}"
+    # "26,27" with no verse colon is two chapters.
+    chapters = re.fullmatch(r"(\d+),(\d+)", rest)
+    if chapters:
+        rest = f"{chapters.group(1)}-{chapters.group(2)}"
     return f"{name} {rest.replace('-', '–')}"

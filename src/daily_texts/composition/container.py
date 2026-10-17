@@ -20,6 +20,7 @@ from daily_texts.infrastructure.formatters.json_formatter import JsonFormatter
 from daily_texts.infrastructure.formatters.markdown import MarkdownFormatter
 from daily_texts.infrastructure.formatters.plain_text import PlainTextFormatter
 from daily_texts.infrastructure.http import create_http_client
+from daily_texts.infrastructure.providers.dataset import DatasetProvider
 from daily_texts.infrastructure.providers.email import EmailInboxProvider
 from daily_texts.infrastructure.providers.moravian_html_sidebar import (
     MoravianHtmlSidebarProvider,
@@ -106,6 +107,8 @@ def _build_provider(settings: Settings, client: httpx.AsyncClient) -> DailyTextP
         return MoravianHtmlSidebarProvider(client, settings)
     if settings.provider == "email":
         return EmailInboxProvider()
+    if settings.provider == "dataset":
+        return DatasetProvider()
     raise ValueError(f"Unknown provider: {settings.provider}")
 
 

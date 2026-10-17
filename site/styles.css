@@ -269,6 +269,15 @@ p.prayer {
   color: var(--text);
 }
 
+p.prayer-source {
+  margin: 0.55rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  text-align: right;
+}
+
 p.reading,
 p.source {
   margin: 0.4rem 0 0;

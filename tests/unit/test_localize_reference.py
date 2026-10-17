@@ -32,6 +32,13 @@ def test_localize_reference_comma_range_segments() -> None:
     assert localize_reference("Isaiah 55:1-5") == "以賽亞書 55:1–5"
 
 
+def test_localize_reference_verse_letter_and_chapter_pair() -> None:
+    assert localize_reference("Philippians 3:4b-14") == "腓立比書 3:4b–14"
+    assert localize_reference("Psalm 95:1-7a") == "詩篇 95:1–7a"
+    assert localize_reference("Acts 6:8-7:2a, 51-60") == "使徒行傳 6:8–7:2a,51–60"
+    assert localize_reference("1 Samuel 26,27") == "撒母耳記上 26–27"
+
+
 def test_localize_reference_cross_book_span() -> None:
     assert (
         localize_reference("Joshua 24:14–Judges 1:16")

@@ -16,6 +16,7 @@ from daily_texts.infrastructure.formatters._common import (
     biblegateway_url,
     date_title_zh,
     lectionary_entries,
+    prayer_citation,
 )
 from daily_texts.infrastructure.formatters.day_payload import day_payload
 
@@ -176,6 +177,11 @@ class HtmlFormatter:
                 f"    {_ref_line(content.week_watchword)}\n"
             )
 
+        citation = prayer_citation(content)
+        citation_block = (
+            f'    <p class="prayer-source">— {escape(citation)}</p>\n' if citation else ""
+        )
+
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -199,7 +205,7 @@ class HtmlFormatter:
     {_ref_line(content.nt)}
     <h2>今日禱告</h2>
     <p class="prayer">{escape(content.prayer_zh)}</p>
-{lectionary_block}{source_block}    </article>
+{citation_block}{lectionary_block}{source_block}    </article>
 {bottom_nav}  </main>
 {footer}  </div>
 {data_block}</body>

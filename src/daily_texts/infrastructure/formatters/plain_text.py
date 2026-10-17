@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from daily_texts.application.dto import FormattedOutput
 from daily_texts.domain.models import LocalizedDailyText
-from daily_texts.infrastructure.formatters._common import date_title_zh, lectionary_lines
+from daily_texts.infrastructure.formatters._common import date_title_zh, lectionary_lines, prayer_citation
 
 
 class PlainTextFormatter:
@@ -37,6 +37,9 @@ class PlainTextFormatter:
             content.prayer_zh,
             "",
         ]
+        citation = prayer_citation(content)
+        if citation:
+            lines[-1:-1] = [f"— {citation}"]
         lectionary = lectionary_lines(content)
         if lectionary:
             lines.extend(["【經文選讀】", *lectionary, ""])

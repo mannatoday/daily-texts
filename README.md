@@ -161,7 +161,7 @@ git push origin master
 
 | 變數 | 說明 |
 |------|------|
-| `PROVIDER` | 目前支援 `moravian_html` |
+| `PROVIDER` | 每日發布用 `dataset`（`.github/workflows/daily-publish.yml`）。本機未設定時仍是 `moravian_html`。 |
 | `FORMATS` | 預設 `markdown,html,text,json` |
 | `PUBLISHERS` | `null`、`static_site`；其餘 `line`／`email`／`telegram`／`website` 為 stub |
 | `SITE_DIR` | 靜態站目錄，預設 `./site` |

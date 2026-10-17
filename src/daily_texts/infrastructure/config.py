@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 from pydantic import AliasChoices, BeforeValidator, Field
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-ProviderName = Literal["moravian_html", "email"]
+ProviderName = Literal["moravian_html", "email", "dataset"]
 TranslatorName = Literal[
     "openai",
     "anthropic",

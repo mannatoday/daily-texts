@@ -22,6 +22,10 @@ def date_title_zh(content: LocalizedDailyText) -> str:
     return title
 
 
+def prayer_citation(content: LocalizedDailyText) -> str:
+    return str(content.metadata.get("prayer_citation") or "").strip()
+
+
 def lectionary_lines(content: LocalizedDailyText) -> list[str]:
     return [zh for zh, _en in lectionary_entries(content)]
 

@@ -110,7 +110,17 @@ class FetchAndLocalizeDailyText:
         )
 
     async def _localize(self, raw: RawDailyText) -> LocalizedDailyText:
-        prayer_zh, translation_report = await self._translate_or_fallback(raw.prayer_en)
+        if raw.metadata.get("prayer_lang") == "zh":
+            prayer_zh = raw.prayer_en
+            translation_report = {
+                "provider": raw.metadata.get("provider") or "dataset",
+                "status": "already_zh",
+                "source_chars": len(raw.prayer_en),
+                "result_chars": len(prayer_zh),
+                "kept_english": False,
+            }
+        else:
+            prayer_zh, translation_report = await self._translate_or_fallback(raw.prayer_en)
         ot = await self._localize_watchword(raw.ot)
         nt = await self._localize_watchword(raw.nt)
         week = None
