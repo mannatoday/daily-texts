@@ -5,6 +5,7 @@
   "description": "摩拉維亞每日箴言 · Moravian Daily Texts 中文版",
   "start_url": "today.html",
   "scope": "./",
+  "id": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f7f6f2",

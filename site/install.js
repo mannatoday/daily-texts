@@ -1,6 +1,10 @@
 (function () {
   "use strict";
 
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+
   function isStandalone() {
     try {
       return (
@@ -35,7 +39,7 @@
         return "請用 Safari 開啟這個網站。點畫面最下方的「分享」，再選「加入主畫面」。";
       }
       if (isAndroid) {
-        return "點瀏覽器右上角選單，再選「加到主畫面」或「安裝應用程式」。";
+        return "請先刪掉主畫面上舊的捷徑。再到 Chrome 選單選「安裝應用程式」。裝好後圖示不會再有 Chrome 小標。";
       }
       return "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
     }

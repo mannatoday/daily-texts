@@ -61,6 +61,7 @@ class StaticSitePublisher:
         self._write_icons()
         self._write_manifest()
         self._write_install_js()
+        self._write_service_worker()
         self._write_about_page()
 
         if self._earliest_date is not None and content.date < self._earliest_date:
@@ -130,6 +131,9 @@ class StaticSitePublisher:
 
     def _write_install_js(self) -> None:
         (self._site_dir / "install.js").write_text(_INSTALL_JS, encoding="utf-8")
+
+    def _write_service_worker(self) -> None:
+        (self._site_dir / "sw.js").write_text(_SW_JS, encoding="utf-8")
 
     def _write_about_page(self) -> None:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
@@ -647,6 +651,7 @@ _MANIFEST_JSON = f"""\
   "description": "摩拉維亞每日箴言 · Moravian Daily Texts 中文版",
   "start_url": "today.html",
   "scope": "./",
+  "id": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f7f6f2",
@@ -664,9 +669,28 @@ _MANIFEST_JSON = f"""\
 # this script confirms the page is not already running as an installed app.
 # Chromium uses the native install prompt when the browser offers one; other
 # browsers get a short platform-specific hint above the bar.
+# A fetch handler is what lets Android Chrome install a real app (WebAPK).
+# Without it, "Add to Home Screen" is only a shortcut: Chrome badge on the
+# icon, and the app switcher stays inside Chrome. This worker does not cache.
+_SW_JS = """\
+self.addEventListener("install", function () {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", function (event) {
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener("fetch", function () {});
+"""
+
 _INSTALL_JS = """\
 (function () {
   "use strict";
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
 
   function isStandalone() {
     try {
@@ -702,7 +726,7 @@ _INSTALL_JS = """\
         return "請用 Safari 開啟這個網站。點畫面最下方的「分享」，再選「加入主畫面」。";
       }
       if (isAndroid) {
-        return "點瀏覽器右上角選單，再選「加到主畫面」或「安裝應用程式」。";
+        return "請先刪掉主畫面上舊的捷徑。再到 Chrome 選單選「安裝應用程式」。裝好後圖示不會再有 Chrome 小標。";
       }
       return "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
     }
