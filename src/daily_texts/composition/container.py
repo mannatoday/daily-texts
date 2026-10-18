@@ -172,6 +172,7 @@ def _build_publishers(settings: Settings) -> list[Publisher]:
                 StaticSitePublisher(
                     settings.site_dir,
                     include_source_link=settings.include_source_link,
+                    earliest_date=settings.site_earliest_date,
                 )
             )
         else:

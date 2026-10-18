@@ -42,10 +42,13 @@ class StaticSitePublisher:
         site_dir: Path | None = None,
         *,
         include_source_link: bool = False,
+        earliest_date: date | None = None,
     ) -> None:
         self._site_dir = Path(site_dir) if site_dir is not None else Path("./site")
         self._html = HtmlFormatter()
         self._include_source_link = include_source_link
+        # Days before this stay off the site (English-translated prayers).
+        self._earliest_date = earliest_date
 
     async def publish(
         self,
@@ -59,6 +62,23 @@ class StaticSitePublisher:
         self._write_manifest()
         self._write_install_js()
         self._write_about_page()
+
+        if self._earliest_date is not None and content.date < self._earliest_date:
+            day_path = self._site_dir / f"{content.date.isoformat()}.html"
+            if day_path.is_file():
+                day_path.unlink()
+            days = self._list_day_pages()
+            self._write_today_page(days[0] if days else None)
+            index_path = self._site_dir / "index.html"
+            index_path.write_text(self._build_index(days), encoding="utf-8")
+            archive_path = self._site_dir / "archive.html"
+            archive_path.write_text(self._build_archive(days), encoding="utf-8")
+            message = (
+                f"Skipped {content.date.isoformat()} (before "
+                f"{self._earliest_date.isoformat()}); updated {index_path}"
+            )
+            logger.info(message)
+            return PublishResult(channel=self.channel, success=True, message=message)
 
         days_before = self._list_day_pages()
         days = sorted(set(days_before) | {content.date}, reverse=True)
@@ -142,7 +162,10 @@ class StaticSitePublisher:
         for path in self._site_dir.iterdir():
             match = _DAY_PAGE.match(path.name)
             if match and path.is_file():
-                days.append(date.fromisoformat(match.group(1)))
+                day = date.fromisoformat(match.group(1))
+                if self._earliest_date is not None and day < self._earliest_date:
+                    continue
+                days.append(day)
         days.sort(reverse=True)
         return days
 
@@ -396,7 +419,7 @@ def _shell_page(
         <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
         <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       </section>
-      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+      <p class="foot-credit">摩拉維亞每日經文 · 中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
 {TABBAR_HTML}  </div>
@@ -779,7 +802,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">若需正式出版、轉載或商業用途，請另洽原文出版單位，並遵守各譯本與作品的版權規定。</p>
     </main>
     <footer class="site-foot">
-      <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+      <p class="foot-credit">摩拉維亞每日經文 · 中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
 {TABBAR_HTML}  </div>

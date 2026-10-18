@@ -313,7 +313,7 @@ def _site_footer(*, site_mode: bool) -> str:
             "  </footer>\n"
         )
     return f"""  <footer class="site-foot">
-    <p class="foot-credit">摩拉維亞每日經文 · 非官方中文整理</p>
+    <p class="foot-credit">摩拉維亞每日經文 · 中文整理</p>
     {LOSUNGEN_ATTRIBUTION_HTML}
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>

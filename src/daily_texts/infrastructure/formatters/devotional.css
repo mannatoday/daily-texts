@@ -607,35 +607,48 @@ a.cal-day:focus-visible {
   color: var(--text-muted);
 }
 
-/* About page */
+/* About page — same sans scale as daily headings and notes */
 .about-page h1 {
-  margin: 0 0 1.75rem;
-  font-size: clamp(1.35rem, 3.5vw, 1.65rem);
+  margin: 0 0 2.5rem;
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 3.2vw, 1.25rem);
   font-weight: 500;
-  letter-spacing: 0.04em;
-  line-height: 1.4;
-  color: var(--text);
+  letter-spacing: 0.06em;
+  line-height: 1.55;
+  color: var(--text-muted);
   text-align: center;
 }
 
 .about-page h2 {
-  margin: 2.4rem 0 0.85rem;
+  margin: 2.6rem 0 0.9rem;
+  padding-top: 1.85rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   color: var(--text-soft);
+}
+
+.about-page h1 + h2 {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.about-page p,
+.about-page li {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text);
 }
 
 .about-page p {
   margin: 0 0 1rem;
-  font-family: var(--font-serif);
-  font-size: clamp(1.02rem, 2.4vw, 1.12rem);
-  line-height: 1.85;
-  color: var(--text);
 }
 
 .about-page p.meta {
-  font-family: var(--font-sans);
   font-size: 0.92rem;
   line-height: 1.7;
   color: var(--text-muted);
@@ -644,9 +657,6 @@ a.cal-day:focus-visible {
 .about-page ul {
   margin: 0.35rem 0 1.1rem;
   padding-left: 1.2rem;
-  color: var(--text-muted);
-  font-size: 0.98rem;
-  line-height: 1.75;
 }
 
 .about-page li + li {

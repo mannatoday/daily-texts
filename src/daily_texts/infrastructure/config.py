@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -59,6 +60,8 @@ class Settings(BaseSettings):
     include_source_link: bool = True
 
     site_dir: Path = Path("./site")
+    # Prayers before this date were translated from the English edition.
+    site_earliest_date: date = date(2026, 9, 29)
 
     bible_version: str = "rcuv"
     fhl_api_base: str = "https://bible.fhl.net/json"
