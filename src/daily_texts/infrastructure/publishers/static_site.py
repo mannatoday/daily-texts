@@ -143,7 +143,7 @@ class StaticSitePublisher:
         if latest is None:
             today_path.write_text(
                 _shell_page(
-                    title="今日經文 · 摩拉維亞每日經文",
+                    title="今日經文 · 摩拉維亞每日箴言",
                     body='    <p class="empty">尚無每日經文。</p>\n'
                     '    <p class="archive-more"><a href="index.html">回首頁</a></p>\n',
                     extra_class="site-index",
@@ -207,7 +207,7 @@ class StaticSitePublisher:
             )
 
         return _shell_page(
-            title="摩拉維亞每日經文",
+            title="摩拉維亞每日箴言",
             body=body,
             extra_class="site-index",
         )
@@ -220,7 +220,7 @@ class StaticSitePublisher:
             body = _archive_markup(days)
 
         return _shell_page(
-            title="歷日檔案 · 摩拉維亞每日經文",
+            title="歷日檔案 · 摩拉維亞每日箴言",
             body=body,
             extra_class="site-index archive-page",
             top_nav=True,
@@ -395,7 +395,7 @@ def _shell_page(
 """
     brand = ""
     if not top_nav:
-        brand = """    <h1 class="brand">摩拉維亞每日經文</h1>
+        brand = """    <h1 class="brand">摩拉維亞每日箴言</h1>
     <p class="subtitle">Moravian Daily Texts • 中文版</p>
     <p class="lede">以神的話開始每一天</p>
 """
@@ -405,7 +405,7 @@ def _shell_page(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
+  <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
   <title>{escape(title)}</title>
 {PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 {INSTALL_SCRIPT_TAG}</head>
@@ -419,7 +419,7 @@ def _shell_page(
         <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
         <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
       </section>
-      <p class="foot-credit">摩拉維亞每日經文 · 中文整理</p>
+      <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
 {TABBAR_HTML}  </div>
@@ -435,7 +435,7 @@ def _as_today_page(day_html: str) -> str:
     links to the about page, so the daily reading page stays on the texts.
     """
     html = _TITLE_TAG.sub(
-        "<title>今日經文 · 摩拉維亞每日經文</title>",
+        "<title>今日經文 · 摩拉維亞每日箴言</title>",
         day_html,
         count=1,
     )
@@ -641,10 +641,10 @@ _VERSION_JS = """\
 # start_url points at today.html so the installed shortcut always opens the latest day.
 _MANIFEST_JSON = f"""\
 {{
-  "name": "摩拉維亞每日經文",
-  "short_name": "每日經文",
+  "name": "摩拉維亞每日箴言",
+  "short_name": "每日箴言",
   "lang": "zh-Hant",
-  "description": "摩拉維亞每日經文 · Moravian Daily Texts 中文版",
+  "description": "摩拉維亞每日箴言 · Moravian Daily Texts 中文版",
   "start_url": "today.html",
   "scope": "./",
   "display": "standalone",
@@ -753,7 +753,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="關於 Moravian Daily Texts 與本站中文版" />
-  <title>關於 · 摩拉維亞每日經文</title>
+  <title>關於 · 摩拉維亞每日箴言</title>
 {PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 {INSTALL_SCRIPT_TAG}</head>
 <body>
@@ -768,7 +768,14 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <h1>關於 Moravian Daily Texts</h1>
 
       <h2>起源</h2>
-      <p>Moravian Daily Texts（摩拉維亞每日經文）自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。數百年來，它陪伴全球信徒以神的話開始每一天。</p>
+      <p>《Die Losungen》（摩拉維亞每日箴言，英文 Moravian Daily Texts）自 1731 年印行以來每年出版，是持續最久的每日靈修讀本之一。</p>
+      <p>1722 年，波希米亞與摩拉維亞的信仰難民來到親岑多夫伯爵（Nikolaus Ludwig von Zinzendorf，1700–1760）的領地，建立赫恩胡特（Herrnhut，「主的守望」）。1727 年 8 月 13 日，弟兄合一會在那裡經歷屬靈更新。1728 年 5 月 3 日晚間聚會，親岑多夫把一句聖經交給會眾，作為第二天整天的口令。他稱這句話為 Losung，意思是守望的口令。此後每天有人把這句話送到村裡三十二戶，並一起談論。</p>
+      <p>親岑多夫為一整年編了 365 則守望經文，1731 年在赫恩胡特印出第一本。封面引用耶利米哀歌：主的慈愛每早晨都是新的。早期版本就把經文和一節聖詩放在一起：經文是神對人說的話，詩節是會眾的回應。1732 年弟兄會開始海外宣教，箴言也跟著傳到各地。今天以六十多種語言出版。每天的聖經章節仍在德國赫恩胡特選定，再分送到各地的語言版本。</p>
+
+      <h2>Losung 與 Lehrtext</h2>
+      <p>現在每一天有兩節，選法不同。</p>
+      <p>舊約的 Losung（守望經文，Watchword）是抽籤得出的。自 1788 年起，從一批適合日常的舊約經文中抽籤；到 1812 年確定，守望經文一律出自舊約。它多半是應許、鼓勵、勸勉或安慰，陪伴人過這一天。親岑多夫說，這些箴言是救主與教會持續的對話。</p>
+      <p>新約的 Lehrtext（教訓經文）不是抽籤，而是按當天的守望經文挑選。這個做法從親岑多夫為小組編的經文匯編長出來。1760 年他過世後，同工把守望經文和教訓經文分開保存，1762 年在巴爾比印成四卷。1801 年的說明是：守望經文是應許、鼓勵、勸戒或安慰；教訓經文則點出一項已經啟示的道理。十九世紀末起，兩節在主題上彼此呼應。</p>
 
       <h2>每日內容</h2>
       <p>每一天通常包含：</p>
@@ -802,7 +809,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">若需正式出版、轉載或商業用途，請另洽原文出版單位，並遵守各譯本與作品的版權規定。</p>
     </main>
     <footer class="site-foot">
-      <p class="foot-credit">摩拉維亞每日經文 · 中文整理</p>
+      <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
 {TABBAR_HTML}  </div>

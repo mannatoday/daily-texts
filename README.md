@@ -1,4 +1,4 @@
-# 摩拉維亞每日經文（daily-texts）
+# 摩拉維亞每日箴言（daily-texts）
 
 **Moravian Daily Texts • 中文版**  
 以神的話開始每一天

@@ -1,8 +1,8 @@
 {
-  "name": "摩拉維亞每日經文",
-  "short_name": "每日經文",
+  "name": "摩拉維亞每日箴言",
+  "short_name": "每日箴言",
   "lang": "zh-Hant",
-  "description": "摩拉維亞每日經文 · Moravian Daily Texts 中文版",
+  "description": "摩拉維亞每日箴言 · Moravian Daily Texts 中文版",
   "start_url": "today.html",
   "scope": "./",
   "display": "standalone",

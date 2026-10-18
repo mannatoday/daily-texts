@@ -52,7 +52,7 @@
 
 ### Notes
 
-- 品牌名稱：**摩拉維亞每日經文**（Moravian Daily Texts • 中文版）
+- 品牌名稱：**摩拉維亞每日箴言**（Moravian Daily Texts • 中文版）
 - 本版本以個人靈修／開發用途為主；對外發布前請確認內容與譯本授權
 
 [Unreleased]: https://github.com/mannatoday/daily-texts/compare/v0.1.0...HEAD

@@ -39,7 +39,7 @@ PWA_HEAD_TAGS = f"""\
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="每日經文" />
+  <meta name="apple-mobile-web-app-title" content="每日箴言" />
 """
 
 INSTALL_SCRIPT_TAG = '  <script src="install.js" defer></script>\n'
@@ -188,8 +188,8 @@ class HtmlFormatter:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="摩拉維亞每日經文 · Moravian Daily Texts 中文版" />
-  <title>{title} · 摩拉維亞每日經文</title>
+  <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
+  <title>{title} · 摩拉維亞每日箴言</title>
 {pwa_head}{_FONT_LINKS}{style_block}{install_script}</head>
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
@@ -308,12 +308,12 @@ def _site_footer(*, site_mode: bool) -> str:
     if not site_mode:
         return (
             '  <footer class="site-foot">\n'
-            '    <p class="foot-credit">摩拉維亞每日經文 · Daily Texts</p>\n'
+            '    <p class="foot-credit">摩拉維亞每日箴言 · Daily Texts</p>\n'
             f"    {LOSUNGEN_ATTRIBUTION_HTML}\n"
             "  </footer>\n"
         )
     return f"""  <footer class="site-foot">
-    <p class="foot-credit">摩拉維亞每日經文 · 中文整理</p>
+    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
     {LOSUNGEN_ATTRIBUTION_HTML}
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
