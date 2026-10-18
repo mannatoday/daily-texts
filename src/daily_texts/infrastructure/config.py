@@ -90,8 +90,8 @@ class Settings(BaseSettings):
     local_translator_api_key: str = "local"
 
     schedule_timezone: str = "Asia/Taipei"
-    schedule_hour: int = 0
-    schedule_retry_hours: CsvInts = Field(default_factory=lambda: [0, 6])
+    schedule_hour: int = 3
+    schedule_retry_hours: CsvInts = Field(default_factory=lambda: [3, 5])
 
     publishers: CsvStrings = Field(default_factory=lambda: ["null"])
     http_user_agent: str = "daily-texts-bot/1.0"
