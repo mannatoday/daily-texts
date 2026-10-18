@@ -12,6 +12,7 @@ from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
+from daily_texts.domain.church_year import church_day_label_zh
 from daily_texts.domain.exceptions import ProviderError
 from daily_texts.domain.models import RawDailyText, Watchword
 
@@ -55,6 +56,7 @@ class DatasetProvider:
             "plan_year": row.get("plan_year", ""),
             "track": row.get("track", ""),
             "church_day": row.get("church_day", ""),
+            "church_year_label": church_day_label_zh(row.get("church_day", "")),
             "third_text_id": source_id,
             "prayer_lang": prayer_lang,
         }
