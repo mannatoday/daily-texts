@@ -476,7 +476,6 @@ _NAV_BLOCK = re.compile(
 def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) -> str:
     from daily_texts.infrastructure.formatters.html import _day_nav
 
-    top = _day_nav(prev_href=prev_href, next_href=next_href, home_href="index.html")
     bottom = _day_nav(
         prev_href=prev_href,
         next_href=next_href,
@@ -489,12 +488,10 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
 
     parts: list[str] = []
     last = 0
-    for i, match in enumerate(matches):
+    for match in matches:
         parts.append(html[last : match.start()])
-        if i == 0:
-            parts.append(top.lstrip() if match.start() > 0 else top)
-        else:
-            parts.append(bottom.lstrip())
+        if "day-nav--bottom" in match.group(0):
+            parts.append(bottom.lstrip() if match.start() > 0 else bottom)
         last = match.end()
     parts.append(html[last:])
     return "".join(parts)

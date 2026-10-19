@@ -155,15 +155,12 @@ class HtmlFormatter:
             style_block = f"  <style>\n{css}\n  </style>\n"
 
         version_picker = _version_picker() if site_mode else ""
-        nav = _day_nav(prev_href=prev_href, next_href=next_href, home_href=home_href)
-        bottom_nav = ""
-        if nav:
-            bottom_nav = _day_nav(
-                prev_href=prev_href,
-                next_href=next_href,
-                home_href=home_href,
-                css_extra="day-nav--bottom",
-            )
+        bottom_nav = _day_nav(
+            prev_href=prev_href,
+            next_href=next_href,
+            home_href=home_href,
+            css_extra="day-nav--bottom",
+        )
         footer = _site_footer(site_mode=site_mode)
         data_block = _day_data_script(content) if site_mode else ""
         pwa_head = PWA_HEAD_TAGS if site_mode else ""
@@ -194,7 +191,7 @@ class HtmlFormatter:
 <body>
   <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">
-{version_picker}{nav}  <main id="main">
+{version_picker}  <main id="main">
     <article>
     <h1>{title}</h1>
 {week_block}    <h2>舊約</h2>
