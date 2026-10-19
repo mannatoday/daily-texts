@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>2026 年 10 月 15 日（星期四） · 摩拉維亞每日箴言</title>
+  <title data-zh="2026 年 10 月 15 日（星期四） · 摩拉維亞每日箴言" data-en="Thursday, October 15, 2026 · Moravian Daily Texts">2026 年 10 月 15 日（星期四） · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -22,10 +43,14 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
   <div class="site-shell">
   <div class="version-picker">
-    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -34,42 +59,44 @@
       <option value="WCB">環球聖經譯本</option>
     </select>
   </div>
-<main id="main">
+  <main id="main">
     <article>
-    <h1>2026 年 10 月 15 日（星期四）</h1>
-    <h2>舊約</h2>
+    <h1><span class="i18n-zh">2026 年 10 月 15 日（星期四）</span><span class="i18n-en">Thursday, October 15, 2026</span></h1>
+    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">凡等候耶和華，心裏尋求他的， 耶和華必施恩給他。</p>
-    <p class="ref">— 耶利米哀歌 3:25</p>
-    <h2>新約</h2>
+    <p class="ref">— <span class="i18n-zh">耶利米哀歌 3:25</span><span class="i18n-en">Lamentations 3:25</span></p>
+    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
     <p class="verse" data-verse="nt">看哪，我站在門外叩門，若有聽見我聲音而開門的，我要進到他那裏去，我與他，他與我一起吃飯。</p>
-    <p class="ref">— 啟示錄 3:20</p>
-    <h2>今日禱告</h2>
+    <p class="ref">— <span class="i18n-zh">啟示錄 3:20</span><span class="i18n-en">Revelation 3:20</span></p>
+    <div class="prayer-block">
+    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">主耶穌站在門外，伸手叩門呼喚；雖備筵席邀請，人卻心硬不開。求主使我聽見，開門迎祢進來；與祢同席相交，永遠不離不棄。</p>
     <p class="prayer-source">— William W. How〈主在門外 (O Jesus Thou Art Standing)〉</p>
-    <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 119:9–16</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20119%3A9-16&amp;version=RCU17TS" data-ref="Psalm 119:9-16" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 119:9–16">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">撒母耳記下 5:17–6:23</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=2%20Samuel%205%3A17-6%3A23&amp;version=RCU17TS" data-ref="2 Samuel 5:17-6:23" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記下 5:17–6:23">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約翰福音 7:14–24</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%207%3A14-24&amp;version=RCU17TS" data-ref="John 7:14-24" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 7:14–24">[閱讀]</a></p>
+    </div>
+    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 119:9–16</span><span class="i18n-en">Psalm 119:9-16</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20119%3A9-16&amp;version=RCU17TS" data-ref="Psalm 119:9-16" data-label-zh="詩篇 119:9–16" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 119:9–16"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">撒母耳記下 5:17–6:23</span><span class="i18n-en">2 Samuel 5:17-6:23</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=2%20Samuel%205%3A17-6%3A23&amp;version=RCU17TS" data-ref="2 Samuel 5:17-6:23" data-label-zh="撒母耳記下 5:17–6:23" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記下 5:17–6:23"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 7:14–24</span><span class="i18n-en">John 7:14-24</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%207%3A14-24&amp;version=RCU17TS" data-ref="John 7:14-24" data-label-zh="約翰福音 7:14–24" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 7:14–24"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
     </article>
   <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-10-14.html">← 前一日</a>
-    <a class="day-nav__home" href="index.html">首頁</a>
-    <a class="day-nav__next" href="2026-10-16.html">後一日 →</a>
+    <a class="day-nav__prev" href="2026-10-14.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
+    <a class="day-nav__home" href="index.html"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+    <a class="day-nav__next" href="2026-10-16.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
   </nav>
 </main>
   <footer class="site-foot">
-    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <p id="install-hint" class="install-hint" hidden></p>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
-    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></button>
   </nav>
   </div>
-  <script type="application/json" id="day-data">{"date":"2026-10-15","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"week_watchword":null,"ot":{"reference":"Lamentations 3:25","reference_zh":"耶利米哀歌 3:25","translations":{"CUV":"凡等候耶和華，心裡尋求他的，耶和華必施恩給他。","RCUV":"凡等候耶和華，心裏尋求他的， 耶和華必施恩給他。","CNVT":"耶和華善待等候他的和心裡尋求他的人。","CSBT":"耶和華善待等候他的人和尋求他的人；","WCB":"耶和華善待等候他、 尋求他的人。"}},"nt":{"reference":"Revelation 3:20","reference_zh":"啟示錄 3:20","translations":{"CUV":"看哪，我站在門外叩門，若有聽見我聲音就開門的，我要進到他那裡去，我與他，他與我一同坐席。","RCUV":"看哪，我站在門外叩門，若有聽見我聲音而開門的，我要進到他那裏去，我與他，他與我一起吃飯。","CNVT":"看哪！我站在門外敲門；如果有人聽見我的聲音就開門的，我要進到他那裡去，我要跟他在一起，他也要跟我在一起吃飯。","CSBT":"看哪，我站在門口敲門。如果有人聽見我的聲音就開門，我就會進到他那裡，而且我與他、他與我，將要一同吃宴席。","WCB":"聽吧，我站在門外敲門；如果有人聽見我的聲音就開門，我就會進入他的家，我與他，他與我一起進餐。"}},"prayer":"主耶穌站在門外，伸手叩門呼喚；雖備筵席邀請，人卻心硬不開。求主使我聽見，開門迎祢進來；與祢同席相交，永遠不離不棄。","readings":[{"reference":"Psalm 119:9–16","reference_zh":"詩篇 119:9–16"},{"reference":"2 Samuel 5:17–6:23","reference_zh":"撒母耳記下 5:17–6:23"},{"reference":"John 7:14–24","reference_zh":"約翰福音 7:14–24"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":279,"result_chars":98,"kept_english":false}}</script>
+  <script type="application/json" id="day-data">{"date":"2026-10-15","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"NLT","label":"NLT"},{"code":"NIRV","label":"NIrV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV","NLT":"NLT","NIRV":"NIRV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.","NLT":"Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.","NIRV":"Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 10 月 15 日（星期四）","date_title_en":"Thursday, October 15, 2026","week_watchword":null,"ot":{"reference":"Lamentations 3:25","reference_zh":"耶利米哀歌 3:25","translations":{"CUV":"凡等候耶和華，心裡尋求他的，耶和華必施恩給他。","RCUV":"凡等候耶和華，心裏尋求他的， 耶和華必施恩給他。","CNVT":"耶和華善待等候他的和心裡尋求他的人。","CSBT":"耶和華善待等候他的人和尋求他的人；","WCB":"耶和華善待等候他、 尋求他的人。","KJV":"The LORD is good unto them that wait for him, to the soul that seeketh him.","NIV":"The Lord is good to those whose hope is in him, to the one who seeks him;","NLT":"The Lord is good to those who depend on him, to those who search for him.","NIRV":"The Lord is good to those who put their hope in him. He is good to those who look to him."},"fums":{"NIV":"GzoBgIzTFfOihHXPxDWVP11I0rJ7CZub2hQQtA5LV9-np4FyQRBwaytMs_w7-QV_0G-HQ9yQJslk_uO2fzxvB4B9saXm8m5TnpZVZPEr5z1x1sT2Rue7HTRD44wEhPIKQqTw8YA_uqzaBcAUQSmD3R54_QYISdRMmsuIXA1SXTEu0Rhhe39OPm9LYGTYxGkiMORPltx2YIXV83hf65mn8xhXNNcUOGlPcaWnM4k6ymyaPEvYyxwH","NLT":"GzoBYBwHbqxlyoOgvR4EdEzy46-2Ydpoo6hIlq6-0Hl6GigXBAG3IMxaln8nv-AP-u1wsI1RErlkftFt_zxvB9Avq7G5vOtFWtowTS766mdhMZXG6iOd73rQGSqvXAT1FWeM4OXOnzar7gKkwCmFwwaw3-CMS9IaaevI-BZd81WVmMdge_9OPG9LIBk2cpoYhADKEtyOFayex_teb8Gn6Xxek_Tz6VwG4xayzOxUzt1sbpVjzNkz","NIRV":"GzoBiBwHbqxlyoOgvR4EdEzy46-2Ydpoo6hIlq6-0Hl6GigXBIG1tSBMo9-_k1_wB_y3g2wuiZiMZgXR8p99--d5O4B-WY3m8a7jrJQyDW7pFnVa6kIaq090vutBZ6i8chHUK84YwcODPy2r7gLMgFKC3QdXhe-9l9ZIW0fGt-haMMp7Mwbb-3XyeVtCZNjgNBEI-cmSbY8VrJ7H-66vlXPTsnBBmrmtMixikDXkuUzW-GhyCsscGQ"}},"nt":{"reference":"Revelation 3:20","reference_zh":"啟示錄 3:20","translations":{"CUV":"看哪，我站在門外叩門，若有聽見我聲音就開門的，我要進到他那裡去，我與他，他與我一同坐席。","RCUV":"看哪，我站在門外叩門，若有聽見我聲音而開門的，我要進到他那裏去，我與他，他與我一起吃飯。","CNVT":"看哪！我站在門外敲門；如果有人聽見我的聲音就開門的，我要進到他那裡去，我要跟他在一起，他也要跟我在一起吃飯。","CSBT":"看哪，我站在門口敲門。如果有人聽見我的聲音就開門，我就會進到他那裡，而且我與他、他與我，將要一同吃宴席。","WCB":"聽吧，我站在門外敲門；如果有人聽見我的聲音就開門，我就會進入他的家，我與他，他與我一起進餐。","KJV":"Behold, I stand at the door, and knock: if any man hear my voice, and open the door, I will come in to him, and will sup with him, and he with me.","NIV":"Here I am! I stand at the door and knock. If anyone hears my voice and opens the door, I will come in and eat with that person, and they with me.","NLT":"“Look! I stand at the door and knock. If you hear my voice and open the door, I will come in, and we will share a meal together as friends.","NIRV":"Here I am! I stand at the door and knock. If anyone hears my voice and opens the door, I will come in. I will eat with that person, and they will eat with me."},"fums":{"NIV":"GzoBCJwHtmOXCgaDm8IzcMmqsaW--V5OXkOjMiRIYpIsXX2hU0VWb5vTcbcKDo_gCyLoNmY_Wr8za8yCQLZ5iXiIeApKPRVr-8fzdgDCiwOex3soddpWmcVWaha5usjhVOd7GOrVSwT0OByjPB7ij7HVYAFYBigXNcrANgFffO84Om6jqD1Jt-hzTWPA9n6l9rwtQWXY4mkiGDG0Jd8eTFg9j_f9vlWnVW05dXHOzZlOm2tTYSc8F50tY66LggE","NLT":"GzoBiJwHtmOXCgaDm8IzcMmqsaW--e3sLTQqQ4IkJsnS1Rc6VWT1tjkdd6vg8Ai-IIJuY_aj9TuzxiwIZJuXiId4eypIPRVr-8fzdgDiiyKax3tc5CXpNLNJk5kupj5RPNH5HocGCZwAfYdjkodD_DGyGiwAywDlgkYZuCbge-89JU9tlKQbd6VAZGPA9n6d9rwtQWTYwmkiGPGzJdse5LB6Hu97fedSl2qleplX9kpt5VtbiJ_PZLVYpFWu84IB","NIRV":"GzoBKCwK7GbiFNOZmV6WP4KkFtnbimn1-y31zfdMQ6MyJNp3TZauvtCpIqu3zem4WwWHR3BL_MbsR-t3VtRYQS-Im70kDylfRfbZ1m3znDOIVwk6j5dwZYyxsLrRdSpiqplU4lLnS3zlhmsJWhyOUv4OkanZpwZLoFzTKIP2G7TUninJVPpJk53OVnFv_B8M14vqczaA0m13uGCE0Bq8LUZon-U6buVNFdpGatYU-drqZFlsU8UKbYoymFiZUmI"}},"prayer":"主耶穌站在門外，伸手叩門呼喚；雖備筵席邀請，人卻心硬不開。求主使我聽見，開門迎祢進來；與祢同席相交，永遠不離不棄。","readings":[{"reference":"Psalm 119:9–16","reference_zh":"詩篇 119:9–16"},{"reference":"2 Samuel 5:17–6:23","reference_zh":"撒母耳記下 5:17–6:23"},{"reference":"John 7:14–24","reference_zh":"約翰福音 7:14–24"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":279,"result_chars":98,"kept_english":false}}</script>
 </body>
 </html>

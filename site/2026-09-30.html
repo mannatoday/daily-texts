@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>2026 年 9 月 30 日（星期三） · 摩拉維亞每日箴言</title>
+  <title data-zh="2026 年 9 月 30 日（星期三） · 摩拉維亞每日箴言" data-en="Wednesday, September 30, 2026 · Moravian Daily Texts">2026 年 9 月 30 日（星期三） · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -22,10 +43,14 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
   <div class="site-shell">
   <div class="version-picker">
-    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -36,40 +61,42 @@
   </div>
   <main id="main">
     <article>
-    <h1>2026 年 9 月 30 日（星期三）</h1>
-    <h2>舊約</h2>
+    <h1><span class="i18n-zh">2026 年 9 月 30 日（星期三）</span><span class="i18n-en">Wednesday, September 30, 2026</span></h1>
+    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">他出來迎接 亞撒 ，對他說：「 亞撒 ， 猶大 和 便雅憫 眾人哪，要聽我說：你們若順從耶和華，耶和華必與你們同在；你們若尋求他，就必尋見；你們若離棄他，他必離棄你們。</p>
-    <p class="ref">— 歷代志下 15:2</p>
-    <h2>新約</h2>
+    <p class="ref">— <span class="i18n-zh">歷代志下 15:2</span><span class="i18n-en">2 Chronicles 15:2</span></p>
+    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
     <p class="verse" data-verse="nt">婦人對他說：「我知道彌賽亞－就是那稱為基督的－要來；他來了，會把一切的事都告訴我們。」耶穌對她說：「我就是，正在跟你說話呢！」</p>
-    <p class="ref">— 約翰福音 4:25–26</p>
-    <h2>今日禱告</h2>
+    <p class="ref">— <span class="i18n-zh">約翰福音 4:25–26</span><span class="i18n-en">John 4:25-26</span></p>
+    <div class="prayer-block">
+    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">頌讚歸你，你是神聖君王，你將屬你榮耀撇在一旁，在我黑暗心中施恩照亮。</p>
     <p class="prayer-source">— 頌讚歸你</p>
-    <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 113</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20113&amp;version=RCU17TS" data-ref="Psalm 113" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 113">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">撒母耳記上 19:8–20:17</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2019%3A8-20%3A17&amp;version=RCU17TS" data-ref="1 Samuel 19:8-20:17" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 19:8–20:17">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約翰福音 4:27–38</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%204%3A27-38&amp;version=RCU17TS" data-ref="John 4:27-38" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 4:27–38">[閱讀]</a></p>
+    </div>
+    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 113</span><span class="i18n-en">Psalm 113</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20113&amp;version=RCU17TS" data-ref="Psalm 113" data-label-zh="詩篇 113" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 113"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">撒母耳記上 19:8–20:17</span><span class="i18n-en">1 Samuel 19:8-20:17</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2019%3A8-20%3A17&amp;version=RCU17TS" data-ref="1 Samuel 19:8-20:17" data-label-zh="撒母耳記上 19:8–20:17" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 19:8–20:17"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 4:27–38</span><span class="i18n-en">John 4:27-38</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%204%3A27-38&amp;version=RCU17TS" data-ref="John 4:27-38" data-label-zh="約翰福音 4:27–38" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 4:27–38"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
     </article>
   <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-09-29.html">← 前一日</a>
-    <a class="day-nav__home" href="index.html">首頁</a>
-    <a class="day-nav__next" href="2026-10-01.html">後一日 →</a>
+    <a class="day-nav__prev" href="2026-09-29.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
+    <a class="day-nav__home" href="index.html"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+    <a class="day-nav__next" href="2026-10-01.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
   </nav>
-  </main>
+</main>
   <footer class="site-foot">
-    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <p id="install-hint" class="install-hint" hidden></p>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
-    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></button>
   </nav>
   </div>
-  <script type="application/json" id="day-data">{"date":"2026-09-30","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"week_watchword":null,"ot":{"reference":"2 Chronicles 15:2","reference_zh":"歷代志下 15:2","translations":{"CUV":"他出來迎接亞撒，對他說：「亞撒和猶大、便雅憫眾人哪，要聽我說：你們若順從耶和華，耶和華必與你們同在；你們若尋求他，就必尋見；你們若離棄他，他必離棄你們。","RCUV":"他出來迎接 亞撒 ，對他說：「 亞撒 ， 猶大 和 便雅憫 眾人哪，要聽我說：你們若順從耶和華，耶和華必與你們同在；你們若尋求他，就必尋見；你們若離棄他，他必離棄你們。","CNVT":"亞撒利雅就出來迎接亞撒，對他說：「亞撒和猶大、便雅憫所有的人哪！請聽我說。你們跟隨耶和華，耶和華就和你們同在；你們尋求他，就必給你們尋見；你們離棄他，他必離棄你們。","CSBT":"他就出去面見 亞撒 ，對他說：「 亞撒 和全體 猶大 人、 便雅憫 人哪，請聽我說！你們跟隨耶和華，耶和華就與你們同在。你們如果尋求他，他就讓你們尋見；你們如果離棄他，他就離棄你們。","WCB":"亞撒利雅就出來見亞撒，對他說：“亞撒和猶大、便雅憫所有的人啊，請聽我說。你們跟隨耶和華，耶和華就與你們同在；你們尋求他，他就會讓你們尋見；你們離棄他，他就會離棄你們。"}},"nt":{"reference":"John 4:25-26","reference_zh":"約翰福音 4:25–26","translations":{"CUV":"婦人說：「我知道彌賽亞（就是那稱為基督的）要來；他來了，必將一切的事都告訴我們。」耶穌說：「這和你說話的就是他！」","RCUV":"婦人對他說：「我知道彌賽亞－就是那稱為基督的－要來；他來了，會把一切的事都告訴我們。」耶穌對她說：「我就是，正在跟你說話呢！」","CNVT":"婦人說：「我知道那稱為基督的彌賽亞要來；他來了，要把一切都告訴我們。」耶穌說：「我這現在跟你說話的就是他。」","CSBT":"婦人說：「我知道那稱為基督的彌賽亞要來。他來的時候，就會把一切都傳講給我們。」耶穌說： 「這和你說話的我，就是那一位。」","WCB":"婦人說：“我知道彌賽亞要來——他就是那稱為基督的——他來的時候，要把一切都告訴我們。”耶穌說：“我就是他，現在正跟你說話。”"}},"prayer":"頌讚歸你，你是神聖君王，你將屬你榮耀撇在一旁，在我黑暗心中施恩照亮。","readings":[{"reference":"Psalm 113","reference_zh":"詩篇 113"},{"reference":"1 Samuel 19:8–20:17","reference_zh":"撒母耳記上 19:8–20:17"},{"reference":"John 4:27–38","reference_zh":"約翰福音 4:27–38"}],"source_url":"dataset://days_2026_q4/2026-09-30","translation":{"provider":"dataset","status":"already_zh","source_chars":34,"result_chars":34,"kept_english":false}}</script>
+  <script type="application/json" id="day-data">{"date":"2026-09-30","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"NLT","label":"NLT"},{"code":"NIRV","label":"NIrV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV","NLT":"NLT","NIRV":"NIRV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.","NLT":"Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.","NIRV":"Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 9 月 30 日（星期三）","date_title_en":"Wednesday, September 30, 2026","week_watchword":null,"ot":{"reference":"2 Chronicles 15:2","reference_zh":"歷代志下 15:2","translations":{"CUV":"他出來迎接亞撒，對他說：「亞撒和猶大、便雅憫眾人哪，要聽我說：你們若順從耶和華，耶和華必與你們同在；你們若尋求他，就必尋見；你們若離棄他，他必離棄你們。","RCUV":"他出來迎接 亞撒 ，對他說：「 亞撒 ， 猶大 和 便雅憫 眾人哪，要聽我說：你們若順從耶和華，耶和華必與你們同在；你們若尋求他，就必尋見；你們若離棄他，他必離棄你們。","CNVT":"亞撒利雅就出來迎接亞撒，對他說：「亞撒和猶大、便雅憫所有的人哪！請聽我說。你們跟隨耶和華，耶和華就和你們同在；你們尋求他，就必給你們尋見；你們離棄他，他必離棄你們。","CSBT":"他就出去面見 亞撒 ，對他說：「 亞撒 和全體 猶大 人、 便雅憫 人哪，請聽我說！你們跟隨耶和華，耶和華就與你們同在。你們如果尋求他，他就讓你們尋見；你們如果離棄他，他就離棄你們。","WCB":"亞撒利雅就出來見亞撒，對他說：“亞撒和猶大、便雅憫所有的人啊，請聽我說。你們跟隨耶和華，耶和華就與你們同在；你們尋求他，他就會讓你們尋見；你們離棄他，他就會離棄你們。","KJV":"And he went out to meet Asa, and said unto him, Hear ye me, Asa, and all Judah and Benjamin; The LORD is with you, while ye be with him; and if ye seek him, he will be found of you; but if ye forsake him, he will forsake you.","NIV":"He went out to meet Asa and said to him, “Listen to me, Asa and all Judah and Benjamin. The Lord is with you when you are with him. If you seek him, he will be found by you, but if you forsake him, he will forsake you.","NLT":"and he went out to meet King Asa as he was returning from the battle. “Listen to me, Asa!” he shouted. “Listen, all you people of Judah and Benjamin! The Lord will stay with you as long as you stay with him! Whenever you seek him, you will find him. But if you abandon him, he will abandon you.","NIRV":"Azariah went out to meet Asa. He said to him, “Asa and all you people of Judah and Benjamin, listen to me. The Lord is with you when you are with him. If you really look for him, you will find him. But if you desert him, he will desert you."},"fums":{"NIV":"GzoBwIzTFfOihHXPpDmVP_2U5Nm2HfipTQFB67B09V13elD-4XCwb9_heI1a3CJPsKQoCeJmpSQvbwk1t-Ufz9sBYF9kmfm825SnZRWJ_Uq8d5S1I_tC-7vlZmAoGEZoLoGdU7h3wB8zZsMFwA3BqM7hD7Qq4OseNDlNZeSkBqohmkRjhO39NPm8LYGQbvuGicKQPllSWwMprJ7Hu7xCaJ4ksdO8TFPtU5rpWSjJRWZLWazSPCzzDAc","NLT":"GzoBYIzTFfOihHVPwzFTPrqUa9mO_dSmAPC_dVi6-j49DZQLgoBbEGYty7-TX_AH_XY4xA1pkkzWP277j9f9CLBvWmwuH3aZVgyzJNFXPw_LmXa0Rzo_rHSGhtEIQn0FcU7h5Q7_aLMaLQGmCEop7PYALAa-nCRNp1nHzrfIFqPJpUwQdo_vxOu-AkiGjZymAkMAZQVuByqsX6fHXo9-FmeLsFzqKKukw5JOz0N2esnAEiRlqSsc","NIRV":"GzoBCIzTFfOihHUPAhqbqV9-84p3EiQR3VqHpavv09MMA-CCIJDW1oLj9Xb_Tn7BB3qQQ9zsJXnxVcRnW7frP6_7Eei31XgeHzrOSymz4FZuWWelLqWx-lT1Q7vOUNmoHFEzwhkjeHzDP22n0RJYEMpJ8XywdfDFJq2JuI6Nb9FWSbnsJ8TucaX-uq9AZdnwNhUYMdQV3xlWsH6dHvs--eq9nS9mssallyGvkpzNgpHzUpdubbyJds0B"}},"nt":{"reference":"John 4:25-26","reference_zh":"約翰福音 4:25–26","translations":{"CUV":"婦人說：「我知道彌賽亞（就是那稱為基督的）要來；他來了，必將一切的事都告訴我們。」耶穌說：「這和你說話的就是他！」","RCUV":"婦人對他說：「我知道彌賽亞－就是那稱為基督的－要來；他來了，會把一切的事都告訴我們。」耶穌對她說：「我就是，正在跟你說話呢！」","CNVT":"婦人說：「我知道那稱為基督的彌賽亞要來；他來了，要把一切都告訴我們。」耶穌說：「我這現在跟你說話的就是他。」","CSBT":"婦人說：「我知道那稱為基督的彌賽亞要來。他來的時候，就會把一切都傳講給我們。」耶穌說： 「這和你說話的我，就是那一位。」","WCB":"婦人說：“我知道彌賽亞要來——他就是那稱為基督的——他來的時候，要把一切都告訴我們。”耶穌說：“我就是他，現在正跟你說話。”","KJV":"The woman saith unto him, I know that Messias cometh, which is called Christ: when he is come, he will tell us all things. Jesus saith unto her, I that speak unto thee am he.","NIV":"The woman said, “I know that Messiah” (called Christ) “is coming. When he comes, he will explain everything to us.” Then Jesus declared, “I, the one speaking to you—I am he.”","NLT":"The woman said, “I know the Messiah is coming—the one who is called Christ. When he comes, he will explain everything to us.” Then Jesus told her, “I Am the Messiah!”","NIRV":"The woman said, “I know that Messiah is coming.” Messiah means Christ. “When he comes, he will explain everything to us.” Then Jesus said, “The one you’re talking about is the one speaking to you. I am he.”"},"fums":{"NIV":"G1UBABwHzrkrrkIUuPZdi8hs7fWfv5_kh2-9SKC_pNGsu3VYuvquOz2o_scDf9_-W5qFbUmECbYA24JAbnhJpHxCbHu_9xXo3yk5lx8tddX22fm4DzGaq2xO73T66HiYSxSfODIjvWrIjPD-gGu5Gm2BKaJc1Ul7KEb_8-YzO2PXFhZ6cj1lKSUskdPnZeX33gE5w8bPJjDCU3ZYtxBh_7t9ln3eVmfW2ordJq045rXn9apU3uZNySmmAl9vcA","NLT":"G1UBABwHbqxlyoOgvZ5Fa0t98sqJfkiPJhIkMUmWrr7QWXd6UP2PB_v2HX5Ls7AtiTDBFmBbEMTNXhIpH4k1t_3jeTsA-rJKzuVdF2lpwzS56KufhcWUjdV_Ot212w4liIscmQCzajhjCOcP_DFy1VkAZgDlrk76QDH6nzMusTVs68j4JtomZrHejAHb-8nK87YEOcPWzyYCEZ6yxLqFI6yex_tj32fOVbtYWp5P04LDPAaeBjflUmKYulpNQT0G","NIRV":"G1UBABwHzrkrrkIUuPZdi8hs7TX4-0l-_KqB1jSa_a61DktX33WnNzyA_sfbKWlBQVuahW1JhAlWgEEg27xEFME6Cotc27v2EfC_5OQ8HtzmIYTMqEqVMQuxpELyd7od_HH7MMOUpZEcUquGhCBof4QrubqXwDyisquT4aGYnL-0o1JMOH6FTlaePDM-_JDuaFm59grIGXb8bAJjPLXCuoUI6ms6Lvvh8srnlTBUVkpQU8mMhkzWVOoxu1xqvWg4"}},"prayer":"頌讚歸你，你是神聖君王，你將屬你榮耀撇在一旁，在我黑暗心中施恩照亮。","readings":[{"reference":"Psalm 113","reference_zh":"詩篇 113"},{"reference":"1 Samuel 19:8–20:17","reference_zh":"撒母耳記上 19:8–20:17"},{"reference":"John 4:27–38","reference_zh":"約翰福音 4:27–38"}],"source_url":"dataset://days_2026_q4/2026-09-30","translation":{"provider":"dataset","status":"already_zh","source_chars":34,"result_chars":34,"kept_english":false}}</script>
 </body>
 </html>

@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>2026 年 10 月 3 日（星期六） · 摩拉維亞每日箴言</title>
+  <title data-zh="2026 年 10 月 3 日（星期六） · 摩拉維亞每日箴言" data-en="Saturday, October 3, 2026 · Moravian Daily Texts">2026 年 10 月 3 日（星期六） · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -22,10 +43,14 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
   <div class="site-shell">
   <div class="version-picker">
-    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -34,47 +59,44 @@
       <option value="WCB">環球聖經譯本</option>
     </select>
   </div>
-<main id="main">
+  <main id="main">
     <article>
-    <h1>2026 年 10 月 3 日（星期六）</h1>
-    <h2>舊約</h2>
+    <h1><span class="i18n-zh">2026 年 10 月 3 日（星期六）</span><span class="i18n-en">Saturday, October 3, 2026</span></h1>
+    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">主說：「因這百姓以口親近我， 用嘴唇尊敬我， 心卻遠離我； 他們敬畏我， 不過是領受前人的命令。</p>
-    <p class="ref">— 以賽亞書 29:13</p>
-    <h2>新約</h2>
+    <p class="ref">— <span class="i18n-zh">以賽亞書 29:13</span><span class="i18n-en">Isaiah 29:13</span></p>
+    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
     <p class="verse" data-verse="nt">從口裏進去的不玷污人，從口裏出來的才玷污人。」</p>
-    <p class="ref">— 馬太福音 15:11</p>
-    <h2>今日禱告</h2>
+    <p class="ref">— <span class="i18n-zh">馬太福音 15:11</span><span class="i18n-en">Matthew 15:11</span></p>
+    <div class="prayer-block">
+    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">我的心一直停在被神吸引之中，又把神吸引回來，所以它是鐵，也是磁石。</p>
     <p class="prayer-source">— 西勒修斯〈天使般的朝聖者 (Cherubinischer Wandersmann)〉</p>
-    <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 115:9–18</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20115%3A9-18&amp;version=RCU17TS" data-ref="Psalm 115:9-18" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 115:9–18">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">撒母耳記上 23</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2023&amp;version=RCU17TS" data-ref="1 Samuel 23" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 23">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約翰福音 5:1–15</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%205%3A1-15&amp;version=RCU17TS" data-ref="John 5:1-15" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 5:1–15">[閱讀]</a></p>
+    </div>
+    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 115:9–18</span><span class="i18n-en">Psalm 115:9-18</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20115%3A9-18&amp;version=RCU17TS" data-ref="Psalm 115:9-18" data-label-zh="詩篇 115:9–18" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 115:9–18"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">撒母耳記上 23</span><span class="i18n-en">1 Samuel 23</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2023&amp;version=RCU17TS" data-ref="1 Samuel 23" data-label-zh="撒母耳記上 23" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 23"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 5:1–15</span><span class="i18n-en">John 5:1-15</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%205%3A1-15&amp;version=RCU17TS" data-ref="John 5:1-15" data-label-zh="約翰福音 5:1–15" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 5:1–15"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
     </article>
   <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-10-02.html">← 前一日</a>
-    <a class="day-nav__home" href="index.html">首頁</a>
-    <a class="day-nav__next" href="2026-10-04.html">後一日 →</a>
+    <a class="day-nav__prev" href="2026-10-02.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
+    <a class="day-nav__home" href="index.html"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+    <a class="day-nav__next" href="2026-10-04.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
   </nav>
 </main>
   <footer class="site-foot">
-    <section class="about-blurb" aria-labelledby="about-blurb-title">
-      <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
-      <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
-      <p class="more"><a href="about.html">了解更多</a></p>
-    </section>
-    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <p id="install-hint" class="install-hint" hidden></p>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
-    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></button>
   </nav>
   </div>
-  <script type="application/json" id="day-data">{"date":"2026-10-03","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"week_watchword":null,"ot":{"reference":"Isaiah 29:13","reference_zh":"以賽亞書 29:13","translations":{"CUV":"主說：因為這百姓親近我，用嘴唇尊敬我，心卻遠離我；他們敬畏我，不過是領受人的吩咐。","RCUV":"主說：「因這百姓以口親近我， 用嘴唇尊敬我， 心卻遠離我； 他們敬畏我， 不過是領受前人的命令。","CNVT":"主說：「因為這子民只用言語來親近我，用嘴唇尊崇我，他們的心卻遠離我。他們對我的敬畏，只是遵從傳統的吩咐。","CSBT":"主說： 「因為這子民嘴上親近我， 用嘴唇尊重我， 他們的心卻遠離我； 他們敬畏我，不過是遵行人所教導的規條；","WCB":"主說： “這人民口說親近我， 嘴唇上尊敬我， 他們的心卻遠離我。 他們對我的敬畏， 不過是人的規條， 人教導的東西。"}},"nt":{"reference":"Matthew 15:11","reference_zh":"馬太福音 15:11","translations":{"CUV":"入口的不能污穢人，出口的乃能污穢人。」","RCUV":"從口裏進去的不玷污人，從口裏出來的才玷污人。」","CNVT":"進到口裡的不能使人污穢，只有從口裡出來的，才能使人污穢。」","CSBT":"不是進到口裡的使人汙穢；而是從口裡出來的，這才使人汙穢。」","WCB":"不是進到口裡的使人污穢，而是從口裡出來的——這才使人污穢。”"}},"prayer":"我的心一直停在被神吸引之中，又把神吸引回來，所以它是鐵，也是磁石。","readings":[{"reference":"Psalm 115:9–18","reference_zh":"詩篇 115:9–18"},{"reference":"1 Samuel 23","reference_zh":"撒母耳記上 23"},{"reference":"John 5:1–15","reference_zh":"約翰福音 5:1–15"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":226,"result_chars":79,"kept_english":false}}</script>
+  <script type="application/json" id="day-data">{"date":"2026-10-03","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"NLT","label":"NLT"},{"code":"NIRV","label":"NIrV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV","NLT":"NLT","NIRV":"NIRV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.","NLT":"Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.","NIRV":"Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 10 月 3 日（星期六）","date_title_en":"Saturday, October 3, 2026","week_watchword":null,"ot":{"reference":"Isaiah 29:13","reference_zh":"以賽亞書 29:13","translations":{"CUV":"主說：因為這百姓親近我，用嘴唇尊敬我，心卻遠離我；他們敬畏我，不過是領受人的吩咐。","RCUV":"主說：「因這百姓以口親近我， 用嘴唇尊敬我， 心卻遠離我； 他們敬畏我， 不過是領受前人的命令。","CNVT":"主說：「因為這子民只用言語來親近我，用嘴唇尊崇我，他們的心卻遠離我。他們對我的敬畏，只是遵從傳統的吩咐。","CSBT":"主說： 「因為這子民嘴上親近我， 用嘴唇尊重我， 他們的心卻遠離我； 他們敬畏我，不過是遵行人所教導的規條；","WCB":"主說： “這人民口說親近我， 嘴唇上尊敬我， 他們的心卻遠離我。 他們對我的敬畏， 不過是人的規條， 人教導的東西。","KJV":"Wherefore the Lord said, Forasmuch as this people draw near me with their mouth, and with their lips do honour me, but have removed their heart far from me, and their fear toward me is taught by the precept of men:","NIV":"The Lord says: “These people come near to me with their mouth and honor me with their lips, but their hearts are far from me. Their worship of me is based on merely human rules they have been taught.","NLT":"And so the Lord says, “These people say they are mine. They honor me with their lips, but their hearts are far from me. And their worship of me is nothing but man-made rules learned by rote.","NIRV":"The Lord says, “These people worship me only with their words. They honor me by what they say. But their hearts are far away from me. Their worship doesn’t mean anything to me. They teach nothing but human rules that they have been taught."},"fums":{"NIV":"Gz0BABwHbqxlyoOgvZ5Fa0t98snsnn8jfoYESUySpasvdNadHlT_44G_w_F6CIKoRZ5IK02zIG72knxISqy54x_P2wHwL_HkPN59qdO2yqJxFWKkVEvx_3S5-344cNqcBMCMDCUNzu74Y9SsXwCmAOWuJmyg9htQarZCK23E0CXtqK61PAZs7yeK520JUrqtHScCEYayxLeGGKyex_vzC85nsaW5TejLWHRm2yKpbaHayEyZpkti","NLT":"Gz0BwIzTFfOihHUPAtpm6pffvBHJLG1JTFqHpavv09NAuTCwthZkpeHh9J38gtfjD4e45SSZzBL07rd_nrcD0C-rmXm860Va2jBNLvrqZ2ExlcbqFzrcdT90ylVlPVFd4YwRHNzxp8mqXwBTQinfuT14FfB576U10taR8S26ZryKvo6J7f04-bwtwciwgfNEYAggL8FtYQWr5_G--N_cZz8NUVZnkgwrO5VlvpzKhZ_PYowi1QUH","NIRV":"Gz0BIIzTFfOihHXPorWlPnntxL4RP0OCJCatw9LV9-lpoFwYcAvCNEuidvIL3r7D5XaoG06SyaL0xC3_eN4OAH05BefxrmlWa51Gv_SLNq1tweb0TIe79sOB-CYuIEhE8GaErxv8oTTrF4AQBKemkvoA7TfAm8_sjF0bWeiS7yyKuTpG2N4_5M_bEkBpmzpODIYU8pLeDI6weh7vu13N8jL5VcocVn7Kceozz4ptYhfzoixcSsEWOA"}},"nt":{"reference":"Matthew 15:11","reference_zh":"馬太福音 15:11","translations":{"CUV":"入口的不能污穢人，出口的乃能污穢人。」","RCUV":"從口裏進去的不玷污人，從口裏出來的才玷污人。」","CNVT":"進到口裡的不能使人污穢，只有從口裡出來的，才能使人污穢。」","CSBT":"不是進到口裡的使人汙穢；而是從口裡出來的，這才使人汙穢。」","WCB":"不是進到口裡的使人污穢，而是從口裡出來的——這才使人污穢。”","KJV":"Not that which goeth into the mouth defileth a man; but that which cometh out of the mouth, this defileth a man.","NIV":"What goes into someone’s mouth does not defile them, but what comes out of their mouth, that is what defiles them.”","NLT":"It’s not what goes into your mouth that defiles you; you are defiled by the words that come out of your mouth.”","NIRV":"What goes into someone’s mouth does not make them ‘unclean.’ It’s what comes out of their mouth that makes them ‘unclean.’ ”"},"fums":{"NIV":"Gz0BIBwHbqxlyoOgvZ6FY0v98ux-80bURoIkJsnS1Rc6b9t13K3T8QQRdHp9nVa0fmd2mwWB3PCSXHIJMds_nrcDYF-04DzebS7TukqUsPIhOBbtaNd0uNthZ2QYDQkoUSHOKVw98EelVXcBmAKUkjq3AVoBPvhe02nWkfMtSnPBRMoYsL1fKJ-3JUAZ1nWeCIQU8pLeFlRYPY_32b6TLHMNq7mOsxh1mGWnZ9lTz9JitsiLVXRJGA","NLT":"Gz0BQIzTFfOihHUPAjom-fFX2zBttFFUtA5LV9-np4FyYWBtLQizFh5O38kveD3-20FueEkuJyFm--d5OwD9spqbx7tepKUN0-Sir34WFlNprN7S4a6HnZGyUVlLVKhwxgiO7vhTaNVdAFNCKadzezAr4IHvpTXS1pHxLbpmgqo1jYnt_UDxvC3BybCm80RgCCEv4W1hBavn8T78V3VuNvNLaYqfyWCXWc5mZiqnS7OwgbxIi_mSAw","NIRV":"Gz0BQIzTFfOihHXPpOmUP50fyf92lS3gqkCNNVqHpavv09NAuTCwthaEaZacvpNf7Nfjvx3khpfkcikhZvvH83YAmBcbbh7vJsxyzlMvS1mUaS4LZdls6XA3o6bXHDQzQoUMYi3h6A5_FJq1C4ApglJO4_bArAAe-F6xVVx662qQaoP2JY0RtvcDxfO2BE66NR0nAkMIeQlvBSasnsf7aB_L5dzNp-zUfDUX5YtdqOL9QgkHi2mWWZgvpzg"}},"prayer":"我的心一直停在被神吸引之中，又把神吸引回來，所以它是鐵，也是磁石。","readings":[{"reference":"Psalm 115:9–18","reference_zh":"詩篇 115:9–18"},{"reference":"1 Samuel 23","reference_zh":"撒母耳記上 23"},{"reference":"John 5:1–15","reference_zh":"約翰福音 5:1–15"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":226,"result_chars":79,"kept_english":false}}</script>
 </body>
 </html>

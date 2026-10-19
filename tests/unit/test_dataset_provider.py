@@ -51,6 +51,7 @@ async def test_dataset_provider_uses_lectionary_on_a_sunday() -> None:
         "Matthew 22:15-22",
     ]
     assert raw.metadata["church_year_label"] == "聖靈降臨後第二十一個主日"
+    assert raw.metadata["church_year_label_en"] == "Twenty-first Sunday after Pentecost"
 
 
 @pytest.mark.asyncio

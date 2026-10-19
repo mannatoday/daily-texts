@@ -13,6 +13,8 @@ from daily_texts.application.ports.publisher import Publisher
 from daily_texts.application.ports.translator import TextTranslator
 from daily_texts.domain.bible_versions import (
     DEFAULT_VERSION,
+    ENGLISH_LOOKUP_VERSIONS,
+    ENGLISH_VERSIONS,
     FHL_VERSION_CODES,
     SITE_VERSIONS,
 )
@@ -45,7 +47,9 @@ class FetchAndLocalizeDailyText:
         self._output_dir = output_dir
         self._bible_version = bible_version
         self._include_source_link = include_source_link
-        self._site_version_codes = [code for code, _label in SITE_VERSIONS]
+        self._site_version_codes = [code for code, _label in SITE_VERSIONS] + [
+            code for code, _label in ENGLISH_VERSIONS
+        ]
 
     async def run(
         self,
@@ -145,27 +149,45 @@ class FetchAndLocalizeDailyText:
         )
 
     async def _localize_watchword(self, watchword) -> LocalizedWatchword:
-        translations = await self._lookup_all_versions(
+        translations, fums = await self._lookup_all_versions(
             watchword.reference, watchword.text_en
         )
-        text_zh = (
-            translations.get(DEFAULT_VERSION)
-            or translations.get("RCUV")
-            or next(iter(translations.values()), watchword.text_en)
-        )
+        text_zh = _chinese_text(translations, watchword.text_en)
         return LocalizedWatchword(
             reference=watchword.reference,
             reference_zh=localize_reference(watchword.reference),
             text_en=watchword.text_en,
             text_zh=text_zh,
             translations=translations,
+            fums_tokens=fums,
             bible_url=watchword.bible_url,
         )
 
     async def _lookup_all_versions(
         self, reference: str, english: str
-    ) -> dict[str, str]:
+    ) -> tuple[dict[str, str], dict[str, str]]:
+        fums: dict[str, str] = {}
+
         async def one(site_code: str) -> tuple[str, str]:
+            english_version = ENGLISH_LOOKUP_VERSIONS.get(site_code)
+            if english_version:
+                try:
+                    text = await self._bible.lookup(reference, version=english_version)
+                    token = ""
+                    getter = getattr(self._bible, "fums_token", None)
+                    if getter is not None:
+                        token = getter(english_version, reference) or ""
+                    if token:
+                        fums[site_code] = token
+                    return site_code, text
+                except BibleLookupError as exc:
+                    logger.warning(
+                        "Bible lookup failed for %s (%s): %s",
+                        reference,
+                        site_code,
+                        exc,
+                    )
+                    return site_code, ""
             fhl = FHL_VERSION_CODES.get(site_code)
             if not fhl:
                 logger.info(
@@ -186,7 +208,7 @@ class FetchAndLocalizeDailyText:
                 return site_code, english
 
         pairs = await asyncio.gather(*(one(code) for code in self._site_version_codes))
-        return dict(pairs)
+        return dict(pairs), fums
 
     async def _lookup_or_fallback(self, reference: str, english: str) -> str:
         try:
@@ -257,6 +279,17 @@ class FetchAndLocalizeDailyText:
             path = day_dir / item.filename
             path.write_text(item.content, encoding="utf-8")
             logger.info("Wrote %s", path)
+
+
+def _chinese_text(translations: dict[str, str], fallback: str) -> str:
+    preferred = (translations.get(DEFAULT_VERSION) or "").strip()
+    if preferred:
+        return preferred
+    for code, _label in SITE_VERSIONS:
+        text = (translations.get(code) or "").strip()
+        if text:
+            return text
+    return fallback
 
 
 def _placeholder_raw(day: date) -> RawDailyText:

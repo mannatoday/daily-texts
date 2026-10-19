@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>2026 年 10 月 1 日（星期四） · 摩拉維亞每日箴言</title>
+  <title data-zh="2026 年 10 月 1 日（星期四） · 摩拉維亞每日箴言" data-en="Thursday, October 1, 2026 · Moravian Daily Texts">2026 年 10 月 1 日（星期四） · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -22,10 +43,14 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
   <div class="site-shell">
   <div class="version-picker">
-    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -34,47 +59,44 @@
       <option value="WCB">環球聖經譯本</option>
     </select>
   </div>
-<main id="main">
+  <main id="main">
     <article>
-    <h1>2026 年 10 月 1 日（星期四）</h1>
-    <h2>舊約</h2>
+    <h1><span class="i18n-zh">2026 年 10 月 1 日（星期四）</span><span class="i18n-en">Thursday, October 1, 2026</span></h1>
+    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">你是叫我多經歷重大急難的， 必使我再活過來， 從地的深處救我上來。</p>
-    <p class="ref">— 詩篇 71:20</p>
-    <h2>新約</h2>
+    <p class="ref">— <span class="i18n-zh">詩篇 71:20</span><span class="i18n-en">Psalm 71:20</span></p>
+    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
     <p class="verse" data-verse="nt">那麼，主知道搭救敬虔的人脫離試煉，把不義的人留在懲罰之下等候審判的日子，</p>
-    <p class="ref">— 彼得後書 2:9</p>
-    <h2>今日禱告</h2>
+    <p class="ref">— <span class="i18n-zh">彼得後書 2:9</span><span class="i18n-en">2 Peter 2:9</span></p>
+    <div class="prayer-block">
+    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">槁木死灰，如今要求你培壅煦覆，賜給忻忻向榮的生意。懇求你將那打擊蹴損的憂心，一處一處修好，再將希望與確信灌溉在心中。上帝啊，奮興我們。</p>
     <p class="prayer-source">— 趙紫宸〈冬暮感痛禱文〉</p>
-    <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 114</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20114&amp;version=RCU17TS" data-ref="Psalm 114" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 114">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">撒母耳記上 20:18–21:9</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2020%3A18-21%3A9&amp;version=RCU17TS" data-ref="1 Samuel 20:18-21:9" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 20:18–21:9">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約翰福音 4:39–42</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%204%3A39-42&amp;version=RCU17TS" data-ref="John 4:39-42" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 4:39–42">[閱讀]</a></p>
+    </div>
+    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 114</span><span class="i18n-en">Psalm 114</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20114&amp;version=RCU17TS" data-ref="Psalm 114" data-label-zh="詩篇 114" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 114"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">撒母耳記上 20:18–21:9</span><span class="i18n-en">1 Samuel 20:18-21:9</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2020%3A18-21%3A9&amp;version=RCU17TS" data-ref="1 Samuel 20:18-21:9" data-label-zh="撒母耳記上 20:18–21:9" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 20:18–21:9"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 4:39–42</span><span class="i18n-en">John 4:39-42</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%204%3A39-42&amp;version=RCU17TS" data-ref="John 4:39-42" data-label-zh="約翰福音 4:39–42" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 4:39–42"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
     </article>
   <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-09-30.html">← 前一日</a>
-    <a class="day-nav__home" href="index.html">首頁</a>
-    <a class="day-nav__next" href="2026-10-02.html">後一日 →</a>
+    <a class="day-nav__prev" href="2026-09-30.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
+    <a class="day-nav__home" href="index.html"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+    <a class="day-nav__next" href="2026-10-02.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
   </nav>
 </main>
   <footer class="site-foot">
-    <section class="about-blurb" aria-labelledby="about-blurb-title">
-      <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
-      <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
-      <p class="more"><a href="about.html">了解更多</a></p>
-    </section>
-    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <p id="install-hint" class="install-hint" hidden></p>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
-    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></button>
   </nav>
   </div>
-  <script type="application/json" id="day-data">{"date":"2026-10-01","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"week_watchword":null,"ot":{"reference":"Psalm 71:20","reference_zh":"詩篇 71:20","translations":{"CUV":"你是叫我們多經歷重大急難的，必使我們復活，從地的深處救上來。","RCUV":"你是叫我多經歷重大急難的， 必使我再活過來， 從地的深處救我上來。","CNVT":"你使我們經歷了很多苦難，你必使我們再活過來，你必把我們從地的深處救上來。","CSBT":"雖然你使我看到許多患難和惡事， 但你必使我再次活過來， 把我從地的深處再次帶上來。","WCB":"你曾使我經歷患難災禍； 但你將使我再活過來， 叫我從地的深處上來。"}},"nt":{"reference":"2 Peter 2:9","reference_zh":"彼得後書 2:9","translations":{"CUV":"主知道搭救敬虔的人脫離試探，把不義的人留在刑罰之下，等候審判的日子。","RCUV":"那麼，主知道搭救敬虔的人脫離試煉，把不義的人留在懲罰之下等候審判的日子，","CNVT":"主知道怎樣搭救敬虔的人脫離試探，又把不義的人留下來，等候在審判的日子受刑罰，","CSBT":"那麼，主就知道怎樣拯救敬神的人脫離試煉【12】，卻把不義的人留在懲罰之下，直到審判的日子，","WCB":"那麼，主當然知道怎樣拯救敬虔的人脫離試煉，而把不義的人保留下來等候在審判的日子受刑罰，"}},"prayer":"槁木死灰，如今要求你培壅煦覆，賜給忻忻向榮的生意。懇求你將那打擊蹴損的憂心，一處一處修好，再將希望與確信灌溉在心中。上帝啊，奮興我們。","readings":[{"reference":"Psalm 114","reference_zh":"詩篇 114"},{"reference":"1 Samuel 20:18–21:9","reference_zh":"撒母耳記上 20:18–21:9"},{"reference":"John 4:39–42","reference_zh":"約翰福音 4:39–42"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":237,"result_chars":78,"kept_english":false}}</script>
+  <script type="application/json" id="day-data">{"date":"2026-10-01","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"NLT","label":"NLT"},{"code":"NIRV","label":"NIrV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV","NLT":"NLT","NIRV":"NIRV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.","NLT":"Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.","NIRV":"Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 10 月 1 日（星期四）","date_title_en":"Thursday, October 1, 2026","week_watchword":null,"ot":{"reference":"Psalm 71:20","reference_zh":"詩篇 71:20","translations":{"CUV":"你是叫我們多經歷重大急難的，必使我們復活，從地的深處救上來。","RCUV":"你是叫我多經歷重大急難的， 必使我再活過來， 從地的深處救我上來。","CNVT":"你使我們經歷了很多苦難，你必使我們再活過來，你必把我們從地的深處救上來。","CSBT":"雖然你使我看到許多患難和惡事， 但你必使我再次活過來， 把我從地的深處再次帶上來。","WCB":"你曾使我經歷患難災禍； 但你將使我再活過來， 叫我從地的深處上來。","KJV":"Thou, which hast shewed me great and sore troubles, shalt quicken me again, and shalt bring me up again from the depths of the earth.","NIV":"Though you have made me see troubles, many and bitter, you will restore my life again; from the depths of the earth you will again bring me up.","NLT":"You have allowed me to suffer much hardship, but you will restore me to life again and lift me up from the depths of the earth.","NIRV":"You have sent many bitter troubles my way. But you will give me new life. Even if I’m almost in the grave, you will bring me back."},"fums":{"NIV":"Gz0BIBwHbqxlyoOgvZ49f0zy4xc_2oazpI2iIlm6-kJn3R1veAD-b5e2pLW15oGVRC3yBAvTtiBu9pI8JB-yNbftH8_bAdCXVXAe75rLtK6SdWHlQzC2sLH6TJe79oYdyVacAYxwcDS6dfB_TFp1F4AlgEpTF3mANgI_OLA1mdaR8S3aU5YS8hiwvW-oPG9LgDLs1HkiGFNoS3pbWMLqebzf7ctNU5j7ZDiWmDm4VeXpbF44lKUrVKtFMMuAAQ","NLT":"Gz0BIIzTFfOihHXPpOmUP_0ryW9XWdcCCtRYo3VYuvquu-MND8D_7fItaW2teYBJ1CJPsDANJIhbTpJBMgm9--0fz9sBYF9kwXm820Vckp9GDlJk5hdT7cg-0-Vuu2FjEhl2CC0cHJ1eHcIfnVbtAmAZQaWoi_IAbQL84KjJZVpGTmqgUzbCYYywvV-oPm9LAGXY1HkiOKbQlvS2QAqr5_G-2yehZWJesi7LMtO-rKZ6yjHpnOar4hckXKY4","NIRV":"Gz0BIIzTFfOihHVPozmVj36CXF1l3UhtCghah6Wr77o73vAA_N8ubUlra3kBJlGLPMHCtC2Im70kD8mHbM1t-8fzdgDYl7fgPN5tnpGcprAMC5lSFtp5-0yXu-0NW1O9CQ5hhANHp1sH_8ekVbcAWEJQaeoiP0AbAT84aO8ylZGLTfYnGkY_RtjeN1SftyWAMuzUeSI4ptCW9LbgFVbP4_1uv1M_DSu_LFooQadZdZrMTrPWNJdFoUS_wAE"}},"nt":{"reference":"2 Peter 2:9","reference_zh":"彼得後書 2:9","translations":{"CUV":"主知道搭救敬虔的人脫離試探，把不義的人留在刑罰之下，等候審判的日子。","RCUV":"那麼，主知道搭救敬虔的人脫離試煉，把不義的人留在懲罰之下等候審判的日子，","CNVT":"主知道怎樣搭救敬虔的人脫離試探，又把不義的人留下來，等候在審判的日子受刑罰，","CSBT":"那麼，主就知道怎樣拯救敬神的人脫離試煉【12】，卻把不義的人留在懲罰之下，直到審判的日子，","WCB":"那麼，主當然知道怎樣拯救敬虔的人脫離試煉，而把不義的人保留下來等候在審判的日子受刑罰，","KJV":"The Lord knoweth how to deliver the godly out of temptations, and to reserve the unjust unto the day of judgment to be punished:","NIV":"if this is so, then the Lord knows how to rescue the godly from trials and to hold the unrighteous for punishment on the day of judgment.","NLT":"So you see, the Lord knows how to rescue godly people from their trials, even while keeping the wicked under punishment until the day of final judgment.","NIRV":"Since all this is true, then the Lord knows how to save godly people. He knows how to keep them safe in times of testing. The Lord also knows how to keep ungodly people under guard. He will do so until the day they will be judged and punished."},"fums":{"NIV":"GzcBQBwHbqxlyoOgvZ6Fcyp_OvSQFPzIodpUaYzJ0tUXOk9PMwyAa0uCtrwFx8vhdr_JBR_o_RA385G8lA-2NXf943k7AP5FnpvHu8_yqlglYl2JaqDcBvK_VN49j3uOXQGYn8EhGKy84Y9jTqMW8AAY90jkwCsVhsDJUki4mAcpI1WFE9IFYHtfTn_eOjCy7UpbKkT4aYftCjJYPY_3Z30oVtJSVq-srqpkNQnZfJWCLajhldRU1eIY","NLT":"GzcBABwHbqxlyoOgvR4ItKbKRx_h-5JD1SoA3JKlqy90np5mGADXlgQBtSC8fN_tfpMLPtBvh7jZS_ISRay56z-v-xH022pyHh96mVY2zJKLvvp5WM6ksfqfyod2_ZZyqoIJM84YwdGTfwadekswB8pd4jGIpVJnXJLWBFzHxjfRVlXl4CZg9zhPe91XULJtqU0FIgB1Be6KFaxfp8fDPtd2PatutZSLtfcyLOZWVr8qMqxmq_kyG1wsiQE","NIRV":"GzcBABwHbqxlyoOgvZ6Jayp_upCkZf8Dh2pTQJAsXX2h8_Q0UK4tCQJqQZhG7XyTC_6g3w4HueEluRwixLZ_PG8HwL7YknN5t2GWc556WcqiTHNZaGJ7p-PdSq8xYgqgQ4UQKTw98EejVXcBmAGUqth9IBZTXyRRM2kuI3I1SCUy5GkM2N7fk8_bEpRMG6oTgRBAWYI7ghVWz-N99Rda-VWJWZcSgvZ-vtDTxKKXUVzQwpKZCgY"}},"prayer":"槁木死灰，如今要求你培壅煦覆，賜給忻忻向榮的生意。懇求你將那打擊蹴損的憂心，一處一處修好，再將希望與確信灌溉在心中。上帝啊，奮興我們。","readings":[{"reference":"Psalm 114","reference_zh":"詩篇 114"},{"reference":"1 Samuel 20:18–21:9","reference_zh":"撒母耳記上 20:18–21:9"},{"reference":"John 4:39–42","reference_zh":"約翰福音 4:39–42"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":237,"result_chars":78,"kept_english":false}}</script>
 </body>
 </html>

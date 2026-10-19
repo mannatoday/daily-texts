@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>2026 年 10 月 6 日（星期二） · 摩拉維亞每日箴言</title>
+  <title data-zh="2026 年 10 月 6 日（星期二） · 摩拉維亞每日箴言" data-en="Tuesday, October 6, 2026 · Moravian Daily Texts">2026 年 10 月 6 日（星期二） · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -22,10 +43,14 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
   <div class="site-shell">
   <div class="version-picker">
-    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -34,47 +59,44 @@
       <option value="WCB">環球聖經譯本</option>
     </select>
   </div>
-<main id="main">
+  <main id="main">
     <article>
-    <h1>2026 年 10 月 6 日（星期二）</h1>
-    <h2>舊約</h2>
+    <h1><span class="i18n-zh">2026 年 10 月 6 日（星期二）</span><span class="i18n-en">Tuesday, October 6, 2026</span></h1>
+    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">求你保護我的性命，搭救我， 使我不致羞愧，因為我投靠你。</p>
-    <p class="ref">— 詩篇 25:20</p>
-    <h2>新約</h2>
+    <p class="ref">— <span class="i18n-zh">詩篇 25:20</span><span class="i18n-en">Psalm 25:20</span></p>
+    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
     <p class="verse" data-verse="nt">再過不久，世人不再看見我，你們卻會看見我，因為我活着，你們也要活着。</p>
-    <p class="ref">— 約翰福音 14:19</p>
-    <h2>今日禱告</h2>
+    <p class="ref">— <span class="i18n-zh">約翰福音 14:19</span><span class="i18n-en">John 14:19</span></p>
+    <div class="prayer-block">
+    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">莫令我承羞。主是安身處。鑒我一片誠。忠貞蘊臟腑。脫我於患難。莫孤我延佇。</p>
     <p class="prayer-source">— 吳經熊〈聖詠譯義（詩篇25）〉</p>
-    <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 116:8–14</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20116%3A8-14&amp;version=RCU17TS" data-ref="Psalm 116:8-14" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 116:8–14">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">撒母耳記上 25:18–44</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2025%3A18-44&amp;version=RCU17TS" data-ref="1 Samuel 25:18-44" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 25:18–44">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約翰福音 5:31–47</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%205%3A31-47&amp;version=RCU17TS" data-ref="John 5:31-47" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 5:31–47">[閱讀]</a></p>
+    </div>
+    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 116:8–14</span><span class="i18n-en">Psalm 116:8-14</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20116%3A8-14&amp;version=RCU17TS" data-ref="Psalm 116:8-14" data-label-zh="詩篇 116:8–14" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 116:8–14"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">撒母耳記上 25:18–44</span><span class="i18n-en">1 Samuel 25:18-44</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Samuel%2025%3A18-44&amp;version=RCU17TS" data-ref="1 Samuel 25:18-44" data-label-zh="撒母耳記上 25:18–44" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記上 25:18–44"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 5:31–47</span><span class="i18n-en">John 5:31-47</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%205%3A31-47&amp;version=RCU17TS" data-ref="John 5:31-47" data-label-zh="約翰福音 5:31–47" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 5:31–47"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
     </article>
   <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-10-05.html">← 前一日</a>
-    <a class="day-nav__home" href="index.html">首頁</a>
-    <a class="day-nav__next" href="2026-10-07.html">後一日 →</a>
+    <a class="day-nav__prev" href="2026-10-05.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
+    <a class="day-nav__home" href="index.html"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+    <a class="day-nav__next" href="2026-10-07.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
   </nav>
 </main>
   <footer class="site-foot">
-    <section class="about-blurb" aria-labelledby="about-blurb-title">
-      <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
-      <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
-      <p class="more"><a href="about.html">了解更多</a></p>
-    </section>
-    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <p id="install-hint" class="install-hint" hidden></p>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
-    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></button>
   </nav>
   </div>
-  <script type="application/json" id="day-data">{"date":"2026-10-06","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"week_watchword":null,"ot":{"reference":"Psalm 25:20","reference_zh":"詩篇 25:20","translations":{"CUV":"求你保護我的性命，搭救我，使我不致羞愧，因為我投靠你。","RCUV":"求你保護我的性命，搭救我， 使我不致羞愧，因為我投靠你。","CNVT":"求你護衛我的性命，搭救我；不要叫我羞愧，因為我投靠你。","CSBT":"求你保守我的性命、解救我， 不要讓我蒙羞，因為我投靠你。","WCB":"求你守護我的性命，搭救我； 不要讓我蒙羞， 因為我投靠你。"}},"nt":{"reference":"John 14:19","reference_zh":"約翰福音 14:19","translations":{"CUV":"還有不多的時候，世人不再看見我，你們卻看見我；因為我活著，你們也要活著。","RCUV":"再過不久，世人不再看見我，你們卻會看見我，因為我活着，你們也要活着。","CNVT":"不久以後，世人不再看見我，你們卻要看見我，因為我活著，你們也要活著。","CSBT":"「再過一會兒，世人不再看到我了，而你們將看到我。因為我活著，你們也將活著。","WCB":"過不多久，世人再也看不見我，你們卻會看見我；因為我活著，你們也要活著。"}},"prayer":"莫令我承羞。主是安身處。鑒我一片誠。忠貞蘊臟腑。脫我於患難。莫孤我延佇。","readings":[{"reference":"Psalm 116:8–14","reference_zh":"詩篇 116:8–14"},{"reference":"1 Samuel 25:18–44","reference_zh":"撒母耳記上 25:18–44"},{"reference":"John 5:31–47","reference_zh":"約翰福音 5:31–47"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":169,"result_chars":69,"kept_english":false}}</script>
+  <script type="application/json" id="day-data">{"date":"2026-10-06","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"NLT","label":"NLT"},{"code":"NIRV","label":"NIrV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV","NLT":"NLT","NIRV":"NIRV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.","NLT":"Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.","NIRV":"Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 10 月 6 日（星期二）","date_title_en":"Tuesday, October 6, 2026","week_watchword":null,"ot":{"reference":"Psalm 25:20","reference_zh":"詩篇 25:20","translations":{"CUV":"求你保護我的性命，搭救我，使我不致羞愧，因為我投靠你。","RCUV":"求你保護我的性命，搭救我， 使我不致羞愧，因為我投靠你。","CNVT":"求你護衛我的性命，搭救我；不要叫我羞愧，因為我投靠你。","CSBT":"求你保守我的性命、解救我， 不要讓我蒙羞，因為我投靠你。","WCB":"求你守護我的性命，搭救我； 不要讓我蒙羞， 因為我投靠你。","KJV":"O keep my soul, and deliver me: let me not be ashamed; for I put my trust in thee.","NIV":"Guard my life and rescue me; do not let me be put to shame, for I take refuge in you.","NLT":"Protect me! Rescue my life from them! Do not let me be disgraced, for in you I take refuge.","NIRV":"Guard my life. Save me. Don’t let me be put to shame. I go to you for safety."},"fums":{"NIV":"Gz0BIBwHbqxlyoOgvZ5J0yl_-keS_-0q61pAgRprJEtXX-g8PQ2UCwNubZWlwbfL6Tv5BQ_87XCQGz4kl_IIseMfz9sBsC-24FzebcrTsoosfuW8J86a2J6pudtu2BgJEgRoUSFECl93_NFp1y4AF4BR0RA6QPsNCEnUTJrLiFwNUtkZ8jwGbO8fyudtCVCmTV0nCiGFvKS3Byusnsf7bs9CM18W04VOFBfap7jS0xUlHXJczJaSsrmCAQ","NLT":"Gz0BABwHbqxlyoOgvZ7Khiof3QKlfDc5d9WmzjvJ0tUXOuvueFD-b5dv5y_JAmlLohZ5YgWSZEHcciGZLILv3fGP5-0A2JdYch7vdpGWEqbJR606C4spO7H_VN1tb9gxPkp2gBmGBDo5O_gfo1bdBeABMK7qIg3UfgPe-cTiWOrIaYu-iZqoMgZs7ycqz9sSpAxbO08UIwx1iW8LIayex_vj7ut0Ps91NuVlXCUOLgcucbrkRfdOVcpKpq5g","NIRV":"Gz0BABwHbqxlyoOgvZ5Jcyp_-ilp8uQq60ZqU0CQLF19ofO2OR13q88j-IQIuo3ZaUXrd2a3WRDELSfJIBOhd7_943k7AP5FnpzHu9dZznkqvORFmeaysIH8Ox3uvjdsHavjAOhhcAxydvA_Wq26BWAJoFzVRR6oDeAL31sKlsooNFW5krgQ0hiwvZ-oPm9LkDJs7DwRjDDUJb4tyGD1PN6X-55NhZqkZFlIrCznyeaFsKUwF12mlChRMQ"}},"nt":{"reference":"John 14:19","reference_zh":"約翰福音 14:19","translations":{"CUV":"還有不多的時候，世人不再看見我，你們卻看見我；因為我活著，你們也要活著。","RCUV":"再過不久，世人不再看見我，你們卻會看見我，因為我活着，你們也要活着。","CNVT":"不久以後，世人不再看見我，你們卻要看見我，因為我活著，你們也要活著。","CSBT":"「再過一會兒，世人不再看到我了，而你們將看到我。因為我活著，你們也將活著。","WCB":"過不多久，世人再也看不見我，你們卻會看見我；因為我活著，你們也要活著。","KJV":"Yet a little while, and the world seeth me no more; but ye see me: because I live, ye shall live also.","NIV":"Before long, the world will not see me anymore, but you will see me. Because I live, you also will live.","NLT":"Soon the world will no longer see me, but you will see me. Since I live, you also will live.","NIRV":"Before long, the world will not see me anymore. But you will see me. Because I live, you will live also."},"fums":{"NIV":"Gz0BQIzTFfOihHUPAhqbqV9-85DwRIIkolvrsHT1XXd6UP7xdvz2HY7XoC2JWuQJplEriFsOkkxGQu9--8_rfgT6bTU3nw-dy6yuk3Vh7UMwtkhj9SsdHrrXGSkblK1EhxLOGMHRA_80WnWXwI0wqunCH8wq-MDv0hpp69j4Fl2zQYXqJ8TucaB83VfgZNjQeaowhJBX8LawgvXr9Fjt0seFn9d5ki66hQzVFDlbBqlKXMZs5zUhHA","NLT":"Gz0BgIzTFfOihHVPwTmVjy6lQEJtO6irXwFB67B09X16GigXBtbWgjBr2eX0nfyC1-O_HWJzlERMml_mbfvH83YA6Bc1NY93vYhL-mm0wRU384upNNRvdLjrrhkqesWCUF_BGiNwcoc_2qzaBcAUQSmjc3sgVgDf917SSJaRcTXYSq-yT2OE7f088bwtgZJhI-eJwBBBXqLbAgVWz-N9sc_ZIjmzpJfzWYnSZ87lzM-mMkznS1MiMaUpDg","NIRV":"Gz0BYBwHbqxlyoOgvR4ENDZTv_zmIeGJBElEt2Tp6gudt-067tbpeIII6us2gk4rWr8zG7cgkBs-JJdbiDn-87ofQb-txubxoeO8lDILbuWWdVbqUhqrl9Q8dK8zUjZIVlCgxhkjuHnwT51ddwmuwChlCBvICvzvvbRG2jo2vkXXbFTexQnYPe5TXvcVmEzruU4VQgZ5xW6PFaxfp8dk36u5DzWWKIs3Cxnms5Wcu_larhbJuJKD-LIw"}},"prayer":"莫令我承羞。主是安身處。鑒我一片誠。忠貞蘊臟腑。脫我於患難。莫孤我延佇。","readings":[{"reference":"Psalm 116:8–14","reference_zh":"詩篇 116:8–14"},{"reference":"1 Samuel 25:18–44","reference_zh":"撒母耳記上 25:18–44"},{"reference":"John 5:31–47","reference_zh":"約翰福音 5:31–47"}],"source_url":"https://www.moravian.org/the-daily-texts/","translation":{"provider":"google","status":"ok","chain":["google","openai","anthropic","fallback"],"skipped":[],"failed":[],"source_chars":169,"result_chars":69,"kept_english":false}}</script>
 </body>
 </html>

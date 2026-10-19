@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from daily_texts.application.use_cases.fetch_and_localize import FetchAndLocalizeDailyText
+from daily_texts.domain.exceptions import BibleLookupError, TranslationError
 from daily_texts.domain.models import RawDailyText, Watchword
 from daily_texts.infrastructure.formatters.markdown import MarkdownFormatter
 from daily_texts.infrastructure.publishers.null_publisher import NullPublisher
@@ -53,6 +54,9 @@ async def test_use_case_writes_outputs(tmp_path: Path) -> None:
     assert result.localized.ot.translations["CNVT"] == "ZH:ncv:Jeremiah 9:7"
     assert result.localized.ot.translations["CSBT"] == "ZH:csb:Jeremiah 9:7"
     assert result.localized.ot.translations["WCB"] == "ZH:wcb:Jeremiah 9:7"
+    assert result.localized.ot.translations["NIV"] == "ZH:niv:Jeremiah 9:7"
+    assert result.localized.ot.translations["KJV"] == "ZH:kjv:Jeremiah 9:7"
+    assert "ESV" not in result.localized.ot.translations
     assert "CCBT" not in result.localized.ot.translations
     assert result.localized.prayer_zh == "Hear our prayer. Amen."
     assert result.localized.metadata["translation"]["provider"] == "fallback"
@@ -95,8 +99,6 @@ class FailingTranslator:
         source_lang: str = "en",
         target_lang: str = "zh-TW",
     ) -> str:
-        from daily_texts.domain.exceptions import TranslationError
-
         raise TranslationError("quota exceeded")
 
 
@@ -149,3 +151,35 @@ async def test_use_case_keeps_chinese_prayer_without_translator(tmp_path: Path) 
     assert result.localized.prayer_zh == prayer
     assert result.localized.metadata["translation"]["status"] == "already_zh"
     assert result.localized.metadata["translation"]["kept_english"] is False
+
+
+class MissingNivBible(FakeBible):
+    async def lookup(self, reference: str, *, version: str = "rcuv") -> str:
+        if version == "niv":
+            raise BibleLookupError("API_BIBLE_API_KEY is not set")
+        return await FakeBible.lookup(self, reference, version=version)
+
+
+@pytest.mark.asyncio
+async def test_use_case_leaves_niv_empty_when_lookup_fails(tmp_path: Path) -> None:
+    raw = RawDailyText(
+        date=date(2026, 10, 18),
+        date_display="Sunday, October 18, 2026",
+        ot=Watchword(reference="Haggai 2:9", text_en=""),
+        nt=Watchword(reference="Mark 11:17", text_en=""),
+        prayer_en="Amen.",
+        source_url="dataset://example",
+        metadata={"provider": "dataset", "prayer_lang": "zh"},
+    )
+    uc = FetchAndLocalizeDailyText(
+        provider=FakeProvider(raw),
+        bible=MissingNivBible(),
+        translator=NoopTranslator(),
+        formatters=[MarkdownFormatter()],
+        publishers=[NullPublisher()],
+        output_dir=tmp_path,
+    )
+    result = await uc.run(force=True)
+    assert result.localized.ot.translations["NIV"] == ""
+    assert result.localized.ot.translations["KJV"] == "ZH:kjv:Haggai 2:9"
+    assert result.localized.ot.text_zh == "ZH:rcuv:Haggai 2:9"

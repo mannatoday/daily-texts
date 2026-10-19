@@ -70,8 +70,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "[閱讀 ·" not in html
     assert "[閱讀]" in html
     assert 'data-ref=' in html
-    assert ">首頁</a>" in html
-    assert 'class="tab__label">首頁</span>' in html
+    assert "首頁" in html
     assert "archive.html" not in html
     js = (tmp_path / "version.js").read_text(encoding="utf-8")
     assert "localStorage" in js
@@ -105,7 +104,8 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     day = (tmp_path / "2026-08-01.html").read_text(encoding="utf-8")
     assert "我要熬煉他們。" in today
     assert "location.replace" not in today
-    assert "<title>今日經文 · 摩拉維亞每日箴言</title>" in today
+    assert "今日經文 · 摩拉維亞每日箴言" in today
+    assert 'data-en="Today · Moravian Daily Texts"' in today
     assert today != day  # title differs; body content matches
     assert "about-blurb" not in today
     assert "了解更多" not in today

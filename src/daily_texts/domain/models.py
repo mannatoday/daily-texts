@@ -38,6 +38,8 @@ class LocalizedWatchword(BaseModel):
     text_zh: str
     # site version code → Chinese (or English fallback) text
     translations: dict[str, str] = Field(default_factory=dict)
+    # API.Bible FUMS tokens, reported when that version is shown.
+    fums_tokens: dict[str, str] = Field(default_factory=dict)
     bible_url: str | None = None
 
 

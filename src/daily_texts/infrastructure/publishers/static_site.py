@@ -9,14 +9,17 @@ from pathlib import Path
 
 from daily_texts.application.dto import FormattedOutput, PublishResult
 from daily_texts.domain.models import LocalizedDailyText
-from daily_texts.infrastructure.formatters._common import format_date_zh
+from daily_texts.infrastructure.formatters._common import format_date_en, format_date_zh
 from daily_texts.infrastructure.formatters.html import (
     ICON_VERSION,
     INSTALL_SCRIPT_TAG,
+    LANG_BOOT_SCRIPT,
     LOSUNGEN_ATTRIBUTION_HTML,
     PWA_HEAD_TAGS,
     TABBAR_HTML,
+    VERSION_SCRIPT_TAG,
     HtmlFormatter,
+    bilingual,
     load_devotional_css,
 )
 
@@ -147,9 +150,10 @@ class StaticSitePublisher:
         if latest is None:
             today_path.write_text(
                 _shell_page(
-                    title="今日經文 · 摩拉維亞每日箴言",
-                    body='    <p class="empty">尚無每日經文。</p>\n'
-                    '    <p class="archive-more"><a href="index.html">回首頁</a></p>\n',
+                    title_zh="今日經文 · 摩拉維亞每日箴言",
+                    title_en="Today · Moravian Daily Texts",
+                    body=f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
+                    f'    <p class="archive-more"><a href="index.html">{bilingual("回首頁", "Home")}</a></p>\n',
                     extra_class="site-index",
                 ),
                 encoding="utf-8",
@@ -194,24 +198,25 @@ class StaticSitePublisher:
     def _build_index(self, days: list[date] | None = None) -> str:
         days = days if days is not None else self._list_day_pages()
         if not days:
-            body = '    <p class="empty">尚無每日經文。</p>\n'
+            body = f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
         else:
             latest = days[0]
-            latest_label = escape(format_date_zh(latest))
+            latest_label = bilingual(format_date_zh(latest), format_date_en(latest))
             recent = days[:3]
             items = "\n".join(_day_list_item(d) for d in recent)
             body = (
                 f'    <a class="today-card" href="today.html">'
-                f'<span class="today-card__label">閱讀今日經文</span>'
+                f'<span class="today-card__label">{bilingual("閱讀今日經文", "Today’s reading")}</span>'
                 f'<span class="today-card__date">{latest_label}</span>'
                 "</a>\n"
-                '    <h2 class="archive-title">最近三天</h2>\n'
+                f'    <h2 class="archive-title">{bilingual("最近三天", "Recent days")}</h2>\n'
                 f'    <ul class="archive-list">\n{items}\n    </ul>\n'
-                '    <p class="archive-more"><a href="archive.html">歷日檔案</a></p>\n'
+                f'    <p class="archive-more"><a href="archive.html">{bilingual("歷日檔案", "Archive")}</a></p>\n'
             )
 
         return _shell_page(
-            title="摩拉維亞每日箴言",
+            title_zh="摩拉維亞每日箴言",
+            title_en="Moravian Daily Texts",
             body=body,
             extra_class="site-index",
         )
@@ -219,12 +224,13 @@ class StaticSitePublisher:
     def _build_archive(self, days: list[date] | None = None) -> str:
         days = days if days is not None else self._list_day_pages()
         if not days:
-            body = '    <p class="empty">尚無每日經文。</p>\n'
+            body = f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
         else:
             body = _archive_markup(days)
 
         return _shell_page(
-            title="歷日檔案 · 摩拉維亞每日箴言",
+            title_zh="歷日檔案 · 摩拉維亞每日箴言",
+            title_en="Archive · Moravian Daily Texts",
             body=body,
             extra_class="site-index archive-page",
             top_nav=True,
@@ -232,10 +238,11 @@ class StaticSitePublisher:
 
 
 def _day_list_item(day: date) -> str:
+    label = bilingual(format_date_zh(day), format_date_en(day))
     return (
         "      <li>"
         f'<a href="{day.isoformat()}.html">'
-        f"<span>{escape(format_date_zh(day))}</span>"
+        f"<span>{label}</span>"
         f'<span class="iso">{day.isoformat()}</span>'
         "</a></li>"
     )
@@ -267,9 +274,9 @@ def _archive_markup(days: list[date], *, today: date | None = None) -> str:
         for year, month in reversed(months)
     )
     return (
-        '    <h1 class="archive-page-title">歷日檔案</h1>\n'
+        f'    <h1 class="archive-page-title">{bilingual("歷日檔案", "Archive")}</h1>\n'
         f'    <div class="cal">\n{panels}\n    </div>\n'
-        '    <h2 class="archive-months-title">依月份</h2>\n'
+        f'    <h2 class="archive-months-title">{bilingual("依月份", "By month")}</h2>\n'
         f'    <div class="archive-months">\n{lists}\n    </div>\n'
     )
 
@@ -291,9 +298,23 @@ def _month_id(year: int, month: int) -> str:
 
 
 def _month_label(year: int, month: int, *, with_year: bool) -> str:
-    if with_year:
-        return f"{year} 年 {month} 月"
-    return f"{month} 月"
+    zh = f"{year} 年 {month} 月" if with_year else f"{month} 月"
+    en_month = (
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    )[month - 1]
+    en = f"{en_month} {year}" if with_year else en_month
+    return bilingual(zh, en)
 
 
 def _calendar_month(
@@ -309,8 +330,19 @@ def _calendar_month(
     checked_attr = " checked" if checked else ""
     prev = _month_edge(prev_month, year, side="prev")
     nxt = _month_edge(next_month, year, side="next")
-    title = f"{year} 年 {month} 月"
-    heads = "".join(f'<span class="cal-dow">{label}</span>' for label in ("日", "一", "二", "三", "四", "五", "六"))
+    title_zh = f"{year} 年 {month} 月"
+    title_en = (
+        "January February March April May June July August September October November December".split()
+    )[month - 1] + f" {year}"
+    title = bilingual(title_zh, title_en)
+    heads = "".join(
+        f'<span class="cal-dow">{bilingual(zh, en)}</span>'
+        for zh, en in zip(
+            ("日", "一", "二", "三", "四", "五", "六"),
+            ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
+            strict=True,
+        )
+    )
     cells = _calendar_cells(year, month, published, today)
     return (
         '      <div class="cal-month">\n'
@@ -321,7 +353,7 @@ def _calendar_month(
         f'            <h2 class="cal-nav__title">{title}</h2>\n'
         f"            {nxt}\n"
         "          </div>\n"
-        f'          <div class="cal-grid" aria-label="{title}">\n'
+        f'          <div class="cal-grid" aria-label="{escape(title_zh)}">\n'
         f"            {heads}\n"
         f"{cells}\n"
         "          </div>\n"
@@ -384,25 +416,34 @@ def _month_list(year: int, month: int, days: list[date], *, open_month: bool) ->
 
 def _shell_page(
     *,
-    title: str,
+    title_zh: str,
+    title_en: str,
     body: str,
     extra_class: str,
     top_nav: bool = False,
 ) -> str:
     nav = ""
     if top_nav:
-        nav = """    <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← 首頁</a>
-      <span class="day-nav__home" aria-current="page">歷日檔案</span>
-      <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+        nav = f"""    <nav class="day-nav" aria-label="網站導覽">
+      <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
+      <span class="day-nav__home" aria-current="page">{bilingual("歷日檔案", "Archive")}</span>
+      <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
     </nav>
 """
     brand = ""
     if not top_nav:
-        brand = """    <h1 class="brand">摩拉維亞每日箴言</h1>
-    <p class="subtitle">Moravian Daily Texts • 中文版</p>
-    <p class="lede">以神的話開始每一天</p>
+        brand = f"""    <h1 class="brand">{bilingual("摩拉維亞每日箴言", "Moravian Daily Texts")}</h1>
+    <p class="subtitle">{bilingual("Moravian Daily Texts • 中文版", "Moravian Daily Texts")}</p>
+    <p class="lede">{bilingual("以神的話開始每一天", "Begin each day with the Word of God")}</p>
 """
+    blurb_zh = (
+        "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
+        "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
+    )
+    blurb_en = (
+        "Moravian Daily Texts has been published since 1731. Each day offers an Old Testament "
+        "watchword, a New Testament text, and a plan for reading Scripture."
+    )
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -410,25 +451,36 @@ def _shell_page(
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>{escape(title)}</title>
-{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-{INSTALL_SCRIPT_TAG}</head>
+  <title data-zh="{escape(title_zh, quote=True)}" data-en="{escape(title_en, quote=True)}">{escape(title_zh)}</title>
+{LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+{VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main">{bilingual("跳至內容", "Skip to content")}</a>
   <div class="site-shell {extra_class}">
+  <div class="version-picker">
+{_lang_toggle_markup()}  </div>
 {nav}    <main id="main">
 {brand}{body}    </main>
     <footer class="site-foot">
       <section class="about-blurb" aria-labelledby="about-blurb-title">
-        <h2 id="about-blurb-title">關於 Moravian Daily Texts</h2>
-        <p>Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。</p>
+        <h2 id="about-blurb-title">{bilingual("關於 Moravian Daily Texts", "About Moravian Daily Texts")}</h2>
+        <p class="i18n-zh">{blurb_zh}</p>
+        <p class="i18n-en">{blurb_en}</p>
       </section>
-      <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+      <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
 {TABBAR_HTML}  </div>
 </body>
 </html>
+"""
+
+
+def _lang_toggle_markup() -> str:
+    return """    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
 """
 
 
@@ -439,7 +491,9 @@ def _as_today_page(day_html: str) -> str:
     links to the about page, so the daily reading page stays on the texts.
     """
     html = _TITLE_TAG.sub(
-        "<title>今日經文 · 摩拉維亞每日箴言</title>",
+        '<title data-zh="今日經文 · 摩拉維亞每日箴言" '
+        'data-en="Today · Moravian Daily Texts">'
+        "今日經文 · 摩拉維亞每日箴言</title>",
         day_html,
         count=1,
     )
@@ -452,7 +506,7 @@ _ABOUT_BLURB_SECTION = re.compile(
 )
 
 
-_TITLE_TAG = re.compile(r"<title>.*?</title>", re.DOTALL)
+_TITLE_TAG = re.compile(r"<title\b[^>]*>.*?</title>", re.DOTALL)
 
 
 def _neighbors(day: date, days_newest_first: list[date]) -> tuple[str | None, str | None]:
@@ -481,6 +535,7 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
         next_href=next_href,
         home_href="index.html",
         css_extra="day-nav--bottom",
+        bilingual_labels=True,
     )
     matches = list(_NAV_BLOCK.finditer(html))
     if not matches:
@@ -498,22 +553,23 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
 
 
 _VERSION_JS = """\
-// Multi-version watchword renderer + lectionary Bible Gateway links.
-// Priority: ?version= → localStorage → embedded default (RCUV).
+// Language toggle plus multi-version watchword renderer.
+// Language: ?lang= → version hint → localStorage → Chinese.
+// Version: ?version= (if it belongs to that language) → per-language localStorage → default.
 (function () {
   "use strict";
-  var KEY = "dailyTexts.bibleVersion";
-  var GATEWAY = {
-    CUV: "CUV",
-    RCUV: "RCU17TS",
-    CNVT: "CNVT",
-    CSBT: "CSBT"
-  };
-  var NOTICE_VERSION = "WCB";
+  var LANG_KEY = "dailyTexts.lang";
+  var VERSION_KEY = "dailyTexts.bibleVersion";
+  var ENGLISH = [
+    { code: "NIV", label: "NIV" },
+    { code: "NLT", label: "NLT" },
+    { code: "NIRV", label: "NIrV" },
+    { code: "KJV", label: "KJV" }
+  ];
+  var CHINESE = ["CUV", "RCUV", "CNVT", "CSBT", "WCB"];
+  var DEFAULTS = { zh: "RCUV", en: "NIV" };
 
   var select = document.getElementById("bible-version");
-  if (!select) return;
-
   var dataEl = document.getElementById("day-data");
   var day = null;
   if (dataEl) {
@@ -524,119 +580,284 @@ _VERSION_JS = """\
     }
   }
 
-  var validCodes = Array.prototype.map.call(select.options, function (opt) {
-    return opt.value;
-  });
-  var defaultVersion =
-    (day && day.default_version) || select.value || "RCUV";
-
-  function fromQuery() {
+  function queryParam(name) {
     try {
-      return new URLSearchParams(window.location.search).get("version");
+      return new URLSearchParams(window.location.search).get(name);
     } catch (err) {
       return null;
     }
   }
 
-  function fromStorage() {
+  function stored(key) {
     try {
-      return window.localStorage.getItem(KEY);
+      return window.localStorage.getItem(key);
     } catch (err) {
       return null;
     }
   }
 
-  function resolveVersion() {
-    var q = fromQuery();
-    if (q && validCodes.indexOf(q) >= 0) return q;
-    var s = fromStorage();
-    if (s && validCodes.indexOf(s) >= 0) return s;
-    if (validCodes.indexOf(defaultVersion) >= 0) return defaultVersion;
-    return validCodes[0];
+  function remember(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch (err) {
+      /* ignore */
+    }
+  }
+
+  function listFor(lang) {
+    var fallback = lang === "en"
+      ? ENGLISH
+      : CHINESE.map(function (code) { return { code: code, label: code }; });
+    var fromDay = day && (lang === "en" ? day.english_versions : day.versions);
+    if (!fromDay || !fromDay.length) return fallback;
+    if (lang !== "en") return fromDay;
+    var allowed = {};
+    ENGLISH.forEach(function (item) { allowed[item.code] = true; });
+    var merged = fromDay.filter(function (item) { return allowed[item.code]; });
+    var seen = {};
+    merged.forEach(function (item) { seen[item.code] = true; });
+    fallback.forEach(function (item) {
+      if (!seen[item.code]) merged.push(item);
+    });
+    return merged;
+  }
+
+  function codesFor(lang) {
+    return listFor(lang).map(function (item) {
+      return item.code;
+    });
+  }
+
+  function resolveLang() {
+    var q = queryParam("lang");
+    if (q === "en" || q === "zh") return q;
+    var version = queryParam("version");
+    if (version && ENGLISH.some(function (item) { return item.code === version; })) return "en";
+    if (version && CHINESE.indexOf(version) >= 0) return "zh";
+    var saved = stored(LANG_KEY);
+    if (saved === "en" || saved === "zh") return saved;
+    if (document.documentElement.getAttribute("data-lang") === "en") return "en";
+    return "zh";
+  }
+
+  function storedVersion(lang, codes) {
+    var saved = stored(VERSION_KEY + "." + lang);
+    if (saved && codes.indexOf(saved) >= 0) return saved;
+    if (lang === "zh") {
+      var legacy = stored(VERSION_KEY);
+      if (legacy && codes.indexOf(legacy) >= 0) return legacy;
+    }
+    var fallback = (day && (lang === "en" ? day.default_english_version : day.default_version)) || DEFAULTS[lang];
+    if (codes.indexOf(fallback) >= 0) return fallback;
+    return codes[0];
+  }
+
+  function resolveVersion(lang, codes) {
+    var q = queryParam("version");
+    if (q && codes.indexOf(q) >= 0) return q;
+    return storedVersion(lang, codes);
+  }
+
+  function gatewayMap() {
+    var map = {
+      CUV: "CUV",
+      RCUV: "RCU17TS",
+      CNVT: "CNVT",
+      CSBT: "CSBT",
+      KJV: "KJV",
+      NIV: "NIV",
+      NLT: "NLT",
+      NIRV: "NIRV"
+    };
+    var extra = (day && day.gateway) || {};
+    Object.keys(extra).forEach(function (key) { map[key] = extra[key]; });
+    return map;
   }
 
   function gatewayCode(siteCode) {
-    return Object.prototype.hasOwnProperty.call(GATEWAY, siteCode)
-      ? GATEWAY[siteCode]
-      : null;
+    var map = gatewayMap();
+    return Object.prototype.hasOwnProperty.call(map, siteCode) ? map[siteCode] : null;
   }
 
-  function textFor(block, siteCode) {
-    if (!block || !block.translations) return null;
+  function gatewayUrl(ref, siteCode) {
+    var code = gatewayCode(siteCode);
+    if (!code || !ref) return "";
     return (
-      block.translations[siteCode] ||
-      block.translations[defaultVersion] ||
-      null
+      "https://www.biblegateway.com/passage/?search=" +
+      encodeURIComponent(ref) +
+      "&version=" +
+      encodeURIComponent(code)
     );
   }
 
-  function applyVerses(siteCode) {
+  function setLangChrome(lang) {
+    var root = document.documentElement;
+    if (lang === "en") {
+      root.setAttribute("data-lang", "en");
+      root.lang = "en";
+    } else {
+      root.removeAttribute("data-lang");
+      root.lang = "zh-Hant";
+    }
+    var title = document.querySelector("title");
+    if (title) {
+      var next = title.getAttribute(lang === "en" ? "data-en" : "data-zh");
+      if (next) title.textContent = next;
+    }
+    var buttons = document.querySelectorAll("[data-set-lang]");
+    Array.prototype.forEach.call(buttons, function (btn) {
+      btn.setAttribute(
+        "aria-pressed",
+        btn.getAttribute("data-set-lang") === lang ? "true" : "false"
+      );
+    });
+  }
+
+  function fillSelect(lang, version) {
+    if (!select) return;
+    var list = listFor(lang);
+    select.innerHTML = "";
+    list.forEach(function (item) {
+      var opt = document.createElement("option");
+      opt.value = item.code;
+      opt.textContent = item.label;
+      if (item.code === version) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.value = version;
+  }
+
+  function textFor(block, siteCode) {
+    if (!block || !block.translations) return "";
+    if (Object.prototype.hasOwnProperty.call(block.translations, siteCode)) {
+      return block.translations[siteCode] || "";
+    }
+    return "";
+  }
+
+  function applyVerses(siteCode, lang) {
     if (!day) return;
     var map = { week: day.week_watchword, ot: day.ot, nt: day.nt };
     Object.keys(map).forEach(function (role) {
       var el = document.querySelector('[data-verse="' + role + '"]');
-      if (!el) return;
-      var text = textFor(map[role], siteCode);
-      if (text) el.textContent = text;
+      var block = map[role];
+      if (!el || !block) return;
+      var text = textFor(block, siteCode);
+      el.textContent = "";
+      if (text) {
+        el.textContent = text;
+        reportFums(block, siteCode);
+        return;
+      }
+      var href = gatewayUrl(block.reference, siteCode);
+      if (!href) return;
+      var link = document.createElement("a");
+      link.className = "verse__fallback";
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = lang === "en" ? "Read on Bible Gateway" : "在 Bible Gateway 閱讀";
+      el.appendChild(link);
     });
   }
 
-  function applyReadingLinks(siteCode) {
-    var code = gatewayCode(siteCode);
+  function applyReadingLinks(siteCode, lang) {
     var links = document.querySelectorAll("a.reading__open");
     Array.prototype.forEach.call(links, function (link) {
       var ref = link.getAttribute("data-ref");
       if (!ref) return;
-      if (!code) {
+      var href = gatewayUrl(ref, siteCode);
+      if (!href) {
         link.hidden = true;
         return;
       }
       link.hidden = false;
-      link.href =
-        "https://www.biblegateway.com/passage/?search=" +
-        encodeURIComponent(ref) +
-        "&version=" +
-        encodeURIComponent(code);
+      link.href = href;
+      var zh = link.getAttribute("data-label-zh") || ref;
+      if (lang === "en") {
+        link.title = "Read on Bible Gateway";
+        link.setAttribute("aria-label", "Read " + ref);
+      } else {
+        link.title = "在 Bible Gateway 閱讀";
+        link.setAttribute("aria-label", "閱讀 " + zh);
+      }
     });
   }
+
+  var EXTRA_NOTICES = {
+    NIV: "Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
+    NLT: "Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.",
+    NIRV: "Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."
+  };
+
+  function reportFums(block, siteCode) {
+    var raw = block && block.fums && block.fums[siteCode];
+    if (!raw) return;
+    raw.split(/\\s+/).forEach(function (token) {
+      if (!token || reportFums.seen[token]) return;
+      reportFums.seen[token] = true;
+      var ping = new Image();
+      ping.referrerPolicy = "no-referrer";
+      ping.src = "https://fums.api.bible/fums/?t=" + encodeURIComponent(token);
+    });
+  }
+  reportFums.seen = {};
 
   function applyNotice(siteCode) {
     var note = document.getElementById("version-notice");
     if (!note) return;
-    note.hidden = siteCode !== NOTICE_VERSION;
+    var notices = (day && day.notices) || {};
+    var text = notices[siteCode] || EXTRA_NOTICES[siteCode] || "";
+    note.hidden = !text;
+    if (text) note.textContent = text;
   }
 
-  function syncUrl(siteCode) {
+  function syncUrl(lang, version) {
     try {
       var url = new URL(window.location.href);
-      url.searchParams.set("version", siteCode);
+      url.searchParams.set("lang", lang);
+      if (select) url.searchParams.set("version", version);
       window.history.replaceState({}, "", url.toString());
     } catch (err) {
       /* file:// or unsupported */
     }
   }
 
-  function apply(siteCode) {
-    select.value = siteCode;
-    applyVerses(siteCode);
-    applyReadingLinks(siteCode);
-    applyNotice(siteCode);
-    try {
-      window.localStorage.setItem(KEY, siteCode);
-    } catch (err) {
-      /* ignore */
-    }
-    syncUrl(siteCode);
+  function apply(lang, version) {
+    setLangChrome(lang);
+    fillSelect(lang, version);
+    applyVerses(version, lang);
+    applyReadingLinks(version, lang);
+    applyNotice(version);
+    remember(LANG_KEY, lang);
+    remember(VERSION_KEY + "." + lang, version);
+    syncUrl(lang, version);
   }
 
-  apply(resolveVersion());
+  var lang = resolveLang();
+  var version = resolveVersion(lang, codesFor(lang));
+  apply(lang, version);
 
-  select.addEventListener("change", function () {
-    apply(select.value);
+  if (select) {
+    select.addEventListener("change", function () {
+      version = select.value;
+      apply(lang, version);
+    });
+  }
+
+  var buttons = document.querySelectorAll("[data-set-lang]");
+  Array.prototype.forEach.call(buttons, function (btn) {
+    btn.addEventListener("click", function () {
+      var next = btn.getAttribute("data-set-lang");
+      if (next !== "en" && next !== "zh") return;
+      if (next === lang) return;
+      lang = next;
+      version = storedVersion(lang, codesFor(lang));
+      apply(lang, version);
+    });
   });
 })();
 """
-
 # Web app manifest. Relative URLs resolve against the manifest's own location,
 # so start_url/scope stay correct under the GitHub Pages subpath (…/daily-texts/).
 # start_url points at today.html so the installed shortcut always opens the latest day.
@@ -774,16 +995,18 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="關於 Moravian Daily Texts 與本站中文版" />
-  <title>關於 · 摩拉維亞每日箴言</title>
-{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-{INSTALL_SCRIPT_TAG}</head>
+  <title data-zh="關於 · 摩拉維亞每日箴言" data-en="About · Moravian Daily Texts">關於 · 摩拉維亞每日箴言</title>
+{LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+{VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main">{bilingual("跳至內容", "Skip to content")}</a>
   <div class="site-shell about-page">
+  <div class="version-picker">
+{_lang_toggle_markup()}  </div>
     <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← 首頁</a>
-      <span class="day-nav__home" aria-current="page">關於</span>
-      <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+      <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
+      <span class="day-nav__home" aria-current="page">{bilingual("關於", "About")}</span>
+      <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
     </nav>
     <main id="main">
       <h1>關於 Moravian Daily Texts</h1>
@@ -825,12 +1048,12 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">每日舊約守望經文與新約經文的章節，出自官方德文《Die Losungen》，由 <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> 出版。更多資訊見 <a href="https://www.losungen.de/" rel="noopener noreferrer">www.losungen.de</a>。</p>
       <p class="meta" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a>. <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
       <p class="meta">英文版每日內容見 <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America — The Daily Texts</a>。讀經進度依北美摩拉維亞教會的讀經安排，說明見 <a href="https://www.moravian.org/2018/07/using-the-moravian-daily-texts/" rel="noopener noreferrer">Using the Moravian Daily Texts</a>。</p>
-      <p class="meta">中文經文正文引自已獲全世界使用授權的譯本：和合本、和合本修訂版、新譯本、中文標準譯本、環球聖經譯本。各譯本版權仍屬原出版機構。選用《環球聖經譯本》時，頁腳另標環球聖經公會的版權。</p>
+      <p class="meta">中文經文正文引自已獲全世界使用授權的譯本：和合本、和合本修訂版、新譯本、中文標準譯本、環球聖經譯本。英文可在頁首切換 NIV、NLT、NIrV 與 KJV。NIV 與 NIrV 版權屬於 Biblica；NLT 版權屬於 Tyndale House；KJV 為公有領域。各譯本版權仍屬原出版機構。選用《環球聖經譯本》、NIV、NLT 或 NIrV 時，頁腳另標版權。</p>
       <p class="meta">今日禱告的出處是當天頁面句末的署名（作者與作品）。聖詩與禱文的版權依各作品而定。</p>
       <p class="meta">若需正式出版、轉載或商業用途，請另洽原文出版單位，並遵守各譯本與作品的版權規定。</p>
     </main>
     <footer class="site-foot">
-      <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+      <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
 {TABBAR_HTML}  </div>

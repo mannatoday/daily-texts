@@ -118,11 +118,63 @@ button:focus-visible {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.6rem;
   font-size: 0.78rem;
   letter-spacing: 0.03em;
   color: var(--text-soft);
+}
+
+.lang-toggle {
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+
+.lang-toggle__btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  min-height: 2.25rem;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+}
+
+html:not([data-lang="en"]) .lang-toggle__btn[data-set-lang="zh"],
+html[data-lang="en"] .lang-toggle__btn[data-set-lang="en"] {
+  background: var(--rule);
+  color: var(--text);
+}
+
+.i18n-en {
+  display: none;
+}
+
+html[data-lang="en"] .i18n-zh {
+  display: none;
+}
+
+html[data-lang="en"] .i18n-en {
+  display: inline;
+}
+
+html[data-lang="en"] p.i18n-en {
+  display: block;
+}
+
+html[data-lang="en"] .prayer-block {
+  display: none;
+}
+
+.verse__fallback {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
 }
 
 .version-picker__select {
@@ -227,7 +279,7 @@ article > h1 {
   text-align: center;
 }
 
-article > h2 {
+article h2 {
   margin: 2.6rem 0 0.9rem;
   padding-top: 1.85rem;
   border-top: 1px solid var(--rule);
@@ -879,7 +931,7 @@ footer.site-foot {
     text-decoration: none;
   }
 
-  article > h2 {
+  article h2 {
     break-after: avoid;
   }
 

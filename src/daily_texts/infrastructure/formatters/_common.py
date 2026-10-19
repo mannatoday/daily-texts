@@ -7,6 +7,21 @@ from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.domain.references import localize_reference
 
 _WEEKDAYS_ZH = ("星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日")
+_WEEKDAYS_EN = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+_MONTHS_EN = (
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+)
 
 
 def format_date_zh(day: date) -> str:
@@ -14,11 +29,28 @@ def format_date_zh(day: date) -> str:
     return f"{day.year} 年 {day.month} 月 {day.day} 日（{_WEEKDAYS_ZH[day.weekday()]}）"
 
 
+def format_date_en(day: date) -> str:
+    """English date like ``Saturday, August 1, 2026``."""
+    return f"{_WEEKDAYS_EN[day.weekday()]}, {_MONTHS_EN[day.month - 1]} {day.day}, {day.year}"
+
+
 def date_title_zh(content: LocalizedDailyText) -> str:
     title = format_date_zh(content.date)
     church = content.metadata.get("church_year_label")
     if church:
         return f"{title}（{church}）"
+    return title
+
+
+def date_title_en(content: LocalizedDailyText) -> str:
+    title = format_date_en(content.date)
+    church = str(content.metadata.get("church_year_label_en") or "").strip()
+    if not church:
+        existing = str(content.metadata.get("church_year_label") or "").strip()
+        if existing and not any("\u4e00" <= char <= "\u9fff" for char in existing):
+            church = existing
+    if church:
+        return f"{title} ({church})"
     return title
 
 

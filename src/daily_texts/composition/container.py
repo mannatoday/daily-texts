@@ -13,6 +13,12 @@ from daily_texts.application.ports.provider import DailyTextProvider
 from daily_texts.application.ports.publisher import Publisher
 from daily_texts.application.ports.translator import TextTranslator
 from daily_texts.application.use_cases.fetch_and_localize import FetchAndLocalizeDailyText
+from daily_texts.infrastructure.bible.english import (
+    ApiBibleService,
+    EsvBibleService,
+    KjvBibleService,
+    RoutingBibleService,
+)
 from daily_texts.infrastructure.bible.fhl_rcuv import FhlRcuvBibleService
 from daily_texts.infrastructure.config import Settings
 from daily_texts.infrastructure.formatters.html import HtmlFormatter
@@ -76,7 +82,12 @@ def build_container(settings: Settings | None = None) -> Container:
     settings = settings or Settings()
     http_client = create_http_client(settings)
     provider = _build_provider(settings, http_client)
-    bible = FhlRcuvBibleService(http_client, settings)
+    bible = RoutingBibleService(
+        FhlRcuvBibleService(http_client, settings),
+        EsvBibleService(http_client, settings),
+        KjvBibleService(http_client, settings),
+        ApiBibleService(http_client, settings),
+    )
     translator = _build_translator(settings)
     formatters = _build_formatters(settings)
     publishers = _build_publishers(settings)

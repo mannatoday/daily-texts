@@ -65,6 +65,11 @@ class Settings(BaseSettings):
 
     bible_version: str = "rcuv"
     fhl_api_base: str = "https://bible.fhl.net/json"
+    esv_api_key: str = ""
+    esv_api_base: str = "https://api.esv.org/v3"
+    kjv_api_base: str = "https://bible-api.com"
+    api_bible_api_key: str = ""
+    api_bible_api_base: str = "https://api.scripture.api.bible/v1"
 
     # Preferred: ordered chain used by CompositeTranslator.
     # Example: google,openai,anthropic,fallback

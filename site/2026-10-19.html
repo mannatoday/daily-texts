@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
-  <title>2026 年 10 月 19 日（星期一） · 摩拉維亞每日箴言</title>
+  <title data-zh="2026 年 10 月 19 日（星期一） · 摩拉維亞每日箴言" data-en="Monday, October 19, 2026 · Moravian Daily Texts">2026 年 10 月 19 日（星期一） · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -22,10 +43,14 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳至內容</a>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
   <div class="site-shell">
   <div class="version-picker">
-    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -36,40 +61,42 @@
   </div>
   <main id="main">
     <article>
-    <h1>2026 年 10 月 19 日（星期一）</h1>
-    <h2>舊約</h2>
+    <h1><span class="i18n-zh">2026 年 10 月 19 日（星期一）</span><span class="i18n-en">Monday, October 19, 2026</span></h1>
+    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">祭司的嘴唇當守護知識，人也當從他口中尋求訓誨，因為他是萬軍之耶和華的使者。</p>
-    <p class="ref">— 瑪拉基書 2:7</p>
-    <h2>新約</h2>
+    <p class="ref">— <span class="i18n-zh">瑪拉基書 2:7</span><span class="i18n-en">Malachi 2:7</span></p>
+    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
     <p class="verse" data-verse="nt">務要傳道；無論得時不得時總要專心，並以百般的忍耐和各樣的教導責備人，警戒人，勸勉人。</p>
-    <p class="ref">— 提摩太後書 4:2</p>
-    <h2>今日禱告</h2>
+    <p class="ref">— <span class="i18n-zh">提摩太後書 4:2</span><span class="i18n-en">2 Timothy 4:2</span></p>
+    <div class="prayer-block">
+    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">上帝啊，凡倚賴主的人，主必賜他力量；求主施憐憫應允我們的禱告。我們因人性軟弱，若離了主，善事皆不能作；求主施恩保佑我們，能遵守主的命令，意念、行為都能蒙主喜歡。這都是靠著我主耶穌基督。阿們。</p>
     <p class="prayer-source">— 公禱書：求恩典遵行聖言 (collect)</p>
-    <h2>經文選讀</h2>
-    <p class="reading"><span class="reading__ref">詩篇 119:33–40</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20119%3A33-40&amp;version=RCU17TS" data-ref="Psalm 119:33-40" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 119:33–40">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">撒母耳記下 9</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=2%20Samuel%209&amp;version=RCU17TS" data-ref="2 Samuel 9" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記下 9">[閱讀]</a></p>
-    <p class="reading"><span class="reading__ref">約翰福音 8:12–30</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%208%3A12-30&amp;version=RCU17TS" data-ref="John 8:12-30" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 8:12–30">[閱讀]</a></p>
+    </div>
+    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 119:33–40</span><span class="i18n-en">Psalm 119:33-40</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20119%3A33-40&amp;version=RCU17TS" data-ref="Psalm 119:33-40" data-label-zh="詩篇 119:33–40" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 119:33–40"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">撒母耳記下 9</span><span class="i18n-en">2 Samuel 9</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=2%20Samuel%209&amp;version=RCU17TS" data-ref="2 Samuel 9" data-label-zh="撒母耳記下 9" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 撒母耳記下 9"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 8:12–30</span><span class="i18n-en">John 8:12-30</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%208%3A12-30&amp;version=RCU17TS" data-ref="John 8:12-30" data-label-zh="約翰福音 8:12–30" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 8:12–30"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
     </article>
   <nav class="day-nav day-nav--bottom" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-10-18.html">← 前一日</a>
-    <a class="day-nav__home" href="index.html">首頁</a>
-    <span class="day-nav__next" aria-disabled="true">後一日 →</span>
+    <a class="day-nav__prev" href="2026-10-18.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
+    <a class="day-nav__home" href="index.html"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+    <span class="day-nav__next" aria-disabled="true"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</span>
   </nav>
   </main>
   <footer class="site-foot">
-    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
+    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <p id="install-hint" class="install-hint" hidden></p>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
-    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label">加到主畫面</span></button>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <button type="button" class="tab install-trigger" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></button>
   </nav>
   </div>
-  <script type="application/json" id="day-data">{"date":"2026-10-19","default_version":"RCUV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"week_watchword":null,"ot":{"reference":"Malachi 2:7","reference_zh":"瑪拉基書 2:7","translations":{"CUV":"祭司的嘴裡當存知識，人也當由他口中尋求律法，因為他是萬軍之耶和華的使者。","RCUV":"祭司的嘴唇當守護知識，人也當從他口中尋求訓誨，因為他是萬軍之耶和華的使者。","CNVT":"祭司的嘴當保存知識，人要從他的口中尋求教訓，因為他是萬軍耶和華的使者。","CSBT":"祭司的嘴當謹守知識，人當從他口中尋求訓誨，因為他是萬軍之耶和華的使者。」","WCB":"的確，祭司的嘴當守護知識，人要從他的口中尋求訓誨，因為他是萬軍之耶和華的使者。"}},"nt":{"reference":"2 Timothy 4:2","reference_zh":"提摩太後書 4:2","translations":{"CUV":"務要傳道，無論得時不得時，總要專心，並用百般的忍耐、各樣的教訓責備人，警戒人，勸勉人。","RCUV":"務要傳道；無論得時不得時總要專心，並以百般的忍耐和各樣的教導責備人，警戒人，勸勉人。","CNVT":"務要傳道；無論時機是否適合，都要常作準備；要以多方的忍耐和教訓責備人、警戒人、勸勉人。","CSBT":"你要傳福音【2】，無論得時不得時，總要堅持；要以極大的耐心和各樣的教導責備人、告誡人、鼓勵人，","WCB":"務要傳道；無論時機有利還是不利，都要常作準備，要用百般的忍耐和教導來指正人的過錯、警戒人、勸勉人。"}},"prayer":"上帝啊，凡倚賴主的人，主必賜他力量；求主施憐憫應允我們的禱告。我們因人性軟弱，若離了主，善事皆不能作；求主施恩保佑我們，能遵守主的命令，意念、行為都能蒙主喜歡。這都是靠著我主耶穌基督。阿們。","readings":[{"reference":"Psalm 119:33-40","reference_zh":"詩篇 119:33–40"},{"reference":"2 Samuel 9","reference_zh":"撒母耳記下 9"},{"reference":"John 8:12-30","reference_zh":"約翰福音 8:12–30"}],"source_url":"dataset://days_2026_q4/2026-10-19","translation":{"provider":"dataset","status":"already_zh","source_chars":95,"result_chars":95,"kept_english":false}}</script>
+  <script type="application/json" id="day-data">{"date":"2026-10-19","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"NLT","label":"NLT"},{"code":"NIRV","label":"NIrV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV","NLT":"NLT","NIRV":"NIRV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.","NLT":"Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.","NIRV":"Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 10 月 19 日（星期一）","date_title_en":"Monday, October 19, 2026","week_watchword":null,"ot":{"reference":"Malachi 2:7","reference_zh":"瑪拉基書 2:7","translations":{"CUV":"祭司的嘴裡當存知識，人也當由他口中尋求律法，因為他是萬軍之耶和華的使者。","RCUV":"祭司的嘴唇當守護知識，人也當從他口中尋求訓誨，因為他是萬軍之耶和華的使者。","CNVT":"祭司的嘴當保存知識，人要從他的口中尋求教訓，因為他是萬軍耶和華的使者。","CSBT":"祭司的嘴當謹守知識，人當從他口中尋求訓誨，因為他是萬軍之耶和華的使者。」","WCB":"的確，祭司的嘴當守護知識，人要從他的口中尋求訓誨，因為他是萬軍之耶和華的使者。","KJV":"For the priest’s lips should keep knowledge, and they should seek the law at his mouth: for he is the messenger of the LORD of hosts.","NIV":"“For the lips of a priest ought to preserve knowledge, because he is the messenger of the Lord Almighty and people seek instruction from his mouth.","NLT":"“The words of a priest’s lips should preserve knowledge of God, and people should go to him for instruction, for the priest is the messenger of the Lord of Heaven’s Armies.","NIRV":"“The lips of a priest should guard knowledge. After all, he is the messenger of the Lord who rules over all. And people seek instruction from his mouth."},"fums":{"NIV":"GzcBABwHbqxlyoOgvR4EdEzy46-2Ydpoo6hIlq6-0Fl3esMD8L9dDtfvWwvCNMszSbBD3BbEzV6Sl6SE5nb887wdQL-sJufzrnOZ1lWyLqx8CMYWaax-p_Suh52BciqDDiPOGMHRG38a7boLsAKUq8TrIDbg-7q0JuA6Mr5Flxllsx2D7f08_XlbQsmyoTYRiADUJbgzVrB6Hu-LXafTuow5LmR1di6Dz5_kLHoj3SKENI1zGxaOAQ","NLT":"GzcBoIzTFfOihHUPAjom-fFX2zBttFFUtA5LV9-npxkGwLUlQdra2uF4PfBNLvYHej_ELQdJJmWFevfXP8_bAeiX1dA83vUiLW2YJhd99bOwmEpj9ROVdz3sDJRTmWie4YwR3Lvjz4xddwE8CeMCifaANcDPdWlN4joyvkVXGRVtGBPb-2XG87YEIMv22URhxJ4umf0DK1g9j_fuAiwWs3l0NspUkpch5bksKRc5p9ls6uerqfULDg","NIRV":"GzcBABwHbqxlyoOgvZ7Fxkz9MnI8eFvUtrQlMUmWrr7QWXd6wwPwv10O1-9bC8KsZXkmCXbQtiBu9pK8pCQ0t-sfz9sBsC9nyXm82zgrpUyDLGVRp6UuNJ19p_Ruh52BEZMBHWYIqXD0hj8anboLwApAuUq8DsQG8H1dOwZcR_QtSkZTkowB2_t5-vO2BCXbhtpEIAJQl-CucAqr5_G-2GeWspiG6UqXOKcOy6XT0zyjDn7KFXODeEkY"}},"nt":{"reference":"2 Timothy 4:2","reference_zh":"提摩太後書 4:2","translations":{"CUV":"務要傳道，無論得時不得時，總要專心，並用百般的忍耐、各樣的教訓責備人，警戒人，勸勉人。","RCUV":"務要傳道；無論得時不得時總要專心，並以百般的忍耐和各樣的教導責備人，警戒人，勸勉人。","CNVT":"務要傳道；無論時機是否適合，都要常作準備；要以多方的忍耐和教訓責備人、警戒人、勸勉人。","CSBT":"你要傳福音【2】，無論得時不得時，總要堅持；要以極大的耐心和各樣的教導責備人、告誡人、鼓勵人，","WCB":"務要傳道；無論時機有利還是不利，都要常作準備，要用百般的忍耐和教導來指正人的過錯、警戒人、勸勉人。","KJV":"Preach the word; be instant in season, out of season; reprove, rebuke, exhort with all longsuffering and doctrine.","NIV":"Preach the word; be prepared in season and out of season; correct, rebuke and encourage—with great patience and careful instruction.","NLT":"Preach the word of God. Be prepared, whether the time is favorable or not. Patiently correct, rebuke, and encourage your people with good teaching.","NIRV":"Preach the word. Be ready to serve God in good times and bad. Correct people’s mistakes. Warn them. Encourage them with words of hope. Be very patient as you do these things. Teach them carefully."},"fums":{"NIV":"GzcBoIzTFfOihHXPxM2UP92RpOkUDo8CxY8xW4elq-_T0wwD4NqSIKDW1vFyuN1vcsEH-u0QN3tJXsoPtjV3_eN5OwD8iz00j3efy1RXiUVXQZW4WGL_ReXdS985dYIwPIMQGey7wR9nnLoFwBxBuUE8HmCl7ECSLFPg2lNoUSp2QWlA2N4305-3JQCy7T4bBUbs6ZLZFdhg9Tze3_S9khyqarZlycnqtCA70WxuV1VnWWspZplw","NLT":"GzcBQIzTFfOihHXPom2lPnnlxEOjkyDxIto6LF19n55mGADXlgQBtSC8HA7f7je54AO9HOJmeUheygfbmrv-8bwdAPqyys3jXRdpacOUXPTVz8JiYmP1l8q7ur6TIA5hfgRnDGHlCX8cc-oWAHcE4x6JeOCVCp1xia1JuPbGt-gqKzmlAWF7X0573pbAyLYrbVQY4adLbFewhNXzeH_WHE3JZTbPLD-zicN8mnHxIXJc1JhnflqExYQD","NIRV":"GzcBQBwHbqxlyoOgvZ5Zcym_-jA0uQpXX9VXQJAsXX2h8_Q00wC0tiQIqAXZL4fb_SYXfKDfDnLqJeIiHmzL9PrH83YA8qtmbh7vWWfuPhVa0qJNvS1iqfmXynumoU-SCDA_g0oJWHnij2NO_QIwByj3iMfAKxWGQhZrSbgNhTulIlHxEbC9L6c_b0swsu1KmwhE-OkS2xU1YPU83p_160RibrNozhpF56s4Wy04VianMo2m3DA"}},"prayer":"上帝啊，凡倚賴主的人，主必賜他力量；求主施憐憫應允我們的禱告。我們因人性軟弱，若離了主，善事皆不能作；求主施恩保佑我們，能遵守主的命令，意念、行為都能蒙主喜歡。這都是靠著我主耶穌基督。阿們。","readings":[{"reference":"Psalm 119:33-40","reference_zh":"詩篇 119:33–40"},{"reference":"2 Samuel 9","reference_zh":"撒母耳記下 9"},{"reference":"John 8:12-30","reference_zh":"約翰福音 8:12–30"}],"source_url":"dataset://days_2026_q4/2026-10-19","translation":{"provider":"dataset","status":"already_zh","source_chars":95,"result_chars":95,"kept_english":false}}</script>
 </body>
 </html>
