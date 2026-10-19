@@ -161,11 +161,7 @@ html[data-lang="en"] .i18n-zh {
 }
 
 html[data-lang="en"] .i18n-en {
-  display: inline;
-}
-
-html[data-lang="en"] p.i18n-en {
-  display: block;
+  display: revert;
 }
 
 html[data-lang="en"] .prayer-block {
