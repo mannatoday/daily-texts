@@ -81,7 +81,7 @@ def bilingual(zh: str, en: str) -> str:
     )
 
 # Bottom tab bar shared by every site page. Fixed on phones (icon over label),
-# a plain centered row on desktop. The last tab (加到主畫面) links to the
+# a plain centered row on desktop. The last tab (加到手機主頁) links to the
 # illustrated guide and is revealed by install.js when the page is not already
 # running as an installed app.
 _ICON_TODAY = (
@@ -123,7 +123,7 @@ TABBAR_HTML = (
     + _tab("about.html", "關於", "About", _ICON_ABOUT)
     + '    <a class="tab install-trigger" href="install.html" hidden>'
     '<span class="tab__icon" aria-hidden="true">' + _ICON_ADD + "</span>"
-    f'<span class="tab__label">{bilingual("加到主畫面", "Add to Home")}</span></a>\n'
+    f'<span class="tab__label">{bilingual("加到手機主頁", "Add to Phone")}</span></a>\n'
     "  </nav>\n"
 )
 

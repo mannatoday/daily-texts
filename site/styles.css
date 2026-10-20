@@ -726,12 +726,18 @@ a.cal-day:focus-visible {
 }
 
 /* Add-to-home guide */
-.install-page .lede {
-  margin: -1.25rem 0 1.75rem;
+.install-page .lede,
+.install-page .install-intro {
+  margin: -1.25rem 0 1.25rem;
   text-align: center;
   color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.install-page .install-intro {
+  margin: 0 0 0.4rem;
+  text-align: left;
 }
 
 .install-done {
@@ -781,22 +787,23 @@ a.cal-day:focus-visible {
 }
 
 .install-step h2 {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.35rem;
   padding: 0;
   border: 0;
   font-family: var(--font-sans);
-  font-size: 1.02rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   line-height: 1.5;
   color: var(--text);
 }
 
 .install-step p {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.65rem;
   font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-muted);
 }
 
 .install-step figure {
@@ -805,17 +812,17 @@ a.cal-day:focus-visible {
 
 .install-step img {
   display: block;
-  width: min(100%, 22rem);
+  width: min(68%, 13rem);
   height: auto;
   margin-inline: auto;
   border: 1px solid var(--rule);
-  border-radius: 0.85rem;
+  border-radius: 0.7rem;
   background: #111;
 }
 
 .install-step img.install-shot--banner {
-  width: min(100%, 32rem);
-  border-radius: 1.35rem;
+  width: min(100%, 16rem);
+  border-radius: 1rem;
 }
 
 .install-step figcaption {
@@ -845,8 +852,9 @@ a.cal-day:focus-visible {
 .install-aside p {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-muted);
 }
 
 /* Bottom tab bar — fixed with icons on phones, inline text row on desktop */
@@ -897,7 +905,13 @@ a.cal-day:focus-visible {
 }
 
 .tab__label {
-  line-height: 1;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.install-trigger .tab__label {
+  font-size: 0.62rem;
+  letter-spacing: 0;
 }
 
 .install-hint {

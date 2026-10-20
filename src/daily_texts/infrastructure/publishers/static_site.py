@@ -915,7 +915,7 @@ _MANIFEST_JSON = f"""\
 }}
 """
 
-# The 加到主畫面 tab links to install.html. It stays hidden until this script
+# The 加到手機主頁 tab links to install.html. It stays hidden until this script
 # confirms the page is not already running as an installed app. On the guide
 # itself, a direct Install button appears only when the browser offers one.
 # A fetch handler is what lets Android Chrome install a real app (WebAPK).
@@ -1137,8 +1137,8 @@ _INSTALL_HTML = f"""<!DOCTYPE html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="把摩拉維亞每日箴言加到手機主畫面" />
-  <title data-zh="加到主畫面 · 摩拉維亞每日箴言" data-en="Add to Home · Moravian Daily Texts">加到主畫面 · 摩拉維亞每日箴言</title>
+  <meta name="description" content="把摩拉維亞每日箴言加到手機主頁" />
+  <title data-zh="加到手機主頁 · 摩拉維亞每日箴言" data-en="Add to Phone · Moravian Daily Texts">加到手機主頁 · 摩拉維亞每日箴言</title>
 {LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 {VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
 <body>
@@ -1148,51 +1148,45 @@ _INSTALL_HTML = f"""<!DOCTYPE html>
 {_lang_toggle_markup()}  </div>
     <nav class="day-nav" aria-label="網站導覽">
       <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
-      <span class="day-nav__home" aria-current="page">{bilingual("加到主畫面", "Add to Home")}</span>
+      <span class="day-nav__home" aria-current="page">{bilingual("加到手機主頁", "Add to Phone")}</span>
       <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
     </nav>
     <main id="main">
-      <h1>{bilingual("加到主畫面", "Add to Home Screen")}</h1>
-      <p class="lede">{bilingual("加到手機主畫面之後，會出現「每日箴言」圖示。點圖示就打開，不必再從瀏覽器找網址。", "After you add it, a 每日箴言 icon appears on the home screen. Tap the icon to open the reading.")}</p>
-      <p id="install-done" class="install-done" hidden>{bilingual("你已經從主畫面的圖示打開。", "You already opened this from the home-screen icon.")}</p>
+      <h1>{bilingual("加到手機主頁", "Add to Phone")}</h1>
+      <p class="lede">{bilingual("加到手機主頁之後，會出現「每日箴言」圖示。點圖示就打開。", "After you add it, a 每日箴言 icon appears. Tap the icon to open the reading.")}</p>
+      <p id="install-done" class="install-done" hidden>{bilingual("你已經從主頁的圖示打開。", "You already opened this from the home-screen icon.")}</p>
       <p id="install-now-wrap" class="install-now-wrap" hidden>{bilingual("這個瀏覽器可以直接安裝，按下面的按鈕即可。", "This browser can install it directly.")}<br /><button type="button" class="install-now" id="install-now">{bilingual("安裝", "Install")}</button></p>
-      <p>{bilingual("下面以 Android 手機的 Chrome 為例。選單若是英文，對照圖裡紅圈標出的那一項。", "The pictures below are Android Chrome. If your menu is in English, tap the item circled in red.")}</p>
+      <p class="install-intro">{bilingual("下面以 Android 手機的 Chrome 為例。選單若是英文，對照圖裡紅圈標出的那一項。", "The pictures below are Android Chrome. If the menu is in English, tap the item circled in red.")}</p>
       <ol class="install-steps">
         <li class="install-step">
-          <h2>{bilingual("1. 進入「加到主畫面」", "1. Open Add to Home")}</h2>
-          <p>{bilingual("打開網站，點最下方的「加到主畫面」，就會來到這一頁。", "Open the site and tap “Add to Home” at the bottom. That opens this page.")}</p>
+          <h2>{bilingual("進入「加到手機主頁」", "Open this page")}</h2>
+          <p>{bilingual("打開網站，點最下方的「加到手機主頁」。", "Open the site and tap “Add to Phone” at the bottom.")}</p>
           <figure>
-            <img src="install/step1.jpg" width="1080" height="2089" alt="網站最下方，「加到主畫面」被紅圈標出" />
-            <figcaption>{bilingual("點最下方的「加到主畫面」。", "Tap “Add to Home” at the bottom.")}</figcaption>
+            <img src="install/step1.jpg" width="1080" height="2089" alt="網站最下方，「加到手機主頁」被紅圈標出" />
           </figure>
         </li>
         <li class="install-step">
-          <h2>{bilingual("2. 打開「安裝或建立捷徑」", "2. Choose Install and create shortcut")}</h2>
-          <p>{bilingual("點瀏覽器右上角的選單（三個點），選「安裝或建立捷徑」。圖中的英文是 Install and create shortcut。", "Open the browser menu (the three dots) and tap “Install and create shortcut”. In Chinese this is 「安裝或建立捷徑」.")}</p>
+          <h2>{bilingual("打開「安裝或建立捷徑」", "Choose Install and create shortcut")}</h2>
+          <p>{bilingual("點瀏覽器右上角的選單，選「安裝或建立捷徑」。圖中英文是 Install and create shortcut。", "Open the browser menu and tap “Install and create shortcut”.")}</p>
           <figure>
             <img src="install/step2.jpg" width="1080" height="2085" alt="瀏覽器選單裡，Install and create shortcut 被紅圈標出" />
-            <figcaption>{bilingual("選單裡點「安裝或建立捷徑」。", "Tap “Install and create shortcut” in the menu.")}</figcaption>
           </figure>
         </li>
         <li class="install-step">
-          <h2>{bilingual("3. 按「安裝」", "3. Tap Install")}</h2>
-          <p>{bilingual("跳出視窗後，按「安裝」。圖中的英文是 Install。", "When the window appears, tap Install. In Chinese the button says 「安裝」.")}</p>
+          <h2>{bilingual("按「安裝」", "Tap Install")}</h2>
+          <p>{bilingual("跳出視窗後，按「安裝」。圖中英文是 Install。裝好時手機會提示已安裝。", "When the window appears, tap Install. The phone then says the app is installed.")}</p>
           <figure>
             <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，Install 按鈕被紅圈標出" />
-            <figcaption>{bilingual("視窗出來後，按「安裝」。", "In the window, tap Install.")}</figcaption>
           </figure>
-          <p>{bilingual("按下去之後，手機會提示已安裝。", "The phone then says the app is installed.")}</p>
           <figure>
             <img class="install-shot--banner" src="install/almostdone.jpg" width="1077" height="281" alt="通知寫著每日箴言，App installed" />
-            <figcaption>{bilingual("通知會寫「每日箴言」，並顯示 App installed。", "A notice shows 每日箴言 and “App installed”.")}</figcaption>
           </figure>
         </li>
         <li class="install-step">
-          <h2>{bilingual("4. 主畫面出現圖示", "4. The icon appears")}</h2>
-          <p>{bilingual("回到手機主畫面，會看到「每日箴言」。之後從這個圖示打開即可。", "On the home screen, look for 每日箴言. Open the reading from that icon.")}</p>
+          <h2>{bilingual("主頁出現圖示", "The icon appears")}</h2>
+          <p>{bilingual("回到手機主頁，會看到「每日箴言」。之後從這個圖示打開即可。", "On the home screen, look for 每日箴言 and open the reading from that icon.")}</p>
           <figure>
-            <img src="install/installed.jpg" width="1079" height="1539" alt="手機主畫面右下角的每日箴言圖示，紅圈標出" />
-            <figcaption>{bilingual("主畫面上的「每日箴言」圖示。", "The 每日箴言 icon on the home screen.")}</figcaption>
+            <img src="install/installed.jpg" width="1079" height="1539" alt="手機主頁上的每日箴言圖示，紅圈標出" />
           </figure>
         </li>
       </ol>
