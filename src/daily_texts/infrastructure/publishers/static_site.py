@@ -28,6 +28,15 @@ logger = logging.getLogger(__name__)
 _DAY_PAGE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.html$")
 # App icon shipped with the package (src/daily_texts/inputs/icon.png).
 _ICON_SOURCE = Path(__file__).resolve().parents[2] / "inputs" / "icon.png"
+# Phone screenshots for the add-to-home guide (repo install/*.jpg).
+_INSTALL_SHOTS = Path(__file__).resolve().parents[4] / "install"
+_INSTALL_SHOT_NAMES = (
+    "step1.jpg",
+    "step2.jpg",
+    "step3.jpg",
+    "almostdone.jpg",
+    "installed.jpg",
+)
 _FONT_LINKS = """\
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -66,6 +75,7 @@ class StaticSitePublisher:
         self._write_install_js()
         self._write_service_worker()
         self._write_about_page()
+        self._write_install_page()
 
         if self._earliest_date is not None and content.date < self._earliest_date:
             day_path = self._site_dir / f"{content.date.isoformat()}.html"
@@ -107,7 +117,7 @@ class StaticSitePublisher:
         archive_path.write_text(self._build_archive(days), encoding="utf-8")
 
         message = (
-            f"Wrote {day_path}, about.html, today.html, archive.html, "
+            f"Wrote {day_path}, about.html, install.html, today.html, archive.html, "
             f"and updated {index_path}"
         )
         logger.info(message)
@@ -140,6 +150,29 @@ class StaticSitePublisher:
 
     def _write_about_page(self) -> None:
         (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
+
+    def _write_install_page(self) -> None:
+        self._write_install_shots()
+        html = _INSTALL_HTML.replace(
+            'href="install.html"',
+            'href="install.html" aria-current="page"',
+            1,
+        )
+        (self._site_dir / "install.html").write_text(html, encoding="utf-8")
+
+    def _write_install_shots(self) -> None:
+        """Copy the illustrated install steps into the site so Pages can serve them."""
+        dest = self._site_dir / "install"
+        dest.mkdir(parents=True, exist_ok=True)
+        if not _INSTALL_SHOTS.is_dir():
+            logger.warning("Install screenshots not found at %s", _INSTALL_SHOTS)
+            return
+        for name in _INSTALL_SHOT_NAMES:
+            src = _INSTALL_SHOTS / name
+            if not src.is_file():
+                logger.warning("Install screenshot missing: %s", src)
+                continue
+            (dest / name).write_bytes(src.read_bytes())
 
     def _write_today_page(self, latest: date | None = None) -> None:
         """Copy the newest day page to today.html so the URL stays stable."""
@@ -882,11 +915,9 @@ _MANIFEST_JSON = f"""\
 }}
 """
 
-# "Add to Home Screen" sits in the footer nav, same weight as the other links.
-# The 加到主畫面 tab lives in the shared bottom tab bar but stays hidden until
-# this script confirms the page is not already running as an installed app.
-# Chromium uses the native install prompt when the browser offers one; other
-# browsers get a short platform-specific hint above the bar.
+# The 加到主畫面 tab links to install.html. It stays hidden until this script
+# confirms the page is not already running as an installed app. On the guide
+# itself, a direct Install button appears only when the browser offers one.
 # A fetch handler is what lets Android Chrome install a real app (WebAPK).
 # Without it, "Add to Home Screen" is only a shortcut: Chrome badge on the
 # icon, and the app switcher stays inside Chrome. This worker does not cache.
@@ -922,61 +953,51 @@ _INSTALL_JS = """\
   }
 
   function start() {
-    if (isStandalone()) return;
+    var done = document.getElementById("install-done");
+    if (isStandalone()) {
+      if (done) done.hidden = false;
+      return;
+    }
 
     var triggers = document.querySelectorAll(".install-trigger");
-    if (!triggers.length) return;
-
-    var hint = document.getElementById("install-hint");
-    var ua = window.navigator.userAgent || "";
-    var isIOS =
-      /iphone|ipad|ipod/i.test(ua) ||
-      (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-    var isAndroid = /android/i.test(ua);
-    var deferredPrompt = null;
-
     for (var i = 0; i < triggers.length; i++) {
       triggers[i].hidden = false;
-    }
-
-    function hintText() {
-      if (isIOS) {
-        return "請用 Safari 開啟這個網站。點畫面最下方的「分享」，再選「加入主畫面」。";
-      }
-      if (isAndroid) {
-        return "請先刪掉主畫面上舊的捷徑。再到 Chrome 選單選「安裝應用程式」。裝好後圖示不會再有 Chrome 小標。";
-      }
-      return "在瀏覽器選單選擇「安裝」或「加到主畫面」。";
-    }
-
-    function onClick() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function () {
-          deferredPrompt = null;
+      if (triggers[i].tagName === "BUTTON") {
+        triggers[i].addEventListener("click", function () {
+          window.location.href = "install.html";
         });
-        return;
       }
-      if (!hint) return;
-      hint.hidden = !hint.hidden;
-      if (!hint.hidden) hint.textContent = hintText();
     }
 
-    for (var j = 0; j < triggers.length; j++) {
-      triggers[j].addEventListener("click", onClick);
-    }
+    var deferredPrompt = null;
+    var nowWrap = document.getElementById("install-now-wrap");
+    var now = document.getElementById("install-now");
 
     window.addEventListener("beforeinstallprompt", function (e) {
       e.preventDefault();
       deferredPrompt = e;
+      if (nowWrap) nowWrap.hidden = false;
     });
+
+    if (now) {
+      now.addEventListener("click", function () {
+        if (!deferredPrompt) return;
+        var prompt = deferredPrompt;
+        deferredPrompt = null;
+        prompt.prompt();
+        prompt.userChoice.then(function () {
+          if (nowWrap) nowWrap.hidden = true;
+        });
+      });
+    }
 
     window.addEventListener("appinstalled", function () {
       deferredPrompt = null;
+      if (nowWrap) nowWrap.hidden = true;
+      if (done) done.hidden = false;
       for (var k = 0; k < triggers.length; k++) {
         triggers[k].hidden = true;
       }
-      if (hint) hint.hidden = true;
     });
   }
 
@@ -1100,6 +1121,85 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">The source of the Chinese prayer is the name printed at the end of that day’s prayer. Copyright in the hymns and prayers depends on each work.</p>
       <p class="meta">For formal publication, reprinting, or commercial use, contact the original publishers and follow the terms of each Bible version and each quoted work.</p>
       </div>
+    </main>
+    <footer class="site-foot">
+      <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
+      {LOSUNGEN_ATTRIBUTION_HTML}
+    </footer>
+{TABBAR_HTML}  </div>
+</body>
+</html>
+"""
+
+_INSTALL_HTML = f"""<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="把摩拉維亞每日箴言加到手機主畫面" />
+  <title data-zh="加到主畫面 · 摩拉維亞每日箴言" data-en="Add to Home · Moravian Daily Texts">加到主畫面 · 摩拉維亞每日箴言</title>
+{LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
+{VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
+<body>
+  <a class="skip-link" href="#main">{bilingual("跳至內容", "Skip to content")}</a>
+  <div class="site-shell install-page">
+  <div class="version-picker">
+{_lang_toggle_markup()}  </div>
+    <nav class="day-nav" aria-label="網站導覽">
+      <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
+      <span class="day-nav__home" aria-current="page">{bilingual("加到主畫面", "Add to Home")}</span>
+      <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
+    </nav>
+    <main id="main">
+      <h1>{bilingual("加到主畫面", "Add to Home Screen")}</h1>
+      <p class="lede">{bilingual("加到手機主畫面之後，會出現「每日箴言」圖示。點圖示就打開，不必再從瀏覽器找網址。", "After you add it, a 每日箴言 icon appears on the home screen. Tap the icon to open the reading.")}</p>
+      <p id="install-done" class="install-done" hidden>{bilingual("你已經從主畫面的圖示打開。", "You already opened this from the home-screen icon.")}</p>
+      <p id="install-now-wrap" class="install-now-wrap" hidden>{bilingual("這個瀏覽器可以直接安裝，按下面的按鈕即可。", "This browser can install it directly.")}<br /><button type="button" class="install-now" id="install-now">{bilingual("安裝", "Install")}</button></p>
+      <p>{bilingual("下面以 Android 手機的 Chrome 為例。選單若是英文，對照圖裡紅圈標出的那一項。", "The pictures below are Android Chrome. If your menu is in English, tap the item circled in red.")}</p>
+      <ol class="install-steps">
+        <li class="install-step">
+          <h2>{bilingual("1. 進入「加到主畫面」", "1. Open Add to Home")}</h2>
+          <p>{bilingual("打開網站，點最下方的「加到主畫面」，就會來到這一頁。", "Open the site and tap “Add to Home” at the bottom. That opens this page.")}</p>
+          <figure>
+            <img src="install/step1.jpg" width="1080" height="2089" alt="網站最下方，「加到主畫面」被紅圈標出" />
+            <figcaption>{bilingual("點最下方的「加到主畫面」。", "Tap “Add to Home” at the bottom.")}</figcaption>
+          </figure>
+        </li>
+        <li class="install-step">
+          <h2>{bilingual("2. 打開「安裝或建立捷徑」", "2. Choose Install and create shortcut")}</h2>
+          <p>{bilingual("點瀏覽器右上角的選單（三個點），選「安裝或建立捷徑」。圖中的英文是 Install and create shortcut。", "Open the browser menu (the three dots) and tap “Install and create shortcut”. In Chinese this is 「安裝或建立捷徑」.")}</p>
+          <figure>
+            <img src="install/step2.jpg" width="1080" height="2085" alt="瀏覽器選單裡，Install and create shortcut 被紅圈標出" />
+            <figcaption>{bilingual("選單裡點「安裝或建立捷徑」。", "Tap “Install and create shortcut” in the menu.")}</figcaption>
+          </figure>
+        </li>
+        <li class="install-step">
+          <h2>{bilingual("3. 按「安裝」", "3. Tap Install")}</h2>
+          <p>{bilingual("跳出視窗後，按「安裝」。圖中的英文是 Install。", "When the window appears, tap Install. In Chinese the button says 「安裝」.")}</p>
+          <figure>
+            <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，Install 按鈕被紅圈標出" />
+            <figcaption>{bilingual("視窗出來後，按「安裝」。", "In the window, tap Install.")}</figcaption>
+          </figure>
+          <p>{bilingual("按下去之後，手機會提示已安裝。", "The phone then says the app is installed.")}</p>
+          <figure>
+            <img class="install-shot--banner" src="install/almostdone.jpg" width="1077" height="281" alt="通知寫著每日箴言，App installed" />
+            <figcaption>{bilingual("通知會寫「每日箴言」，並顯示 App installed。", "A notice shows 每日箴言 and “App installed”.")}</figcaption>
+          </figure>
+        </li>
+        <li class="install-step">
+          <h2>{bilingual("4. 主畫面出現圖示", "4. The icon appears")}</h2>
+          <p>{bilingual("回到手機主畫面，會看到「每日箴言」。之後從這個圖示打開即可。", "On the home screen, look for 每日箴言. Open the reading from that icon.")}</p>
+          <figure>
+            <img src="install/installed.jpg" width="1079" height="1539" alt="手機主畫面右下角的每日箴言圖示，紅圈標出" />
+            <figcaption>{bilingual("主畫面上的「每日箴言」圖示。", "The 每日箴言 icon on the home screen.")}</figcaption>
+          </figure>
+        </li>
+      </ol>
+      <section class="install-aside" aria-labelledby="install-iphone">
+        <h2 id="install-iphone">{bilingual("iPhone", "iPhone")}</h2>
+        <p>{bilingual("請用 Safari 打開這個網站。點畫面下方的分享按鈕，再選「加入主畫面」。", "Open this site in Safari. Tap the Share button at the bottom, then “Add to Home Screen”.")}</p>
+      </section>
     </main>
     <footer class="site-foot">
       <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>

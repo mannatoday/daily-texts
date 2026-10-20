@@ -79,6 +79,14 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "reading__open" in js
     assert "CCBT" not in js
     assert (tmp_path / "about.html").is_file()
+    assert (tmp_path / "install.html").is_file()
+    guide = (tmp_path / "install.html").read_text(encoding="utf-8")
+    assert "進入「加到主畫面」" in guide
+    assert "install/step1.jpg" in guide
+    assert "install/installed.jpg" in guide
+    assert (tmp_path / "install" / "step1.jpg").is_file()
+    assert (tmp_path / "install" / "installed.jpg").is_file()
+    assert 'href="install.html"' in html
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
     assert "1731" in about
     assert "非官方出版物" in about

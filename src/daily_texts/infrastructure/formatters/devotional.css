@@ -226,6 +226,19 @@ html[data-lang="en"] .prayer-block {
   text-decoration: none;
 }
 
+/* The rule above is more specific than .i18n-en, so spell out the language hide. */
+.day-nav .i18n-en {
+  display: none;
+}
+
+html[data-lang="en"] .day-nav .i18n-zh {
+  display: none;
+}
+
+html[data-lang="en"] .day-nav .i18n-en {
+  display: inline-flex;
+}
+
 .day-nav a {
   color: var(--text-muted);
 }
@@ -656,7 +669,8 @@ a.cal-day:focus-visible {
 }
 
 /* About page — same sans scale as daily headings and notes */
-.about-page h1 {
+.about-page h1,
+.install-page h1 {
   margin: 0 0 2.5rem;
   font-family: var(--font-sans);
   font-size: clamp(1.05rem, 3.2vw, 1.25rem);
@@ -709,6 +723,130 @@ a.cal-day:focus-visible {
 
 .about-page li + li {
   margin-top: 0.35rem;
+}
+
+/* Add-to-home guide */
+.install-page .lede {
+  margin: -1.25rem 0 1.75rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.install-done {
+  margin: 0 0 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.install-now-wrap {
+  margin: 0 0 1.75rem;
+  text-align: center;
+}
+
+.install-now {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  margin-top: 0.85rem;
+  padding: 0.4rem 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.install-now:hover,
+.install-now:focus-visible {
+  color: var(--link-hover);
+  border-color: var(--text-soft);
+}
+
+.install-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.install-step {
+  margin: 0;
+  padding: 1.85rem 0 0.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.install-step h2 {
+  margin: 0 0 0.55rem;
+  padding: 0;
+  border: 0;
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.install-step p {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.install-step figure {
+  margin: 0.2rem 0 1.15rem;
+}
+
+.install-step img {
+  display: block;
+  width: min(100%, 22rem);
+  height: auto;
+  margin-inline: auto;
+  border: 1px solid var(--rule);
+  border-radius: 0.85rem;
+  background: #111;
+}
+
+.install-step img.install-shot--banner {
+  width: min(100%, 32rem);
+  border-radius: 1.35rem;
+}
+
+.install-step figcaption {
+  margin-top: 0.55rem;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-soft);
+}
+
+.install-aside {
+  margin-top: 0.4rem;
+  padding-top: 1.85rem;
+  border-top: 1px solid var(--rule);
+}
+
+.install-aside h2 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+}
+
+.install-aside p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.75;
 }
 
 /* Bottom tab bar — fixed with icons on phones, inline text row on desktop */

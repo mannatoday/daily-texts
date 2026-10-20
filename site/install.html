@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="把摩拉維亞每日箴言加到手機主畫面" />
+  <title data-zh="加到主畫面 · 摩拉維亞每日箴言" data-en="Add to Home · Moravian Daily Texts">加到主畫面 · 摩拉維亞每日箴言</title>
+  <script>
+  (function () {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get("lang");
+      if (lang !== "en" && lang !== "zh") {
+        var version = params.get("version");
+        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        else if (version) lang = "zh";
+        else lang = window.localStorage.getItem("dailyTexts.lang");
+      }
+      if (lang === "en") {
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.lang = "en";
+        var title = document.querySelector("title");
+        var english = title && title.getAttribute("data-en");
+        if (english) title.textContent = english;
+      }
+    } catch (err) {}
+  })();
+  </script>
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="icon" href="icon.png?v=4" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="每日箴言" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="version.js" defer></script>
+  <script src="install.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
+  <div class="site-shell install-page">
+  <div class="version-picker">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+    <nav class="day-nav" aria-label="網站導覽">
+      <a class="day-nav__prev" href="index.html">← <span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
+      <span class="day-nav__home" aria-current="page"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span>
+      <span class="day-nav__next" aria-disabled="true"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</span>
+    </nav>
+    <main id="main">
+      <h1><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home Screen</span></h1>
+      <p class="lede"><span class="i18n-zh">加到手機主畫面之後，會出現「每日箴言」圖示。點圖示就打開，不必再從瀏覽器找網址。</span><span class="i18n-en">After you add it, a 每日箴言 icon appears on the home screen. Tap the icon to open the reading.</span></p>
+      <p id="install-done" class="install-done" hidden><span class="i18n-zh">你已經從主畫面的圖示打開。</span><span class="i18n-en">You already opened this from the home-screen icon.</span></p>
+      <p id="install-now-wrap" class="install-now-wrap" hidden><span class="i18n-zh">這個瀏覽器可以直接安裝，按下面的按鈕即可。</span><span class="i18n-en">This browser can install it directly.</span><br /><button type="button" class="install-now" id="install-now"><span class="i18n-zh">安裝</span><span class="i18n-en">Install</span></button></p>
+      <p><span class="i18n-zh">下面以 Android 手機的 Chrome 為例。選單若是英文，對照圖裡紅圈標出的那一項。</span><span class="i18n-en">The pictures below are Android Chrome. If your menu is in English, tap the item circled in red.</span></p>
+      <ol class="install-steps">
+        <li class="install-step">
+          <h2><span class="i18n-zh">1. 進入「加到主畫面」</span><span class="i18n-en">1. Open Add to Home</span></h2>
+          <p><span class="i18n-zh">打開網站，點最下方的「加到主畫面」，就會來到這一頁。</span><span class="i18n-en">Open the site and tap “Add to Home” at the bottom. That opens this page.</span></p>
+          <figure>
+            <img src="install/step1.jpg" width="1080" height="2089" alt="網站最下方，「加到主畫面」被紅圈標出" />
+            <figcaption><span class="i18n-zh">點最下方的「加到主畫面」。</span><span class="i18n-en">Tap “Add to Home” at the bottom.</span></figcaption>
+          </figure>
+        </li>
+        <li class="install-step">
+          <h2><span class="i18n-zh">2. 打開「安裝或建立捷徑」</span><span class="i18n-en">2. Choose Install and create shortcut</span></h2>
+          <p><span class="i18n-zh">點瀏覽器右上角的選單（三個點），選「安裝或建立捷徑」。圖中的英文是 Install and create shortcut。</span><span class="i18n-en">Open the browser menu (the three dots) and tap “Install and create shortcut”. In Chinese this is 「安裝或建立捷徑」.</span></p>
+          <figure>
+            <img src="install/step2.jpg" width="1080" height="2085" alt="瀏覽器選單裡，Install and create shortcut 被紅圈標出" />
+            <figcaption><span class="i18n-zh">選單裡點「安裝或建立捷徑」。</span><span class="i18n-en">Tap “Install and create shortcut” in the menu.</span></figcaption>
+          </figure>
+        </li>
+        <li class="install-step">
+          <h2><span class="i18n-zh">3. 按「安裝」</span><span class="i18n-en">3. Tap Install</span></h2>
+          <p><span class="i18n-zh">跳出視窗後，按「安裝」。圖中的英文是 Install。</span><span class="i18n-en">When the window appears, tap Install. In Chinese the button says 「安裝」.</span></p>
+          <figure>
+            <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，Install 按鈕被紅圈標出" />
+            <figcaption><span class="i18n-zh">視窗出來後，按「安裝」。</span><span class="i18n-en">In the window, tap Install.</span></figcaption>
+          </figure>
+          <p><span class="i18n-zh">按下去之後，手機會提示已安裝。</span><span class="i18n-en">The phone then says the app is installed.</span></p>
+          <figure>
+            <img class="install-shot--banner" src="install/almostdone.jpg" width="1077" height="281" alt="通知寫著每日箴言，App installed" />
+            <figcaption><span class="i18n-zh">通知會寫「每日箴言」，並顯示 App installed。</span><span class="i18n-en">A notice shows 每日箴言 and “App installed”.</span></figcaption>
+          </figure>
+        </li>
+        <li class="install-step">
+          <h2><span class="i18n-zh">4. 主畫面出現圖示</span><span class="i18n-en">4. The icon appears</span></h2>
+          <p><span class="i18n-zh">回到手機主畫面，會看到「每日箴言」。之後從這個圖示打開即可。</span><span class="i18n-en">On the home screen, look for 每日箴言. Open the reading from that icon.</span></p>
+          <figure>
+            <img src="install/installed.jpg" width="1079" height="1539" alt="手機主畫面右下角的每日箴言圖示，紅圈標出" />
+            <figcaption><span class="i18n-zh">主畫面上的「每日箴言」圖示。</span><span class="i18n-en">The 每日箴言 icon on the home screen.</span></figcaption>
+          </figure>
+        </li>
+      </ol>
+      <section class="install-aside" aria-labelledby="install-iphone">
+        <h2 id="install-iphone"><span class="i18n-zh">iPhone</span><span class="i18n-en">iPhone</span></h2>
+        <p><span class="i18n-zh">請用 Safari 打開這個網站。點畫面下方的分享按鈕，再選「加入主畫面」。</span><span class="i18n-en">Open this site in Safari. Tap the Share button at the bottom, then “Add to Home Screen”.</span></p>
+      </section>
+    </main>
+    <footer class="site-foot">
+      <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
+      <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
+    </footer>
+  <nav class="tabbar" aria-label="主要導覽">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <a class="tab install-trigger" href="install.html" aria-current="page" hidden><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg></span><span class="tab__label"><span class="i18n-zh">加到主畫面</span><span class="i18n-en">Add to Home</span></span></a>
+  </nav>
+  </div>
+</body>
+</html>
