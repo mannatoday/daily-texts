@@ -81,14 +81,19 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert (tmp_path / "about.html").is_file()
     assert (tmp_path / "install.html").is_file()
     guide = (tmp_path / "install.html").read_text(encoding="utf-8")
-    assert "進入「加到手機主頁」" in guide
-    assert "1. 進入" not in guide
-    assert "install/step1.jpg" in guide
+    assert "打開「安裝或建立捷徑」" in guide
+    assert "進入「加到手機主頁」" not in guide
+    assert "點最下方" not in guide
+    assert "install/step1.jpg" not in guide
+    assert "install/step2.jpg" in guide
     assert "install/installed.jpg" in guide
-    assert (tmp_path / "install" / "step1.jpg").is_file()
+    assert (tmp_path / "install" / "step2.jpg").is_file()
     assert (tmp_path / "install" / "installed.jpg").is_file()
-    assert 'href="install.html"' in html
+    assert 'class="tab install-trigger"' not in html
+    assert 'href="install.html"' not in html
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
+    assert 'href="install.html"' in about
+    assert "加到主畫面" in about
     assert "1731" in about
     assert "非官方出版物" in about
     assert "大約兩年可以讀完聖經一遍" in about

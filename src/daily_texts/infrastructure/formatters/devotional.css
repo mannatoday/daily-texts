@@ -909,33 +909,19 @@ a.cal-day:focus-visible {
   text-align: center;
 }
 
-.install-trigger .tab__label {
-  font-size: 0.62rem;
-  letter-spacing: 0;
-}
-
-.install-hint {
-  margin: 0;
+.about-page .home-screen-note {
+  margin: 2.6rem 0 0;
+  padding-top: 1.85rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.92rem;
+  line-height: 1.7;
   color: var(--text-muted);
+  text-align: center;
 }
 
 @media (max-width: 47.99rem) {
   .site-shell {
     padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0) + 1.5rem);
-  }
-
-  .install-hint {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0));
-    z-index: 19;
-    padding: 0.7rem 1.1rem;
-    background: var(--surface);
-    border-top: 1px solid var(--rule);
-    text-align: center;
-    font-size: 0.8rem;
-    line-height: 1.6;
   }
 }
 
@@ -963,13 +949,6 @@ a.cal-day:focus-visible {
 
   .tab__icon {
     display: none;
-  }
-
-  .install-hint {
-    max-width: 24rem;
-    margin: 0.6rem auto 0;
-    text-align: center;
-    font-size: 0.8rem;
   }
 }
 
@@ -1060,7 +1039,7 @@ footer.site-foot {
   .skip-link,
   .day-nav,
   .version-picker,
-  .install-hint,
+  .home-screen-note,
   .tabbar,
   .reading__open,
   .about-blurb .more,

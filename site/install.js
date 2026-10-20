@@ -18,19 +18,11 @@
 
   function start() {
     var done = document.getElementById("install-done");
+    var note = document.querySelector(".home-screen-note");
     if (isStandalone()) {
       if (done) done.hidden = false;
+      if (note) note.hidden = true;
       return;
-    }
-
-    var triggers = document.querySelectorAll(".install-trigger");
-    for (var i = 0; i < triggers.length; i++) {
-      triggers[i].hidden = false;
-      if (triggers[i].tagName === "BUTTON") {
-        triggers[i].addEventListener("click", function () {
-          window.location.href = "install.html";
-        });
-      }
     }
 
     var deferredPrompt = null;
@@ -59,9 +51,7 @@
       deferredPrompt = null;
       if (nowWrap) nowWrap.hidden = true;
       if (done) done.hidden = false;
-      for (var k = 0; k < triggers.length; k++) {
-        triggers[k].hidden = true;
-      }
+      if (note) note.hidden = true;
     });
   }
 

@@ -153,12 +153,7 @@ class StaticSitePublisher:
 
     def _write_install_page(self) -> None:
         self._write_install_shots()
-        html = _INSTALL_HTML.replace(
-            'href="install.html"',
-            'href="install.html" aria-current="page"',
-            1,
-        )
-        (self._site_dir / "install.html").write_text(html, encoding="utf-8")
+        (self._site_dir / "install.html").write_text(_INSTALL_HTML, encoding="utf-8")
 
     def _write_install_shots(self) -> None:
         """Copy the illustrated install steps into the site so Pages can serve them."""
@@ -915,9 +910,10 @@ _MANIFEST_JSON = f"""\
 }}
 """
 
-# The 加到手機主頁 tab links to install.html. It stays hidden until this script
-# confirms the page is not already running as an installed app. On the guide
-# itself, a direct Install button appears only when the browser offers one.
+# Registers the service worker so the site can be installed from the browser
+# menu. On the guide page, a direct Install button appears only when the
+# browser offers one. The about-page note is hidden once the site is already
+# open from the home-screen icon.
 # A fetch handler is what lets Android Chrome install a real app (WebAPK).
 # Without it, "Add to Home Screen" is only a shortcut: Chrome badge on the
 # icon, and the app switcher stays inside Chrome. This worker does not cache.
@@ -954,19 +950,11 @@ _INSTALL_JS = """\
 
   function start() {
     var done = document.getElementById("install-done");
+    var note = document.querySelector(".home-screen-note");
     if (isStandalone()) {
       if (done) done.hidden = false;
+      if (note) note.hidden = true;
       return;
-    }
-
-    var triggers = document.querySelectorAll(".install-trigger");
-    for (var i = 0; i < triggers.length; i++) {
-      triggers[i].hidden = false;
-      if (triggers[i].tagName === "BUTTON") {
-        triggers[i].addEventListener("click", function () {
-          window.location.href = "install.html";
-        });
-      }
     }
 
     var deferredPrompt = null;
@@ -995,9 +983,7 @@ _INSTALL_JS = """\
       deferredPrompt = null;
       if (nowWrap) nowWrap.hidden = true;
       if (done) done.hidden = false;
-      for (var k = 0; k < triggers.length; k++) {
-        triggers[k].hidden = true;
-      }
+      if (note) note.hidden = true;
     });
   }
 
@@ -1121,6 +1107,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">The source of the Chinese prayer is the name printed at the end of that day’s prayer. Copyright in the hymns and prayers depends on each work.</p>
       <p class="meta">For formal publication, reprinting, or commercial use, contact the original publishers and follow the terms of each Bible version and each quoted work.</p>
       </div>
+      <p class="home-screen-note"><span class="i18n-zh">想從手機主頁打開，見<a href="install.html">加到主畫面</a>。</span><span class="i18n-en">To open this from the phone’s home screen, see <a href="install.html">how to add it</a>.</span></p>
     </main>
     <footer class="site-foot">
       <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
@@ -1159,15 +1146,8 @@ _INSTALL_HTML = f"""<!DOCTYPE html>
       <p class="install-intro">{bilingual("下面以 Android 手機的 Chrome 為例。選單若是英文，對照圖裡紅圈標出的那一項。", "The pictures below are Android Chrome. If the menu is in English, tap the item circled in red.")}</p>
       <ol class="install-steps">
         <li class="install-step">
-          <h2>{bilingual("進入「加到手機主頁」", "Open this page")}</h2>
-          <p>{bilingual("打開網站，點最下方的「加到手機主頁」。", "Open the site and tap “Add to Phone” at the bottom.")}</p>
-          <figure>
-            <img src="install/step1.jpg" width="1080" height="2089" alt="網站最下方，「加到手機主頁」被紅圈標出" />
-          </figure>
-        </li>
-        <li class="install-step">
           <h2>{bilingual("打開「安裝或建立捷徑」", "Choose Install and create shortcut")}</h2>
-          <p>{bilingual("點瀏覽器右上角的選單，選「安裝或建立捷徑」。圖中英文是 Install and create shortcut。", "Open the browser menu and tap “Install and create shortcut”.")}</p>
+          <p>{bilingual("用 Chrome 打開這個網站，點右上角的選單，選「安裝或建立捷徑」。圖中英文是 Install and create shortcut。", "Open this site in Chrome, then open the menu and tap “Install and create shortcut”.")}</p>
           <figure>
             <img src="install/step2.jpg" width="1080" height="2085" alt="瀏覽器選單裡，Install and create shortcut 被紅圈標出" />
           </figure>

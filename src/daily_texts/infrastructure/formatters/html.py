@@ -81,9 +81,7 @@ def bilingual(zh: str, en: str) -> str:
     )
 
 # Bottom tab bar shared by every site page. Fixed on phones (icon over label),
-# a plain centered row on desktop. The last tab (加到手機主頁) links to the
-# illustrated guide and is revealed by install.js when the page is not already
-# running as an installed app.
+# a plain centered row on desktop. Three equal items: today, home, about.
 _ICON_TODAY = (
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
     'stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/>'
@@ -101,13 +99,6 @@ _ICON_ABOUT = (
     'stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/>'
     '<path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>'
 )
-_ICON_ADD = (
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
-    'stroke-linecap="round" stroke-linejoin="round">'
-    '<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 9v6M9 12h6"/></svg>'
-)
-
-
 def _tab(href: str, zh: str, en: str, icon: str) -> str:
     return (
         f'    <a class="tab" href="{href}">'
@@ -121,10 +112,7 @@ TABBAR_HTML = (
     + _tab("today.html", "今日", "Today", _ICON_TODAY)
     + _tab("index.html", "首頁", "Home", _ICON_HOME)
     + _tab("about.html", "關於", "About", _ICON_ABOUT)
-    + '    <a class="tab install-trigger" href="install.html" hidden>'
-    '<span class="tab__icon" aria-hidden="true">' + _ICON_ADD + "</span>"
-    f'<span class="tab__label">{bilingual("加到手機主頁", "Add to Phone")}</span></a>\n'
-    "  </nav>\n"
+    + "  </nav>\n"
 )
 
 # Required by Losungen Nutzungsbedingungen (Herrnhuter Brüdergemeine, Nov 2023).
