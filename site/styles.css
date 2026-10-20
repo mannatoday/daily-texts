@@ -698,19 +698,19 @@ a.cal-day:focus-visible {
   border-top: none;
 }
 
-.about-page p,
-.about-page li {
+.about-page main p,
+.about-page main li {
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.75;
   color: var(--text);
 }
 
-.about-page p {
+.about-page main p {
   margin: 0 0 1rem;
 }
 
-.about-page p.meta {
+.about-page main p.meta {
   font-size: 0.92rem;
   line-height: 1.7;
   color: var(--text-muted);
