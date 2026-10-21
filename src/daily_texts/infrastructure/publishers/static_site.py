@@ -26,6 +26,8 @@ from daily_texts.infrastructure.formatters.html import (
 logger = logging.getLogger(__name__)
 
 _DAY_PAGE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.html$")
+# Public GitHub Pages base (project site). Used for sitemap.xml and robots.txt.
+_SITE_BASE_URL = "https://mannatoday.github.io/daily-texts"
 # App icon shipped with the package (src/daily_texts/inputs/icon.png).
 _ICON_SOURCE = Path(__file__).resolve().parents[2] / "inputs" / "icon.png"
 # Phone screenshots for the add-to-home guide (repo install/*.jpg).
@@ -87,6 +89,8 @@ class StaticSitePublisher:
             index_path.write_text(self._build_index(days), encoding="utf-8")
             archive_path = self._site_dir / "archive.html"
             archive_path.write_text(self._build_archive(days), encoding="utf-8")
+            self._write_sitemap(days)
+            self._write_robots_txt()
             message = (
                 f"Skipped {content.date.isoformat()} (before "
                 f"{self._earliest_date.isoformat()}); updated {index_path}"
@@ -115,10 +119,12 @@ class StaticSitePublisher:
         index_path.write_text(self._build_index(days), encoding="utf-8")
         archive_path = self._site_dir / "archive.html"
         archive_path.write_text(self._build_archive(days), encoding="utf-8")
+        self._write_sitemap(days)
+        self._write_robots_txt()
 
         message = (
             f"Wrote {day_path}, about.html, install.html, today.html, archive.html, "
-            f"and updated {index_path}"
+            f"sitemap.xml, and updated {index_path}"
         )
         logger.info(message)
         return PublishResult(channel=self.channel, success=True, message=message)
@@ -154,6 +160,22 @@ class StaticSitePublisher:
     def _write_install_page(self) -> None:
         self._write_install_shots()
         (self._site_dir / "install.html").write_text(_INSTALL_HTML, encoding="utf-8")
+
+    def _write_sitemap(self, days: list[date] | None = None) -> None:
+        """Write sitemap.xml for Search Console (home, about, archive, dated days)."""
+        days = days if days is not None else self._list_day_pages()
+        (self._site_dir / "sitemap.xml").write_text(
+            _build_sitemap(days),
+            encoding="utf-8",
+        )
+
+    def _write_robots_txt(self) -> None:
+        (self._site_dir / "robots.txt").write_text(
+            "User-agent: *\n"
+            "Allow: /\n"
+            f"\nSitemap: {_SITE_BASE_URL}/sitemap.xml\n",
+            encoding="utf-8",
+        )
 
     def _write_install_shots(self) -> None:
         """Copy the illustrated install steps into the site so Pages can serve them."""
@@ -276,6 +298,39 @@ def _day_list_item(day: date) -> str:
         f"<span>{label}</span>"
         f'<span class="iso">{day.isoformat()}</span>'
         "</a></li>"
+    )
+
+
+def _sitemap_url(loc: str, lastmod: date | None = None) -> str:
+    lines = ["  <url>", f"    <loc>{escape(loc)}</loc>"]
+    if lastmod is not None:
+        lines.append(f"    <lastmod>{lastmod.isoformat()}</lastmod>")
+    lines.append("  </url>")
+    return "\n".join(lines)
+
+
+def _build_sitemap(days: list[date]) -> str:
+    """Sitemap for Google: home, about, archive, and each dated day page.
+
+    Omits today.html (same content as the newest day), install.html, and
+    the Search Console verification file.
+    """
+    newest = days[0] if days else None
+    entries = [
+        _sitemap_url(f"{_SITE_BASE_URL}/", newest),
+        _sitemap_url(f"{_SITE_BASE_URL}/about.html", newest),
+        _sitemap_url(f"{_SITE_BASE_URL}/archive.html", newest),
+    ]
+    for day in days:
+        entries.append(
+            _sitemap_url(f"{_SITE_BASE_URL}/{day.isoformat()}.html", day)
+        )
+    body = "\n".join(entries)
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{body}\n"
+        "</urlset>\n"
     )
 
 

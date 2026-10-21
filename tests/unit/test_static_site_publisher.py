@@ -137,6 +137,16 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "losungen.de" in archive
     assert "today.html" in archive
 
+    sitemap = (tmp_path / "sitemap.xml").read_text(encoding="utf-8")
+    assert "https://mannatoday.github.io/daily-texts/" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/about.html" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/archive.html" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/2026-08-01.html" in sitemap
+    assert "today.html" not in sitemap
+    assert "install.html" not in sitemap
+    robots = (tmp_path / "robots.txt").read_text(encoding="utf-8")
+    assert "Sitemap: https://mannatoday.github.io/daily-texts/sitemap.xml" in robots
+
 
 def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:
     publisher = StaticSitePublisher(tmp_path)
