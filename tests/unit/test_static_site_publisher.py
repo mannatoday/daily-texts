@@ -53,7 +53,9 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
 
     index = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert "2026-08-01.html" in index
-    assert "摩拉維亞每日箴言" in index
+    assert "摩拉維亞每日箴言｜每日靈修經文" in index
+    assert "家庭祭壇" in index
+    assert "8 月 1 日每日靈修經文。舊約耶利米書 9:7，新約路加福音 22:40。" in html
     assert "Moravian Daily Texts • 中文版" in index
     assert "以神的話開始每一天" in index
     brand_idx = index.index("摩拉維亞每日箴言")
@@ -94,6 +96,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     about = (tmp_path / "about.html").read_text(encoding="utf-8")
     assert 'href="install.html"' in about
     assert "加到主畫面" in about
+    assert "如何用於家庭靈修" in about
     assert "1731" in about
     assert "非官方出版物" in about
     assert "大約兩年可以讀完聖經一遍" in about

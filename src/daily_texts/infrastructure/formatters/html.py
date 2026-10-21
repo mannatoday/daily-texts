@@ -136,6 +136,14 @@ def load_devotional_css() -> str:
     return path.read_text(encoding="utf-8")
 
 
+def day_meta_description(content: LocalizedDailyText) -> str:
+    """Search snippet for one day: the date plus that day's two references."""
+    day = content.date
+    ot = content.ot.reference_zh.strip() or content.ot.reference.strip()
+    nt = content.nt.reference_zh.strip() or content.nt.reference.strip()
+    return f"{day.month} 月 {day.day} 日每日靈修經文。舊約{ot}，新約{nt}。"
+
+
 class HtmlFormatter:
     format_name = "html"
 
@@ -151,6 +159,7 @@ class HtmlFormatter:
     ) -> FormattedOutput:
         title_zh = date_title_zh(content)
         title_en = date_title_en(content)
+        description = escape(day_meta_description(content), quote=True)
         entries = lectionary_entries(content)
         site_mode = stylesheet_href is not None
 
@@ -234,7 +243,7 @@ class HtmlFormatter:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
+  <meta name="description" content="{description}" />
   {title_tag}
 {boot}{pwa_head}{_FONT_LINKS}{style_block}{install_script}</head>
 <body>

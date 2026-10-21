@@ -55,6 +55,10 @@ def test_html_formatter() -> None:
     out = HtmlFormatter().format(_sample(), include_source_link=False)
     assert out.filename == "daily-text.html"
     assert "<title>2026 年 8 月 1 日（星期六） · 摩拉維亞每日箴言</title>" in out.content
+    assert (
+        'content="8 月 1 日每日靈修經文。舊約耶利米書 9:7，新約路加福音 22:40。"'
+        in out.content
+    )
     assert "<h1>2026 年 8 月 1 日（星期六）</h1>" in out.content
     assert "<h2>舊約</h2>" in out.content
     assert "<h2>經文選讀</h2>" in out.content

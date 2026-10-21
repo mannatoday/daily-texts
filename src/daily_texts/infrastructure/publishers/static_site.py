@@ -180,6 +180,7 @@ class StaticSitePublisher:
                 _shell_page(
                     title_zh="今日經文 · 摩拉維亞每日箴言",
                     title_en="Today · Moravian Daily Texts",
+                    description="今天的摩拉維亞每日箴言：舊約與新約每日靈修經文。",
                     body=f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
                     f'    <p class="archive-more"><a href="index.html">{bilingual("回首頁", "Home")}</a></p>\n',
                     extra_class="site-index",
@@ -243,8 +244,9 @@ class StaticSitePublisher:
             )
 
         return _shell_page(
-            title_zh="摩拉維亞每日箴言",
+            title_zh=_HOME_TITLE_ZH,
             title_en="Moravian Daily Texts",
+            description=_HOME_DESCRIPTION,
             body=body,
             extra_class="site-index",
         )
@@ -259,6 +261,7 @@ class StaticSitePublisher:
         return _shell_page(
             title_zh="歷日檔案 · 摩拉維亞每日箴言",
             title_en="Archive · Moravian Daily Texts",
+            description=_ARCHIVE_DESCRIPTION,
             body=body,
             extra_class="site-index archive-page",
             top_nav=True,
@@ -442,10 +445,22 @@ def _month_list(year: int, month: int, days: list[date], *, open_month: bool) ->
     )
 
 
+_HOME_TITLE_ZH = "摩拉維亞每日箴言｜每日靈修經文"
+_HOME_DESCRIPTION = (
+    "摩拉維亞每日箴言（每日箴文）：每天一段舊約、一段新約金句，"
+    "供基督徒每日讀經、家庭靈修與家庭祭壇使用。"
+)
+_ABOUT_DESCRIPTION = (
+    "摩拉維亞每日箴言的由來，以及本站的每日靈修經文、讀經進度，如何用於家庭靈修。"
+)
+_ARCHIVE_DESCRIPTION = "摩拉維亞每日箴言歷日檔案，按日期回看每日靈修經文。"
+
+
 def _shell_page(
     *,
     title_zh: str,
     title_en: str,
+    description: str,
     body: str,
     extra_class: str,
     top_nav: bool = False,
@@ -478,7 +493,7 @@ def _shell_page(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="摩拉維亞每日箴言 · Moravian Daily Texts 中文版" />
+  <meta name="description" content="{escape(description, quote=True)}" />
   <title data-zh="{escape(title_zh, quote=True)}" data-en="{escape(title_en, quote=True)}">{escape(title_zh)}</title>
 {LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 {VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
@@ -1001,7 +1016,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="關於 Moravian Daily Texts 與本站中文版" />
+  <meta name="description" content="{_ABOUT_DESCRIPTION}" />
   <title data-zh="關於 · 摩拉維亞每日箴言" data-en="About · Moravian Daily Texts">關於 · 摩拉維亞每日箴言</title>
 {LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
 {VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
