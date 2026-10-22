@@ -161,7 +161,7 @@ class MissingNivBible(FakeBible):
 
 
 @pytest.mark.asyncio
-async def test_use_case_retries_later_when_niv_lookup_fails(tmp_path: Path) -> None:
+async def test_use_case_publishes_chinese_when_niv_lookup_fails(tmp_path: Path) -> None:
     raw = RawDailyText(
         date=date(2026, 10, 18),
         date_display="Sunday, October 18, 2026",
@@ -179,6 +179,8 @@ async def test_use_case_retries_later_when_niv_lookup_fails(tmp_path: Path) -> N
         publishers=[NullPublisher()],
         output_dir=tmp_path,
     )
-    with pytest.raises(BibleLookupError, match="Missing NIV"):
-        await uc.run(force=True)
-    assert not (tmp_path / "2026-10-18").exists()
+    result = await uc.run(force=True)
+    assert "NIV" not in result.localized.ot.translations
+    assert result.localized.ot.translations["KJV"] == "ZH:kjv:Haggai 2:9"
+    assert result.localized.ot.text_zh == "ZH:rcuv:Haggai 2:9"
+    assert (tmp_path / "2026-10-18" / "daily-text.md").is_file()

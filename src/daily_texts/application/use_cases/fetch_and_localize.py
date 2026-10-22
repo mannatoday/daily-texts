@@ -95,7 +95,14 @@ class FetchAndLocalizeDailyText:
             )
 
         localized = await self._localize(raw)
-        _require_default_english(localized)
+        missing_english = _missing_default_english(localized)
+        if missing_english:
+            logger.warning(
+                "Publishing %s without %s for %s; a later run can fill it",
+                raw.date.isoformat(),
+                DEFAULT_ENGLISH_VERSION,
+                ", ".join(missing_english),
+            )
         outputs = [
             formatter.format(localized, include_source_link=self._include_source_link)
             for formatter in self._formatters
@@ -297,30 +304,23 @@ def _chinese_text(translations: dict[str, str], fallback: str) -> str:
     return fallback
 
 
-def _require_default_english(content: LocalizedDailyText) -> None:
-    """Fail the publish when the default English text is missing.
+def _missing_default_english(content: LocalizedDailyText) -> list[str]:
+    """References whose default English text is still blank.
 
-    A blank NIV used to be saved as a finished page, and the next scheduled
-    run then skipped because the file already existed.
+    Chinese is published either way. The daily workflow uses this gap to
+    try the English lookup again instead of treating the page as finished.
     """
     missing: list[str] = []
-    watchwords = [("舊約", content.ot), ("新約", content.nt)]
-    if content.week_watchword is not None and content.week_watchword.reference.strip():
-        watchwords.append(("本週", content.week_watchword))
-    for label, watchword in watchwords:
+    watchwords = [content.ot, content.nt]
+    if content.week_watchword is not None:
+        watchwords.append(content.week_watchword)
+    for watchword in watchwords:
         if not watchword.reference.strip():
             continue
         text = (watchword.translations.get(DEFAULT_ENGLISH_VERSION) or "").strip()
         if not text:
-            missing.append(f"{label} {watchword.reference}")
-    if missing:
-        raise BibleLookupError(
-            "Missing "
-            + DEFAULT_ENGLISH_VERSION
-            + " text for "
-            + ", ".join(missing)
-            + "; will retry later"
-        )
+            missing.append(watchword.reference)
+    return missing
 
 
 def _placeholder_raw(day: date) -> RawDailyText:
