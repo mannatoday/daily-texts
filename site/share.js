@@ -78,7 +78,7 @@
       var prayer = ((day && day.prayer) || "").trim();
       if (prayer) {
         if (lines.length) lines.push("");
-        lines.push("今日禱告");
+        lines.push("今日禱文");
         lines.push(prayer);
         var source = document.querySelector(".prayer-source");
         var cite = source && (source.textContent || "").trim();

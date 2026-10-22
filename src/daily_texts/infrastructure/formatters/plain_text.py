@@ -33,7 +33,7 @@ class PlainTextFormatter:
             content.nt.text_zh,
             f"— {content.nt.reference_zh}",
             "",
-            "【今日禱告】",
+            "【今日禱文】",
             content.prayer_zh,
             "",
         ]

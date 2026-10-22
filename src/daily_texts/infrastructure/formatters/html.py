@@ -82,23 +82,26 @@ def bilingual(zh: str, en: str) -> str:
     )
 
 
-# Standard share icon (arrow out of a tray), stroke-matched to the tab bar.
+# Forward/share: a stroke arrow that curves out to the right (轉寄), not the
+# iOS tray-upload glyph. Stroke matches the tab bar.
 _SHARE_ICON = (
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-    '<path d="M12 3v11"/><path d="m8 7 4-4 4 4"/>'
-    '<path d="M5 14v4.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V14"/>'
+    '<path d="M4 19c0-7 5-11 11-11h5"/>'
+    '<polyline points="16 4 21 8 16 12"/>'
     "</svg>"
 )
 
+# Sits below the prayer as a day-level action: a divider closes the OT/NT/prayer
+# group, and the label names the whole reading so it is not read as prayer-only.
 SHARE_BAR_HTML = (
-    '    <p class="share-bar">\n'
+    '    <div class="share-bar">\n'
     '      <button type="button" class="share-btn" id="share-day">\n'
     f'        <span class="share-btn__icon">{_SHARE_ICON}</span>\n'
-    f'        <span class="share-btn__label">{bilingual("分享", "Share")}</span>\n'
+    f'        <span class="share-btn__label">{bilingual("分享今日經文", "Share today’s reading")}</span>\n'
     "      </button>\n"
     '      <span id="share-status" class="share-status" hidden></span>\n'
-    "    </p>\n"
+    "    </div>\n"
 )
 
 # Bottom tab bar shared by every site page. Fixed on phones (icon over label),
@@ -251,7 +254,7 @@ class HtmlFormatter:
             f'    <p class="prayer-source">— {escape(citation)}</p>\n' if citation else ""
         )
         prayer_inner = (
-            f"{_heading('今日禱告', 'Prayer', site_mode=site_mode)}"
+            f"{_heading('今日禱文', 'Prayer', site_mode=site_mode)}"
             f'    <p class="prayer">{escape(content.prayer_zh)}</p>\n'
             f"{citation_block}"
         )
@@ -259,6 +262,20 @@ class HtmlFormatter:
             prayer_block = f'    <div class="prayer-block">\n{prayer_inner}    </div>\n'
         else:
             prayer_block = prayer_inner
+
+        texts = (
+            f"{_heading('舊約', 'Old Testament', site_mode=site_mode)}"
+            f"    {_verse_line(content.ot, 'ot')}\n"
+            f"    {_ref_line(content.ot, site_mode=site_mode)}\n"
+            f"{_heading('新約', 'New Testament', site_mode=site_mode)}"
+            f"    {_verse_line(content.nt, 'nt')}\n"
+            f"    {_ref_line(content.nt, site_mode=site_mode)}\n"
+            f"{prayer_block}"
+        )
+        if site_mode:
+            texts = f'    <div class="day-share">\n{texts}{share_bar}    </div>\n'
+        else:
+            texts = f"{texts}{share_bar}"
 
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -275,11 +292,7 @@ class HtmlFormatter:
 {version_picker}  <main id="main">
     <article>
     <h1>{heading_html}</h1>
-{week_block}{_heading("舊約", "Old Testament", site_mode=site_mode)}    {_verse_line(content.ot, "ot")}
-    {_ref_line(content.ot, site_mode=site_mode)}
-{_heading("新約", "New Testament", site_mode=site_mode)}    {_verse_line(content.nt, "nt")}
-    {_ref_line(content.nt, site_mode=site_mode)}
-{prayer_block}{share_bar}{lectionary_block}{source_block}    </article>
+{week_block}{texts}{lectionary_block}{source_block}    </article>
 {bottom_nav}  </main>
 {footer}  </div>
 {data_block}</body>
