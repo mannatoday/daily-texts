@@ -1,12 +1,13 @@
 # Daily fetch → localize → update site/ → commit/push to master.
 # Source is the local dataset (PROVIDER=dataset), not the Moravian HTML page.
 # GitHub Pages deploy stays in pages.yml (triggered by site/** pushes).
-# Late-day alarm if neither run published: daily-watchdog.yml
+# Late-day alarm if none of the runs published: daily-watchdog.yml
 #
 # Schedule (UTC → Asia/Taipei). The page follows the Taiwan calendar day.
 #   0 19 * * *  → 03:00 Taiwan (primary)
-#   0 21 * * *  → 05:00 Taiwan (retry if the 03:00 run did not publish)
-# If site/{today}.html already exists, later crons exit early (saves Actions minutes).
+#   0 21 * * *  → 05:00 Taiwan (retry)
+#   0 23 * * *  → 07:00 Taiwan (retry)
+# If site/{today}.html already exists and NIV is present, later crons exit early.
 # Edit the cron lines below to change the schedule (GitHub cron is always UTC).
 # Note: GitHub scheduled workflows are often delayed (sometimes hours past the cron time).
 
@@ -17,6 +18,7 @@ on:
     # Configurable: change these cron expressions (UTC).
     - cron: "0 19 * * *"
     - cron: "0 21 * * *"
+    - cron: "0 23 * * *"
   workflow_dispatch:
     inputs:
       force:
