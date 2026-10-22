@@ -104,7 +104,7 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "1731" in about
     assert "非官方出版物" in about
     assert "大約兩年可以讀完聖經一遍" in about
-    assert "目前不是翻譯版" in about
+    assert "目前不是翻譯版" not in about
     assert "全世界使用授權" in about
     assert "losungen.de" in about
     assert "herrnhuter.de" in about
