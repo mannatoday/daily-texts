@@ -339,6 +339,55 @@ p.prayer-source {
   text-align: right;
 }
 
+/* Share — one quiet icon button; system sheet lists LINE / Messages / etc. */
+.share-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin: 1.35rem 0 0;
+  padding: 0;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--tap);
+  margin: 0;
+  padding: 0.2rem 0.15rem;
+  border: 0;
+  background: none;
+  color: var(--text-soft);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.share-btn:hover,
+.share-btn:focus-visible {
+  color: var(--link-hover);
+}
+
+.share-btn__icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: block;
+}
+
+.share-btn__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.share-status {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
 p.reading,
 p.source {
   margin: 0.4rem 0 0;
@@ -1039,6 +1088,7 @@ footer.site-foot {
   .skip-link,
   .day-nav,
   .version-picker,
+  .share-bar,
   .home-screen-note,
   .tabbar,
   .reading__open,

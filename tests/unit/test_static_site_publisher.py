@@ -64,11 +64,15 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert brand_idx < subtitle_idx < lede_idx
     assert 'href="styles.css"' in index
     assert (tmp_path / "version.js").is_file()
+    assert (tmp_path / "share.js").is_file()
     assert (tmp_path / "archive.html").is_file()
     assert 'id="bible-version"' in html
     assert "version.js" in html
+    assert "share.js" in html
+    assert 'id="share-day"' in html
     assert 'id="day-data"' in html
     assert 'data-verse="ot"' in html
+    assert "navigator.share" in (tmp_path / "share.js").read_text(encoding="utf-8")
     assert "[閱讀 ·" not in html
     assert "[閱讀]" in html
     assert 'data-ref=' in html

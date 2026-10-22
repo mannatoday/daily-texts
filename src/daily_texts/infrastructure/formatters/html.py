@@ -45,6 +45,7 @@ PWA_HEAD_TAGS = f"""\
 """
 
 INSTALL_SCRIPT_TAG = '  <script src="install.js" defer></script>\n'
+SHARE_SCRIPT_TAG = '  <script src="share.js" defer></script>\n'
 VERSION_SCRIPT_TAG = '  <script src="version.js" defer></script>\n'
 
 # Runs before the stylesheet so an English preference hides the prayer before paint.
@@ -79,6 +80,26 @@ def bilingual(zh: str, en: str) -> str:
         f'<span class="i18n-zh">{escape(zh)}</span>'
         f'<span class="i18n-en">{escape(en)}</span>'
     )
+
+
+# Standard share icon (arrow out of a tray), stroke-matched to the tab bar.
+_SHARE_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M12 3v11"/><path d="m8 7 4-4 4 4"/>'
+    '<path d="M5 14v4.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V14"/>'
+    "</svg>"
+)
+
+SHARE_BAR_HTML = (
+    '    <p class="share-bar">\n'
+    '      <button type="button" class="share-btn" id="share-day">\n'
+    f'        <span class="share-btn__icon">{_SHARE_ICON}</span>\n'
+    f'        <span class="share-btn__label">{bilingual("分享", "Share")}</span>\n'
+    "      </button>\n"
+    '      <span id="share-status" class="share-status" hidden></span>\n'
+    "    </p>\n"
+)
 
 # Bottom tab bar shared by every site page. Fixed on phones (icon over label),
 # a plain centered row on desktop. Three equal items: today, home, about.
@@ -214,6 +235,8 @@ class HtmlFormatter:
         data_block = _day_data_script(content) if site_mode else ""
         pwa_head = PWA_HEAD_TAGS if site_mode else ""
         install_script = INSTALL_SCRIPT_TAG if site_mode else ""
+        share_script = SHARE_SCRIPT_TAG if site_mode else ""
+        share_bar = SHARE_BAR_HTML if site_mode else ""
 
         week_block = ""
         if content.week_watchword is not None:
@@ -245,7 +268,7 @@ class HtmlFormatter:
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="{description}" />
   {title_tag}
-{boot}{pwa_head}{_FONT_LINKS}{style_block}{install_script}</head>
+{boot}{pwa_head}{_FONT_LINKS}{style_block}{install_script}{share_script}</head>
 <body>
   <a class="skip-link" href="#main">{skip}</a>
   <div class="site-shell">
@@ -256,7 +279,7 @@ class HtmlFormatter:
     {_ref_line(content.ot, site_mode=site_mode)}
 {_heading("新約", "New Testament", site_mode=site_mode)}    {_verse_line(content.nt, "nt")}
     {_ref_line(content.nt, site_mode=site_mode)}
-{prayer_block}{lectionary_block}{source_block}    </article>
+{prayer_block}{share_bar}{lectionary_block}{source_block}    </article>
 {bottom_nav}  </main>
 {footer}  </div>
 {data_block}</body>

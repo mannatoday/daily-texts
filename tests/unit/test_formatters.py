@@ -73,6 +73,8 @@ def test_html_formatter() -> None:
     assert "color-scheme" in out.content
     assert "複製經文" not in out.content
     assert "data-copy-scripture" not in out.content
+    assert 'id="share-day"' not in out.content
+    assert "share.js" not in out.content
     prayer_idx = out.content.index("<h2>今日禱告</h2>")
     lectionary_idx = out.content.index("<h2>經文選讀</h2>")
     assert prayer_idx < lectionary_idx
@@ -101,6 +103,12 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "today.html" in out.content
     assert 'class="tab__label"' in out.content
     assert "首頁" in out.content
+    assert 'id="share-day"' in out.content
+    assert "share.js" in out.content
+    prayer_idx = out.content.index('class="prayer-block"')
+    share_idx = out.content.index('id="share-day"')
+    readings_idx = out.content.index("經文選讀")
+    assert prayer_idx < share_idx < readings_idx
     assert "archive.html" not in out.content
     assert "Old Testament" in out.content
     assert "prayer-block" in out.content
