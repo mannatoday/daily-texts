@@ -38,14 +38,14 @@ def test_markdown_formatter_includes_sections() -> None:
     assert out.content.startswith("# 2026 年 8 月 1 日（星期六）\n")
     assert "## 舊約" in out.content
     assert "## 新約" in out.content
-    assert "## 今日禱告" in out.content
+    assert "## 今日禱文" in out.content
     assert "## 經文選讀" in out.content
     assert "詩篇 91:1–8" in out.content
     assert "約書亞記 8:30–9:27" in out.content
     assert "路加福音 12:49–59" in out.content
     assert "耶利米書 9:7" in out.content
     assert "moravian.org" in out.content
-    prayer_idx = out.content.index("## 今日禱告")
+    prayer_idx = out.content.index("## 今日禱文")
     lectionary_idx = out.content.index("## 經文選讀")
     source_idx = out.content.index("## 原文連結")
     assert prayer_idx < lectionary_idx < source_idx
@@ -73,7 +73,9 @@ def test_html_formatter() -> None:
     assert "color-scheme" in out.content
     assert "複製經文" not in out.content
     assert "data-copy-scripture" not in out.content
-    prayer_idx = out.content.index("<h2>今日禱告</h2>")
+    assert 'id="share-day"' not in out.content
+    assert "share.js" not in out.content
+    prayer_idx = out.content.index("<h2>今日禱文</h2>")
     lectionary_idx = out.content.index("<h2>經文選讀</h2>")
     assert prayer_idx < lectionary_idx
 
@@ -101,6 +103,17 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "today.html" in out.content
     assert 'class="tab__label"' in out.content
     assert "首頁" in out.content
+    assert 'id="share-day"' in out.content
+    assert "share.js" in out.content
+    assert 'class="day-share"' in out.content
+    assert "分享今日經文" in out.content
+    prayer_idx = out.content.index('class="prayer-block"')
+    share_idx = out.content.index('id="share-day"')
+    readings_idx = out.content.index("經文選讀")
+    assert prayer_idx < share_idx < readings_idx
+    group_open = out.content.index('class="day-share"')
+    group_close = out.content.index("</div>", share_idx)
+    assert group_open < prayer_idx < share_idx < group_close < readings_idx
     assert "archive.html" not in out.content
     assert "Old Testament" in out.content
     assert "prayer-block" in out.content
@@ -118,13 +131,13 @@ def test_plain_text_formatter() -> None:
     assert out.filename == "daily-text.txt"
     assert out.content.startswith("2026 年 8 月 1 日（星期六）\n")
     assert "【舊約】" in out.content
-    assert "【今日禱告】" in out.content
+    assert "【今日禱文】" in out.content
     assert "【經文選讀】" in out.content
     assert "詩篇 91:1–8" in out.content
     assert "約書亞記 8:30–9:27" in out.content
     assert "路加福音 12:49–59" in out.content
     # Lectionary comes after prayer, before source link
-    prayer_idx = out.content.index("【今日禱告】")
+    prayer_idx = out.content.index("【今日禱文】")
     lectionary_idx = out.content.index("【經文選讀】")
     source_idx = out.content.index("【原文連結】")
     assert prayer_idx < lectionary_idx < source_idx

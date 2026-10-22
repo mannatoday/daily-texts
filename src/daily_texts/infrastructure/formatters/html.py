@@ -45,6 +45,7 @@ PWA_HEAD_TAGS = f"""\
 """
 
 INSTALL_SCRIPT_TAG = '  <script src="install.js" defer></script>\n'
+SHARE_SCRIPT_TAG = '  <script src="share.js" defer></script>\n'
 VERSION_SCRIPT_TAG = '  <script src="version.js" defer></script>\n'
 
 # Runs before the stylesheet so an English preference hides the prayer before paint.
@@ -79,6 +80,29 @@ def bilingual(zh: str, en: str) -> str:
         f'<span class="i18n-zh">{escape(zh)}</span>'
         f'<span class="i18n-en">{escape(en)}</span>'
     )
+
+
+# Forward/share: a stroke arrow that curves out to the right (轉寄), not the
+# iOS tray-upload glyph. Stroke matches the tab bar.
+_SHARE_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M4 19c0-7 5-11 11-11h5"/>'
+    '<polyline points="16 4 21 8 16 12"/>'
+    "</svg>"
+)
+
+# Sits below the prayer as a day-level action: a divider closes the OT/NT/prayer
+# group, and the label names the whole reading so it is not read as prayer-only.
+SHARE_BAR_HTML = (
+    '    <div class="share-bar">\n'
+    '      <button type="button" class="share-btn" id="share-day">\n'
+    f'        <span class="share-btn__icon">{_SHARE_ICON}</span>\n'
+    f'        <span class="share-btn__label">{bilingual("分享今日經文", "Share today’s reading")}</span>\n'
+    "      </button>\n"
+    '      <span id="share-status" class="share-status" hidden></span>\n'
+    "    </div>\n"
+)
 
 # Bottom tab bar shared by every site page. Fixed on phones (icon over label),
 # a plain centered row on desktop. Three equal items: today, home, about.
@@ -214,6 +238,8 @@ class HtmlFormatter:
         data_block = _day_data_script(content) if site_mode else ""
         pwa_head = PWA_HEAD_TAGS if site_mode else ""
         install_script = INSTALL_SCRIPT_TAG if site_mode else ""
+        share_script = SHARE_SCRIPT_TAG if site_mode else ""
+        share_bar = SHARE_BAR_HTML if site_mode else ""
 
         week_block = ""
         if content.week_watchword is not None:
@@ -228,7 +254,7 @@ class HtmlFormatter:
             f'    <p class="prayer-source">— {escape(citation)}</p>\n' if citation else ""
         )
         prayer_inner = (
-            f"{_heading('今日禱告', 'Prayer', site_mode=site_mode)}"
+            f"{_heading('今日禱文', 'Prayer', site_mode=site_mode)}"
             f'    <p class="prayer">{escape(content.prayer_zh)}</p>\n'
             f"{citation_block}"
         )
@@ -236,6 +262,20 @@ class HtmlFormatter:
             prayer_block = f'    <div class="prayer-block">\n{prayer_inner}    </div>\n'
         else:
             prayer_block = prayer_inner
+
+        texts = (
+            f"{_heading('舊約', 'Old Testament', site_mode=site_mode)}"
+            f"    {_verse_line(content.ot, 'ot')}\n"
+            f"    {_ref_line(content.ot, site_mode=site_mode)}\n"
+            f"{_heading('新約', 'New Testament', site_mode=site_mode)}"
+            f"    {_verse_line(content.nt, 'nt')}\n"
+            f"    {_ref_line(content.nt, site_mode=site_mode)}\n"
+            f"{prayer_block}"
+        )
+        if site_mode:
+            texts = f'    <div class="day-share">\n{texts}{share_bar}    </div>\n'
+        else:
+            texts = f"{texts}{share_bar}"
 
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -245,18 +285,14 @@ class HtmlFormatter:
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="{description}" />
   {title_tag}
-{boot}{pwa_head}{_FONT_LINKS}{style_block}{install_script}</head>
+{boot}{pwa_head}{_FONT_LINKS}{style_block}{install_script}{share_script}</head>
 <body>
   <a class="skip-link" href="#main">{skip}</a>
   <div class="site-shell">
 {version_picker}  <main id="main">
     <article>
     <h1>{heading_html}</h1>
-{week_block}{_heading("舊約", "Old Testament", site_mode=site_mode)}    {_verse_line(content.ot, "ot")}
-    {_ref_line(content.ot, site_mode=site_mode)}
-{_heading("新約", "New Testament", site_mode=site_mode)}    {_verse_line(content.nt, "nt")}
-    {_ref_line(content.nt, site_mode=site_mode)}
-{prayer_block}{lectionary_block}{source_block}    </article>
+{week_block}{texts}{lectionary_block}{source_block}    </article>
 {bottom_nav}  </main>
 {footer}  </div>
 {data_block}</body>

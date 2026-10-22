@@ -75,6 +75,7 @@ class StaticSitePublisher:
         self._write_icons()
         self._write_manifest()
         self._write_install_js()
+        self._write_share_js()
         self._write_service_worker()
         self._write_about_page()
         self._write_install_page()
@@ -150,6 +151,9 @@ class StaticSitePublisher:
 
     def _write_install_js(self) -> None:
         (self._site_dir / "install.js").write_text(_INSTALL_JS, encoding="utf-8")
+
+    def _write_share_js(self) -> None:
+        (self._site_dir / "share.js").write_text(_SHARE_JS, encoding="utf-8")
 
     def _write_service_worker(self) -> None:
         (self._site_dir / "sw.js").write_text(_SW_JS, encoding="utf-8")
@@ -999,6 +1003,169 @@ self.addEventListener("activate", function (event) {
 self.addEventListener("fetch", function () {});
 """
 
+# Opens the system share sheet (LINE, Messages, WhatsApp, Mail, …) with the
+# day's two watchwords, the Chinese prayer when showing Chinese, and a dated URL.
+# Desktop browsers without Web Share copy the same text instead.
+_SHARE_JS = """\
+(function () {
+  "use strict";
+
+  function dayData() {
+    var el = document.getElementById("day-data");
+    if (!el) return null;
+    try {
+      return JSON.parse(el.textContent || "{}");
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function isEnglish() {
+    return document.documentElement.getAttribute("data-lang") === "en";
+  }
+
+  function verseText(role) {
+    var el = document.querySelector('[data-verse="' + role + '"]');
+    if (!el) return "";
+    return (el.textContent || "").replace(/\\s+/g, " ").trim();
+  }
+
+  function refFor(block, english) {
+    if (!block) return "";
+    if (english) return block.reference || block.reference_zh || "";
+    return block.reference_zh || block.reference || "";
+  }
+
+  function pageUrl(day) {
+    try {
+      var path = window.location.pathname || "";
+      var base = path.replace(/[^/]+$/, "");
+      var file = (day && day.date ? day.date : "today") + ".html";
+      return window.location.origin + base + file + window.location.search;
+    } catch (err) {
+      return window.location.href;
+    }
+  }
+
+  function shareTitle(day, english) {
+    if (!day) return english ? "Moravian Daily Texts" : "摩拉維亞每日箴言";
+    if (english) {
+      return (day.date_title_en || day.date || "") + " · Moravian Daily Texts";
+    }
+    return (day.date_title_zh || day.date || "") + " · 摩拉維亞每日箴言";
+  }
+
+  function shareText(day, english) {
+    var lines = [];
+    var ot = day && day.ot;
+    var nt = day && day.nt;
+    var otRef = refFor(ot, english);
+    var ntRef = refFor(nt, english);
+    var otText = verseText("ot");
+    var ntText = verseText("nt");
+
+    if (english) {
+      if (otText) {
+        lines.push("Old Testament" + (otRef ? " (" + otRef + ")" : ""));
+        lines.push(otText);
+      }
+      if (ntText) {
+        if (lines.length) lines.push("");
+        lines.push("New Testament" + (ntRef ? " (" + ntRef + ")" : ""));
+        lines.push(ntText);
+      }
+    } else {
+      if (otText) {
+        lines.push("舊約" + (otRef ? "（" + otRef + "）" : ""));
+        lines.push(otText);
+      }
+      if (ntText) {
+        if (lines.length) lines.push("");
+        lines.push("新約" + (ntRef ? "（" + ntRef + "）" : ""));
+        lines.push(ntText);
+      }
+      var prayer = ((day && day.prayer) || "").trim();
+      if (prayer) {
+        if (lines.length) lines.push("");
+        lines.push("今日禱文");
+        lines.push(prayer);
+        var source = document.querySelector(".prayer-source");
+        var cite = source && (source.textContent || "").trim();
+        if (cite) lines.push(cite);
+      }
+    }
+    return lines.join("\\n");
+  }
+
+  function showStatus(message) {
+    var status = document.getElementById("share-status");
+    if (!status) return;
+    status.hidden = false;
+    status.textContent = message;
+    window.setTimeout(function () {
+      status.hidden = true;
+      status.textContent = "";
+    }, 2200);
+  }
+
+  function copyFallback(text, english) {
+    var done = english ? "Copied" : "已複製";
+    var fail = english ? "Could not copy" : "無法複製";
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { showStatus(done); },
+        function () { showStatus(fail); }
+      );
+      return;
+    }
+    try {
+      var area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      document.body.removeChild(area);
+      showStatus(done);
+    } catch (err) {
+      showStatus(fail);
+    }
+  }
+
+  function start() {
+    var btn = document.getElementById("share-day");
+    if (!btn) return;
+
+    btn.addEventListener("click", function () {
+      var day = dayData();
+      var english = isEnglish();
+      var url = pageUrl(day);
+      var title = shareTitle(day, english);
+      var body = shareText(day, english);
+      var text = body ? body + "\\n\\n" + url : url;
+      var payload = { title: title, text: body, url: url };
+
+      if (typeof navigator.share === "function") {
+        navigator.share(payload).catch(function (err) {
+          if (err && err.name === "AbortError") return;
+          copyFallback(text, english);
+        });
+        return;
+      }
+      copyFallback(text, english);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+})();
+"""
+
 _INSTALL_JS = """\
 (function () {
   "use strict";
@@ -1109,8 +1276,8 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       </ul>
       <p>舊約與新約並陳，提醒我們整本聖經彼此呼應：神的應許與成全、律法與福音，都在每日閱讀中相遇。</p>
 
-      <h2>今日禱告</h2>
-      <p>頁面上的「今日禱告」就是這一段簡短禱告。它回應當天的舊約與新約，把人帶到向神說話。篇幅只取一節聖詩，或一小段禱文，句末署名作者與作品。</p>
+      <h2>今日禱文</h2>
+      <p>頁面上的「今日禱文」就是這一段簡短禱告。它回應當天的舊約與新約，把人帶到向神說話。篇幅只取一節聖詩，或一小段禱文，句末署名作者與作品。</p>
       <p>這段禱文按當天兩節挑選，並加入華人文化裡的聖詩、禮文與靈修文字，以及歷代中文聖詩與公禱文。</p>
 
       <h2>讀經進度</h2>
@@ -1119,13 +1286,13 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p>照這進度，詩篇大約一年讀完一遍；詩篇以外的舊約與新約大約兩年讀完。一年大約讀完整本聖經的一半。跟著每天的選讀走，大約兩年可以讀完聖經一遍。</p>
 
       <h2>關於本站中文版</h2>
-      <p class="meta">本站中文版依官方每日經文章節編排，目前不是翻譯版。經文正文引自已獲全世界使用授權的中文譯本，可在頁首切換。今日禱告依當天兩節挑選，並加入華人文化中的聖詩與禱文。本站供個人與家庭靈修使用，非官方出版物。</p>
+      <p class="meta">本站中文版依官方每日經文章節編排，目前不是翻譯版。經文正文引自已獲全世界使用授權的中文譯本，可在頁首切換。今日禱文依當天兩節挑選，並加入華人文化中的聖詩與禱文。本站供個人與家庭靈修使用，非官方出版物。</p>
 
       <h2>版權與來源</h2>
       <p class="meta">每日舊約守望經文與新約經文的章節，出自官方德文《Die Losungen》，由 <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> 出版。更多資訊見 <a href="https://www.losungen.de/" rel="noopener noreferrer">www.losungen.de</a>。</p>
       <p class="meta">英文版每日內容見 <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America — The Daily Texts</a>。讀經進度依北美摩拉維亞教會的讀經安排，說明見 <a href="https://www.moravian.org/2018/07/using-the-moravian-daily-texts/" rel="noopener noreferrer">Using the Moravian Daily Texts</a>。</p>
       <p class="meta">中文經文正文引自已獲全世界使用授權的譯本：和合本、和合本修訂版、新譯本、中文標準譯本、環球聖經譯本。英文可在頁首切換 NIV、NLT、NIrV 與 KJV。NIV 與 NIrV 版權屬於 Biblica；NLT 版權屬於 Tyndale House；KJV 為公有領域。各譯本版權仍屬原出版機構。選用《環球聖經譯本》、NIV、NLT 或 NIrV 時，頁腳另標版權。</p>
-      <p class="meta">今日禱告的出處是當天頁面句末的署名（作者與作品）。聖詩與禱文的版權依各作品而定。</p>
+      <p class="meta">今日禱文的出處是當天頁面句末的署名（作者與作品）。聖詩與禱文的版權依各作品而定。</p>
       <p class="meta">若需正式出版、轉載或商業用途，請另洽各原文出版單位，並遵守各譯本與作品的版權規定。</p>
       </div>
 
@@ -1153,7 +1320,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p>The Old and New Testaments are set side by side, so promise and fulfillment, law and gospel, meet in the day’s reading.</p>
 
       <h2>The prayer</h2>
-      <p>In Chinese, “今日禱告” is that short prayer. It answers the day’s two texts and turns the reader toward speaking to God. It is one hymn stanza or a short prayer, with the author and the work named at the end.</p>
+      <p>In Chinese, “今日禱文” is that short prayer. It answers the day’s two texts and turns the reader toward speaking to God. It is one hymn stanza or a short prayer, with the author and the work named at the end.</p>
       <p>The prayer is chosen for those two texts and draws on Chinese hymns, liturgy, and devotional writing, together with historic Chinese hymnals and books of common prayer.</p>
 
       <h2>Readings</h2>

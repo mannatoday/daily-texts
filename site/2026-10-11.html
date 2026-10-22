@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="version.js" defer></script>
   <script src="install.js" defer></script>
+  <script src="share.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
@@ -65,6 +66,7 @@
     <h2><span class="i18n-zh">本週守望經文</span><span class="i18n-en">Watchword for the Week</span></h2>
     <p class="verse" data-verse="week">耶和華啊，你是我的上帝， 我要尊崇你，稱頌你的名。 因為你以信實忠信 行遠古所定奇妙的事。</p>
     <p class="ref">— <span class="i18n-zh">以賽亞書 25:1</span><span class="i18n-en">Isaiah 25:1</span></p>
+    <div class="day-share">
     <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
     <p class="verse" data-verse="ot">基甸 對他們說：「我不治理你們，我的兒子也不治理你們，耶和華會治理你們。」</p>
     <p class="ref">— <span class="i18n-zh">士師記 8:23</span><span class="i18n-en">Judges 8:23</span></p>
@@ -72,9 +74,17 @@
     <p class="verse" data-verse="nt">多馬 回答，對他說：「我的主！我的上帝！」</p>
     <p class="ref">— <span class="i18n-zh">約翰福音 20:28</span><span class="i18n-en">John 20:28</span></p>
     <div class="prayer-block">
-    <h2><span class="i18n-zh">今日禱告</span><span class="i18n-en">Prayer</span></h2>
+    <h2><span class="i18n-zh">今日禱文</span><span class="i18n-en">Prayer</span></h2>
     <p class="prayer">聖哉，聖哉，聖哉！全能的大主宰！清晨我眾歌聲，穿雲上達主前。聖哉，聖哉，聖哉！慈悲又全能！榮耀與讚美，歸於三一神。</p>
     <p class="prayer-source">— Reginald Heber〈聖哉！聖哉！聖哉！(Holy, Holy, Holy)〉</p>
+    </div>
+    <div class="share-bar">
+      <button type="button" class="share-btn" id="share-day">
+        <span class="share-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19c0-7 5-11 11-11h5"/><polyline points="16 4 21 8 16 12"/></svg></span>
+        <span class="share-btn__label"><span class="i18n-zh">分享今日經文</span><span class="i18n-en">Share today’s reading</span></span>
+      </button>
+      <span id="share-status" class="share-status" hidden></span>
+    </div>
     </div>
     <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
     <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 23</span><span class="i18n-en">Psalm 23</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%2023&amp;version=RCU17TS" data-ref="Psalm 23" data-label-zh="詩篇 23" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 23"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>

@@ -4,8 +4,20 @@
 
 ## [Unreleased]
 
+### Planned
+
+- 真實 `LinePublisher` / `EmailPublisher`
+- `WebsitePublisher`（S3／CMS 等，有別於靜態站）
+- 授權合規閘道（`REQUIRE_LICENSE_ACK`）與正式 attribution
+- 其他 Provider（如 Email inbox）
+
+---
+
+## [0.2.0] — 2026-10-22
+
 ### Added
 
+- 每日頁分享舊約、新約與今日禱文：手機用系統分享，電腦則複製到剪貼簿。三節放在同一塊，分享鈕是這塊的頁腳。
 - GitHub Actions 每日發布工作流程（`.github/workflows/daily-publish.yml`）：cron + 手動觸發，產生 `site/` 後 commit／push 至 `master`；run／commit 標示 schedule 來源
 - Daily Watchdog（`.github/workflows/daily-watchdog.yml`）：兩次 publish 之後檢查當日頁；失敗可選 SMTP 寄信
 - HTTP 請求重試（`HTTP_MAX_RETRIES`／`HTTP_RETRY_BACKOFF_SECONDS`）用於 Moravian、FHL、Google Translate
@@ -16,19 +28,13 @@
 
 ### Changed
 
+- 「今日禱告」改稱「今日禱文」
 - Daily Publish 新增 14:00 UTC（太平洋 07:00 PDT／06:00 PST）排程，讓當日頁在清晨自動產生；09:00／11:00 PDT 改為重試
 
 ### Fixed
 
 - Moravian 解析：主日版面（教會年／Watchword for the week）不再誤把非經文段當 OT／NT；改以 BibleGateway 連結定位守望經文
 - 經文參考中文化支援逗號分段（如 `Psalm 145:8-9,14-21` → `詩篇 145:8–9,14–21`）
-
-### Planned
-
-- 真實 `LinePublisher` / `EmailPublisher`
-- `WebsitePublisher`（S3／CMS 等，有別於靜態站）
-- 授權合規閘道（`REQUIRE_LICENSE_ACK`）與正式 attribution
-- 其他 Provider（如 Email inbox）
 
 ---
 
@@ -55,5 +61,6 @@
 - 品牌名稱：**摩拉維亞每日箴言**（Moravian Daily Texts • 中文版）
 - 本版本以個人靈修／開發用途為主；對外發布前請確認內容與譯本授權
 
-[Unreleased]: https://github.com/mannatoday/daily-texts/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mannatoday/daily-texts/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mannatoday/daily-texts/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mannatoday/daily-texts/releases/tag/v0.1.0
