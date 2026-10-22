@@ -193,7 +193,7 @@ jobs:
           PY
 
       - name: Verify site day page exists
-        if: steps.skip.outputs.skip != 'true'
+        if: steps.skip.outputs.skip != 'true' && success()
         run: |
           DAY="${{ steps.dates.outputs.expect_date }}"
           test -f "site/${DAY}.html"
@@ -202,7 +202,7 @@ jobs:
 
       - name: Commit and push if changed
         id: push
-        if: steps.skip.outputs.skip != 'true'
+        if: steps.skip.outputs.skip != 'true' && success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -227,7 +227,7 @@ jobs:
 
       # GITHUB_TOKEN pushes do not trigger other workflows; dispatch Pages explicitly.
       - name: Trigger Pages deploy
-        if: steps.skip.outputs.skip != 'true' && steps.push.outputs.pushed == 'true'
+        if: steps.skip.outputs.skip != 'true' && steps.push.outputs.pushed == 'true' && success()
         uses: actions/github-script@v7
         with:
           script: |

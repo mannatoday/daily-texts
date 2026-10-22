@@ -59,7 +59,7 @@ async def request_with_retries(
             continue
 
         if response.status_code in _RETRYABLE_STATUS and attempt < retries:
-            delay = backoff_seconds * (2**attempt)
+            delay = _retry_delay(response, attempt, backoff_seconds)
             logger.warning(
                 "HTTP %s %s returned %s (attempt %d/%d); retrying in %.1fs",
                 method.upper(),
@@ -77,3 +77,14 @@ async def request_with_retries(
     if last_error is not None:
         raise last_error
     raise RuntimeError("request_with_retries exhausted without response or error")
+
+
+def _retry_delay(response: httpx.Response, attempt: int, backoff_seconds: float) -> float:
+    """Prefer a server Retry-After, capped so one call cannot stall the publish."""
+    header = response.headers.get("Retry-After", "").strip()
+    if header:
+        try:
+            return min(max(float(header), 0.0), 30.0)
+        except ValueError:
+            pass
+    return backoff_seconds * (2**attempt)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 from urllib.parse import quote
@@ -246,11 +247,16 @@ class ApiBibleService:
         self._settings = settings
         self._bible_ids: dict[str, str] = {}
         self._fums: dict[tuple[str, str], str] = {}
+        self._lock = asyncio.Lock()
 
     def fums_token(self, version: str, reference: str) -> str:
         return self._fums.get((version.lower(), reference.strip()), "")
 
     async def lookup(self, reference: str, *, version: str) -> str:
+        async with self._lock:
+            return await self._lookup_unlocked(reference, version=version)
+
+    async def _lookup_unlocked(self, reference: str, *, version: str) -> str:
         key = version.lower()
         if key not in self.VERSIONS:
             raise BibleLookupError(f"API.Bible does not serve {version}")

@@ -12,6 +12,7 @@ from daily_texts.application.ports.provider import DailyTextProvider
 from daily_texts.application.ports.publisher import Publisher
 from daily_texts.application.ports.translator import TextTranslator
 from daily_texts.domain.bible_versions import (
+    DEFAULT_ENGLISH_VERSION,
     DEFAULT_VERSION,
     ENGLISH_LOOKUP_VERSIONS,
     ENGLISH_VERSIONS,
@@ -94,6 +95,7 @@ class FetchAndLocalizeDailyText:
             )
 
         localized = await self._localize(raw)
+        _require_default_english(localized)
         outputs = [
             formatter.format(localized, include_source_link=self._include_source_link)
             for formatter in self._formatters
@@ -187,7 +189,7 @@ class FetchAndLocalizeDailyText:
                         site_code,
                         exc,
                     )
-                    return site_code, ""
+                    return site_code, None
             fhl = FHL_VERSION_CODES.get(site_code)
             if not fhl:
                 logger.info(
@@ -208,7 +210,10 @@ class FetchAndLocalizeDailyText:
                 return site_code, english
 
         pairs = await asyncio.gather(*(one(code) for code in self._site_version_codes))
-        return dict(pairs), fums
+        translations = {
+            code: text for code, text in pairs if text and text.strip()
+        }
+        return translations, fums
 
     async def _lookup_or_fallback(self, reference: str, english: str) -> str:
         try:
@@ -290,6 +295,32 @@ def _chinese_text(translations: dict[str, str], fallback: str) -> str:
         if text:
             return text
     return fallback
+
+
+def _require_default_english(content: LocalizedDailyText) -> None:
+    """Fail the publish when the default English text is missing.
+
+    A blank NIV used to be saved as a finished page, and the next scheduled
+    run then skipped because the file already existed.
+    """
+    missing: list[str] = []
+    watchwords = [("舊約", content.ot), ("新約", content.nt)]
+    if content.week_watchword is not None and content.week_watchword.reference.strip():
+        watchwords.append(("本週", content.week_watchword))
+    for label, watchword in watchwords:
+        if not watchword.reference.strip():
+            continue
+        text = (watchword.translations.get(DEFAULT_ENGLISH_VERSION) or "").strip()
+        if not text:
+            missing.append(f"{label} {watchword.reference}")
+    if missing:
+        raise BibleLookupError(
+            "Missing "
+            + DEFAULT_ENGLISH_VERSION
+            + " text for "
+            + ", ".join(missing)
+            + "; will retry later"
+        )
 
 
 def _placeholder_raw(day: date) -> RawDailyText:

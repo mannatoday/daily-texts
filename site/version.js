@@ -174,8 +174,13 @@
 
   function textFor(block, siteCode) {
     if (!block || !block.translations) return "";
-    if (Object.prototype.hasOwnProperty.call(block.translations, siteCode)) {
-      return block.translations[siteCode] || "";
+    var direct = block.translations[siteCode];
+    if (direct && String(direct).trim()) return direct;
+    var english = ENGLISH.some(function (item) { return item.code === siteCode; });
+    if (!english) return "";
+    for (var i = 0; i < ENGLISH.length; i++) {
+      var alt = block.translations[ENGLISH[i].code];
+      if (alt && String(alt).trim()) return alt;
     }
     return "";
   }
