@@ -87,7 +87,9 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert (tmp_path / "about.html").is_file()
     assert (tmp_path / "install.html").is_file()
     guide = (tmp_path / "install.html").read_text(encoding="utf-8")
-    assert "打開「安裝或建立捷徑」" in guide
+    assert "如何把這個網站變成手機 App" in guide
+    assert "加入主畫面" in guide
+    assert "安裝應用程式" in guide
     assert "進入「加到手機主頁」" not in guide
     assert "點最下方" not in guide
     assert "install/step1.jpg" not in guide

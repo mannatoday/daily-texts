@@ -1374,40 +1374,49 @@ _INSTALL_HTML = f"""<!DOCTYPE html>
       <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
     </nav>
     <main id="main">
-      <h1>{bilingual("加到手機主頁", "Add to Phone")}</h1>
-      <p class="lede">{bilingual("加到手機主頁之後，會出現「每日箴言」圖示。點圖示就打開。", "After you add it, a 每日箴言 icon appears. Tap the icon to open the reading.")}</p>
+      <h1>{bilingual("如何把這個網站變成手機 App？", "How do I turn this website into a phone app?")}</h1>
+      <p class="lede">{bilingual("為了方便每天家庭靈修時快速打開，建議你將它設定到手機桌面上。", "Add it to the home screen so the family devotion is quick to open each day.")}</p>
       <p id="install-done" class="install-done" hidden>{bilingual("你已經從主頁的圖示打開。", "You already opened this from the home-screen icon.")}</p>
       <p id="install-now-wrap" class="install-now-wrap" hidden>{bilingual("這個瀏覽器可以直接安裝，按下面的按鈕即可。", "This browser can install it directly.")}<br /><button type="button" class="install-now" id="install-now">{bilingual("安裝", "Install")}</button></p>
-      <p class="install-intro">{bilingual("下面以 Android 手機的 Chrome 為例。選單若是英文，對照圖裡紅圈標出的那一項。", "The pictures below are Android Chrome. If the menu is in English, tap the item circled in red.")}</p>
-      <ol class="install-steps">
-        <li class="install-step">
-          <h2>{bilingual("打開「安裝或建立捷徑」", "Choose Install and create shortcut")}</h2>
-          <p>{bilingual("用 Chrome 打開這個網站，點右上角的選單，選「安裝或建立捷徑」。圖中英文是 Install and create shortcut。", "Open this site in Chrome, then open the menu and tap “Install and create shortcut”.")}</p>
-          <figure>
-            <img src="install/step2.jpg" width="1080" height="2085" alt="瀏覽器選單裡，Install and create shortcut 被紅圈標出" />
-          </figure>
-        </li>
-        <li class="install-step">
-          <h2>{bilingual("按「安裝」", "Tap Install")}</h2>
-          <p>{bilingual("跳出視窗後，按「安裝」。圖中英文是 Install。裝好時手機會提示已安裝。", "When the window appears, tap Install. The phone then says the app is installed.")}</p>
-          <figure>
-            <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，Install 按鈕被紅圈標出" />
-          </figure>
-          <figure>
-            <img class="install-shot--banner" src="install/almostdone.jpg" width="1077" height="281" alt="通知寫著每日箴言，App installed" />
-          </figure>
-        </li>
-        <li class="install-step">
-          <h2>{bilingual("主頁出現圖示", "The icon appears")}</h2>
-          <p>{bilingual("回到手機主頁，會看到「每日箴言」。之後從這個圖示打開即可。", "On the home screen, look for 每日箴言 and open the reading from that icon.")}</p>
-          <figure>
-            <img src="install/installed.jpg" width="1079" height="1539" alt="手機主頁上的每日箴言圖示，紅圈標出" />
-          </figure>
-        </li>
-      </ol>
+
       <section class="install-aside" aria-labelledby="install-iphone">
-        <h2 id="install-iphone">{bilingual("iPhone", "iPhone")}</h2>
-        <p>{bilingual("請用 Safari 打開這個網站。點畫面下方的分享按鈕，再選「加入主畫面」。", "Open this site in Safari. Tap the Share button at the bottom, then “Add to Home Screen”.")}</p>
+        <h2 id="install-iphone">{bilingual("蘋果手機（iPhone / Safari）", "iPhone (Safari)")}</h2>
+        <ol class="install-steps">
+          <li class="install-step"><p>{bilingual("用 Safari 瀏覽器打開這個網址。", "Open this site in Safari.")}</p></li>
+          <li class="install-step"><p>{bilingual("點擊畫面下方的「分享」圖示（一個正方形帶有向上箭頭）。", "Tap the Share icon at the bottom of the screen (a square with an arrow pointing up).")}</p></li>
+          <li class="install-step"><p>{bilingual("往下滑動，選擇「加入主畫面」（Add to Home Screen）。", "Scroll down and choose “Add to Home Screen”.")}</p></li>
+          <li class="install-step"><p>{bilingual("命名為「摩拉維亞每日箴言」，點擊右上角「新增」即可。", "Name it 摩拉維亞每日箴言, then tap Add at the top right.")}</p></li>
+        </ol>
+      </section>
+
+      <section class="install-aside" aria-labelledby="install-android">
+        <h2 id="install-android">{bilingual("安卓手機（Android / Chrome）", "Android (Chrome)")}</h2>
+        <ol class="install-steps">
+          <li class="install-step">
+            <p>{bilingual("用 Chrome 瀏覽器打開這個網址。", "Open this site in Chrome.")}</p>
+          </li>
+          <li class="install-step">
+            <p>{bilingual("點擊右上角的「三個點」功能選單。", "Tap the three-dot menu at the top right.")}</p>
+            <figure>
+              <img src="install/step2.jpg" width="1080" height="2085" alt="Chrome 右上角選單，安裝或建立捷徑被標出" />
+            </figure>
+          </li>
+          <li class="install-step">
+            <p>{bilingual("選擇「安裝應用程式」或「加入主畫面」。", "Choose “Install app” or “Add to Home screen”.")}</p>
+            <figure>
+              <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，安裝按鈕被標出" />
+            </figure>
+            <figure>
+              <img class="install-shot--banner" src="install/almostdone.jpg" width="1077" height="281" alt="通知寫著每日箴言已安裝" />
+            </figure>
+          </li>
+          <li class="install-step">
+            <p>{bilingual("確認後，手機桌面就會出現一個像 App 一樣的快捷圖示。", "After you confirm, a shortcut that looks like an app appears on the home screen.")}</p>
+            <figure>
+              <img src="install/installed.jpg" width="1079" height="1539" alt="手機桌面上的每日箴言圖示" />
+            </figure>
+          </li>
+        </ol>
       </section>
     </main>
     <footer class="site-foot">

@@ -863,9 +863,9 @@ a.cal-day:focus-visible {
 }
 
 .install-steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  list-style: decimal;
+  margin: 0 0 0.4rem;
+  padding-left: 1.35rem;
 }
 
 .install-step {
@@ -929,12 +929,12 @@ a.cal-day:focus-visible {
 }
 
 .install-aside h2 {
-  margin: 0 0 0.7rem;
+  margin: 0 0 0.85rem;
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 1.05rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  color: var(--text-soft);
+  letter-spacing: 0.04em;
+  color: var(--text);
 }
 
 .install-aside p {
