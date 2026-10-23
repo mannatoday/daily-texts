@@ -48,6 +48,19 @@ INSTALL_SCRIPT_TAG = '  <script src="install.js" defer></script>\n'
 SHARE_SCRIPT_TAG = '  <script src="share.js" defer></script>\n'
 VERSION_SCRIPT_TAG = '  <script src="version.js" defer></script>\n'
 
+# GA4. One tag per page, immediately after <head>.
+GOOGLE_TAG = """\
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KK8K4PQW21"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KK8K4PQW21');
+</script>
+"""
+
 # Runs before the stylesheet so an English preference hides the prayer before paint.
 LANG_BOOT_SCRIPT = """\
   <script>
@@ -237,6 +250,7 @@ class HtmlFormatter:
         footer = _site_footer(site_mode=site_mode)
         data_block = _day_data_script(content) if site_mode else ""
         pwa_head = PWA_HEAD_TAGS if site_mode else ""
+        google_tag = GOOGLE_TAG if site_mode else ""
         install_script = INSTALL_SCRIPT_TAG if site_mode else ""
         share_script = SHARE_SCRIPT_TAG if site_mode else ""
         share_bar = SHARE_BAR_HTML if site_mode else ""
@@ -280,7 +294,7 @@ class HtmlFormatter:
         body = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
+{google_tag}  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="{description}" />

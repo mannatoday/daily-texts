@@ -11,6 +11,7 @@ from daily_texts.application.dto import FormattedOutput, PublishResult
 from daily_texts.domain.models import LocalizedDailyText
 from daily_texts.infrastructure.formatters._common import format_date_en, format_date_zh
 from daily_texts.infrastructure.formatters.html import (
+    GOOGLE_TAG,
     ICON_VERSION,
     INSTALL_SCRIPT_TAG,
     LANG_BOOT_SCRIPT,
@@ -549,7 +550,7 @@ def _shell_page(
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
+{GOOGLE_TAG}  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="{escape(description, quote=True)}" />
@@ -1240,7 +1241,7 @@ _INSTALL_JS = """\
 _ABOUT_HTML = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
+{GOOGLE_TAG}  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="{_ABOUT_DESCRIPTION}" />
@@ -1355,7 +1356,7 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
 _INSTALL_HTML = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
+{GOOGLE_TAG}  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="把摩拉維亞每日箴言加到手機主頁" />
