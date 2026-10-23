@@ -114,21 +114,7 @@ jobs:
           if [ -f "site/${DAY}.html" ]; then
             # Chinese can already be live while NIV is still blank. In that
             # case run again so the later cron can fill the English text.
-            if python3 -c 'import json,re,sys; from pathlib import Path
-day=sys.argv[1]
-html=Path(f"site/{day}.html").read_text(encoding="utf-8")
-m=re.search(r"id=.day-data.>(.*?)</script>", html, re.S)
-if not m:
-    sys.exit(0)
-data=json.loads(m.group(1))
-
-def missing(block):
-    if not isinstance(block, dict) or not str(block.get("reference") or "").strip():
-        return False
-    return not str((block.get("translations") or {}).get("NIV") or "").strip()
-
-sys.exit(1 if missing(data.get("ot")) or missing(data.get("nt")) else 0)
-' "$DAY"
+            if python3 -c 'import json,re,sys; from pathlib import Path; day=sys.argv[1]; html=Path("site/%s.html"%day).read_text(encoding="utf-8"); m=re.search(r"id=.day-data.>(.*?)</script>", html, re.S); data=json.loads(m.group(1)) if m else {}; miss=lambda b: isinstance(b, dict) and str(b.get("reference") or "").strip() and not str((b.get("translations") or {}).get("NIV") or "").strip(); sys.exit(1 if miss(data.get("ot")) or miss(data.get("nt")) else 0)' "$DAY"
             then
               echo "site/${DAY}.html already on master; skipping fetch (save Actions minutes)."
               echo "skip=true" >> "$GITHUB_OUTPUT"
