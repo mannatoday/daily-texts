@@ -110,7 +110,6 @@ class StaticSitePublisher:
             stylesheet_href="styles.css",
             prev_href=prev_href,
             next_href=next_href,
-            home_href="index.html",
         )
         day_path = self._site_dir / f"{content.date.isoformat()}.html"
         day_path.write_text(page.content, encoding="utf-8")
@@ -624,35 +623,34 @@ def _neighbors(day: date, days_newest_first: list[date]) -> tuple[str | None, st
     return prev_href, next_href
 
 
-_NAV_BLOCK = re.compile(
-    r'<nav class="day-nav(?:\s+day-nav--bottom)?"[^>]*>.*?</nav>\s*',
+_DATE_NAV = re.compile(
+    r'(<nav class="day-nav day-nav--date"[^>]*>)(.*?)(</nav>)',
     re.DOTALL,
 )
+_DATE_HEADING = re.compile(r"<h1>.*?</h1>", re.DOTALL)
 
 
 def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) -> str:
-    from daily_texts.infrastructure.formatters.html import _day_nav
+    from daily_texts.infrastructure.formatters.html import _nav_label, day_nav_control
 
-    bottom = _day_nav(
-        prev_href=prev_href,
-        next_href=next_href,
-        home_href="index.html",
-        css_extra="day-nav--bottom",
-        bilingual_labels=True,
-    )
-    matches = list(_NAV_BLOCK.finditer(html))
-    if not matches:
+    match = _DATE_NAV.search(html)
+    if match is None:
         return html
-
-    parts: list[str] = []
-    last = 0
-    for match in matches:
-        parts.append(html[last : match.start()])
-        if "day-nav--bottom" in match.group(0):
-            parts.append(bottom.lstrip() if match.start() > 0 else bottom)
-        last = match.end()
-    parts.append(html[last:])
-    return "".join(parts)
+    heading = _DATE_HEADING.search(match.group(2))
+    if heading is None:
+        return html
+    prev = day_nav_control(
+        prev_href,
+        "day-nav__prev",
+        _nav_label("前一日", "Previous", bilingual_labels=True, prefix="← "),
+    )
+    nxt = day_nav_control(
+        next_href,
+        "day-nav__next",
+        _nav_label("後一日", "Next", bilingual_labels=True, suffix=" →"),
+    )
+    inner = f"\n{prev}    {heading.group(0)}\n{nxt}"
+    return html[: match.start()] + match.group(1) + inner + match.group(3) + html[match.end() :]
 
 
 _VERSION_JS = """\

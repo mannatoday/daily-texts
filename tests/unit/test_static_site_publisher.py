@@ -46,7 +46,11 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     assert "我要熬煉他們。" in html
     assert "經文選讀" in html
     assert 'href="styles.css"' in html
-    assert "day-nav" in html
+    assert "day-nav--date" in html
+    assert "day-nav--bottom" not in html
+    assert "day-nav__home" not in html
+    assert "前一日" in html
+    assert "後一日" in html
     assert "index.html" in html
     assert "原文連結" not in html
     assert "Moravian Daily Texts</a>" not in html

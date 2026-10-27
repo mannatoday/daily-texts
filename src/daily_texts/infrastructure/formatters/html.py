@@ -192,7 +192,6 @@ class HtmlFormatter:
         stylesheet_href: str | None = None,
         prev_href: str | None = None,
         next_href: str | None = None,
-        home_href: str | None = None,
     ) -> FormattedOutput:
         title_zh = date_title_zh(content)
         title_en = date_title_en(content)
@@ -240,13 +239,15 @@ class HtmlFormatter:
             skip = "跳至內容"
 
         version_picker = _version_picker() if site_mode else ""
-        bottom_nav = _day_nav(
-            prev_href=prev_href,
-            next_href=next_href,
-            home_href=home_href,
-            css_extra="day-nav--bottom",
-            bilingual_labels=site_mode,
-        )
+        if site_mode or prev_href or next_href:
+            heading_block = _date_nav(
+                heading_html,
+                prev_href=prev_href,
+                next_href=next_href,
+                bilingual_labels=site_mode,
+            )
+        else:
+            heading_block = f"    <h1>{heading_html}</h1>\n"
         footer = _site_footer(site_mode=site_mode)
         data_block = _day_data_script(content) if site_mode else ""
         pwa_head = PWA_HEAD_TAGS if site_mode else ""
@@ -305,9 +306,8 @@ class HtmlFormatter:
   <div class="site-shell">
 {version_picker}  <main id="main">
     <article>
-    <h1>{heading_html}</h1>
-{week_block}{texts}{lectionary_block}{source_block}    </article>
-{bottom_nav}  </main>
+{heading_block}{week_block}{texts}{lectionary_block}{source_block}    </article>
+  </main>
 {footer}  </div>
 {data_block}</body>
 </html>
@@ -389,42 +389,45 @@ def _reading_row(zh_label: str, english_ref: str, *, with_link: bool) -> str:
     )
 
 
-def _day_nav(
+def _nav_label(zh: str, en: str, *, bilingual_labels: bool, prefix: str = "", suffix: str = "") -> str:
+    text = bilingual(zh, en) if bilingual_labels else escape(zh)
+    return f"{prefix}{text}{suffix}"
+
+
+def day_nav_control(
+    href: str | None,
+    css: str,
+    label: str,
+) -> str:
+    """One previous/next control. A missing day stays in the row so the date stays centered."""
+    if href:
+        return f'    <a class="{css}" href="{escape(href, quote=True)}">{label}</a>\n'
+    return f'    <span class="{css}" aria-disabled="true">{label}</span>\n'
+
+
+def _date_nav(
+    heading_html: str,
     *,
     prev_href: str | None,
     next_href: str | None,
-    home_href: str | None,
-    css_extra: str = "",
-    bilingual_labels: bool = False,
+    bilingual_labels: bool,
 ) -> str:
-    if prev_href is None and next_href is None and home_href is None:
-        return ""
-
-    classes = "day-nav" + (f" {css_extra}" if css_extra else "")
-
-    def _label(zh: str, en: str, *, prefix: str = "", suffix: str = "") -> str:
-        text = bilingual(zh, en) if bilingual_labels else escape(zh)
-        return f"{prefix}{text}{suffix}"
-
-    def _link(href: str | None, label: str, css: str) -> str:
-        if href:
-            return (
-                f'    <a class="{css}" href="{escape(href, quote=True)}">{label}</a>\n'
-            )
-        return f'    <span class="{css}" aria-disabled="true">{label}</span>\n'
-
-    home = ""
-    if home_href:
-        home = (
-            f'    <a class="day-nav__home" href="{escape(home_href, quote=True)}">'
-            f"{_label('首頁', 'Home')}</a>\n"
-        )
+    prev = day_nav_control(
+        prev_href,
+        "day-nav__prev",
+        _nav_label("前一日", "Previous", bilingual_labels=bilingual_labels, prefix="← "),
+    )
+    nxt = day_nav_control(
+        next_href,
+        "day-nav__next",
+        _nav_label("後一日", "Next", bilingual_labels=bilingual_labels, suffix=" →"),
+    )
     return (
-        f'  <nav class="{classes}" aria-label="日期導覽">\n'
-        + _link(prev_href, _label("前一日", "Previous", prefix="← "), "day-nav__prev")
-        + home
-        + _link(next_href, _label("後一日", "Next", suffix=" →"), "day-nav__next")
-        + "  </nav>\n"
+        '    <nav class="day-nav day-nav--date" aria-label="日期導覽">\n'
+        f"{prev}"
+        f"    <h1>{heading_html}</h1>\n"
+        f"{nxt}"
+        "    </nav>\n"
     )
 
 
