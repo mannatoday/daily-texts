@@ -20,6 +20,9 @@ _REF_PATTERN = re.compile(
     r"^(?P<book>\d?\s?[A-Za-z]+(?:\s+(?:of\s+)?[A-Za-z]+)?)\s+"
     r"(?P<chapter>\d+):(?P<verse>\d+)(?:(?:[–-]|,\s*)(?P<end>\d+))?$",
 )
+# Some editions (新譯本、環球譯本) fold a verse into the previous one and
+# leave the requested number empty, or store a footnote letter such as "a".
+_FOOTNOTE_STUB = re.compile(r"^[A-Za-z]$")
 
 
 @dataclass(frozen=True)
@@ -56,6 +59,11 @@ def parse_reference(reference: str) -> ParsedReference:
     return ParsedReference(book=book, chineses=chineses, chapter=chapter, verse=verse)
 
 
+def _usable_verse(text: str) -> bool:
+    cleaned = text.strip()
+    return bool(cleaned) and _FOOTNOTE_STUB.fullmatch(cleaned) is None
+
+
 def _strip_html(text: str) -> str:
     soup = BeautifulSoup(text, "html.parser")
     for tag in soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"]):
@@ -82,32 +90,84 @@ class FhlRcuvBibleService:
         # FHL qb.php reliably resolves books via `chineses` (中文書卷簡寫),
         # not `bid` (which can return the wrong book for some versions).
         url = f"{self._settings.fhl_api_base.rstrip('/')}/qb.php"
-        params = {
-            "chineses": parsed.chineses,
-            "chap": parsed.chapter,
-            "sec": parsed.verse,
-            "version": version,
-            "gb": 0,
-        }
         try:
-            response = await request_with_retries(
-                self._client,
-                "GET",
+            verses = await self._query(
                 url,
-                max_retries=self._settings.http_max_retries,
-                backoff_seconds=self._settings.http_retry_backoff_seconds,
-                params=params,
+                chineses=parsed.chineses,
+                chapter=parsed.chapter,
+                sec=parsed.verse,
+                version=version,
             )
-            response.raise_for_status()
-            payload = response.json()
         except (httpx.HTTPError, ValueError) as exc:
             raise BibleLookupError(f"FHL API request failed for {reference}: {exc}") from exc
 
-        if payload.get("status") != "success" or not payload.get("record"):
-            raise BibleLookupError(f"FHL API returned no verses for {reference}")
+        number = int(parsed.verse) if parsed.verse.isdigit() else None
+        if number is None:
+            joined = "".join(text for _, text in sorted(verses.items())).strip()
+            if not joined:
+                raise BibleLookupError(f"FHL API returned no verses for {reference}")
+            return joined
 
-        texts = [_strip_html(str(row.get("bible_text", ""))) for row in payload["record"]]
-        joined = "".join(texts).strip()
-        if not joined:
-            raise BibleLookupError(f"Empty FHL response for {reference}")
-        return joined
+        text = verses.get(number, "")
+        if _usable_verse(text):
+            return text.strip()
+
+        if number > 1:
+            try:
+                window = await self._query(
+                    url,
+                    chineses=parsed.chineses,
+                    chapter=parsed.chapter,
+                    sec=f"{number - 1}-{number + 1}",
+                    version=version,
+                )
+            except (httpx.HTTPError, ValueError) as exc:
+                raise BibleLookupError(
+                    f"FHL API request failed for {reference}: {exc}"
+                ) from exc
+            previous = window.get(number - 1, "")
+            following = window.get(number + 1, "")
+            current = window.get(number, "")
+            # The verse number sits between two real verses but has no text of
+            # its own: this edition merged it into the previous verse.
+            if _usable_verse(previous) and _usable_verse(following) and not _usable_verse(current):
+                return previous.strip()
+
+        raise BibleLookupError(f"FHL API returned no verses for {reference}")
+
+    async def _query(
+        self,
+        url: str,
+        *,
+        chineses: str,
+        chapter: int,
+        sec: str,
+        version: str,
+    ) -> dict[int, str]:
+        params = {
+            "chineses": chineses,
+            "chap": chapter,
+            "sec": sec,
+            "version": version,
+            "gb": 0,
+        }
+        response = await request_with_retries(
+            self._client,
+            "GET",
+            url,
+            max_retries=self._settings.http_max_retries,
+            backoff_seconds=self._settings.http_retry_backoff_seconds,
+            params=params,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        if payload.get("status") != "success":
+            raise BibleLookupError(f"FHL API returned no verses for {chineses} {chapter}:{sec}")
+        verses: dict[int, str] = {}
+        for row in payload.get("record") or []:
+            try:
+                number = int(row.get("sec"))
+            except (TypeError, ValueError):
+                continue
+            verses[number] = _strip_html(str(row.get("bible_text", "")))
+        return verses
