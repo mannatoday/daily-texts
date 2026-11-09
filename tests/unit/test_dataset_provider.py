@@ -5,7 +5,7 @@ from datetime import date
 import pytest
 
 from daily_texts.domain.exceptions import ProviderError
-from daily_texts.infrastructure.providers.dataset import DatasetProvider
+from daily_texts.infrastructure.providers.dataset import DatasetProvider, _prayer_text
 
 
 @pytest.mark.asyncio
@@ -24,21 +24,23 @@ async def test_dataset_provider_resolves_known_chinese_excerpt() -> None:
 
 
 @pytest.mark.asyncio
-async def test_dataset_provider_keeps_english_excerpt_for_translation() -> None:
+async def test_dataset_provider_resolves_self_translated_classic() -> None:
     raw = await DatasetProvider().fetch(date(2026, 12, 9))
     assert raw.metadata["third_text_id"] == "dc-murray-abide"
-    assert raw.metadata["prayer_lang"] == "en"
-    assert raw.metadata["prayer_citation"] == "慕安德烈〈住在基督裡 (Abide in Christ)〉"
-    assert raw.prayer_en.startswith("Let me listen and believe")
-
-
-@pytest.mark.asyncio
-async def test_dataset_provider_names_missing_excerpt_without_inventing_one() -> None:
-    raw = await DatasetProvider().fetch(date(2026, 11, 15))
-    assert raw.metadata["third_text_id"] == "tx-foundation"
     assert raw.metadata["prayer_lang"] == "zh"
-    assert raw.prayer_en == "（第三段待補原文：tx-foundation）"
-    assert "教會唯一的根基" in raw.metadata["prayer_citation"]
+    assert raw.metadata["prayer_citation"] == "慕安德烈〈住在基督裡 (Abide in Christ)〉"
+    assert raw.prayer_en.startswith("求你使我側耳")
+
+
+def test_prayer_text_names_missing_excerpt_without_inventing_one() -> None:
+    # A source with no verified excerpt must surface a labelled placeholder,
+    # never fabricated prayer text.
+    text, lang = _prayer_text("wc-chenchonggui", {"text_zh_excerpt": ""})
+    assert text == "（第三段待補原文：wc-chenchonggui）"
+    assert lang == "zh"
+    text, lang = _prayer_text("some-id", None)
+    assert text == "（第三段待補原文：some-id）"
+    assert lang == "zh"
 
 
 @pytest.mark.asyncio
