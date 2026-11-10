@@ -126,11 +126,15 @@ class FhlRcuvBibleService:
                     f"FHL API request failed for {reference}: {exc}"
                 ) from exc
             previous = window.get(number - 1, "")
-            following = window.get(number + 1, "")
             current = window.get(number, "")
-            # The verse number sits between two real verses but has no text of
-            # its own: this edition merged it into the previous verse.
-            if _usable_verse(previous) and _usable_verse(following) and not _usable_verse(current):
+            # The verse number has no text of its own. Either this edition
+            # merged it into the previous verse (e.g. 新譯本／環球譯本 fold
+            # 1 John 3:20 into 3:19), or the reference uses Hebrew/German
+            # versification that runs one past the Chinese numbering (e.g.
+            # Psalms whose superscription is counted, so Psalm 31:25 maps to
+            # the Chinese 31:24 and no following verse exists). In both cases
+            # the text lives in the previous verse.
+            if _usable_verse(previous) and not _usable_verse(current):
                 return previous.strip()
 
         raise BibleLookupError(f"FHL API returned no verses for {reference}")

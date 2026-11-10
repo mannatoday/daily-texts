@@ -86,6 +86,32 @@ async def test_lookup_ignores_footnote_letter_and_uses_merged_verse() -> None:
 
 
 @pytest.mark.asyncio
+async def test_lookup_uses_previous_verse_for_hebrew_numbering_offset() -> None:
+    # Moravian/German versification counts a Psalm superscription, so
+    # "Psalm 31:25" runs one past the Chinese numbering (chapter ends at 24).
+    # FHL returns nothing for v25 and no following v26 exists; the text lives
+    # in the previous verse.
+    last_verse = "凡仰望耶和華的人，你們都要壯膽，堅固你們的心！"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        sec = request.url.params["sec"]
+        if sec == "25":
+            return httpx.Response(200, json={"status": "success", "record": []})
+        assert sec == "24-26"
+        return httpx.Response(
+            200,
+            json={"status": "success", "record": [{"chap": 31, "sec": 24, "bible_text": last_verse}]},
+        )
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    text = await FhlRcuvBibleService(client, _settings()).lookup(
+        "Psalm 31:25", version="rcuv"
+    )
+    assert text == last_verse
+    await client.aclose()
+
+
+@pytest.mark.asyncio
 async def test_lookup_keeps_a_verse_that_is_present() -> None:
     calls: list[str] = []
 
