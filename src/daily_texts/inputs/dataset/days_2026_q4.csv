@@ -25,7 +25,7 @@ date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
 2026-10-22,Thu,weekday,,Psalm 100:3,John 10:14,hh-baker-shepherd,2026
 2026-10-23,Fri,weekday,,Jeremiah 23:5,Matthew 16:16,tx-crown,2026
 2026-10-24,Sat,weekday,,Isaiah 52:10,Ephesians 2:19,pl-ubicaritas,2026
-2026-10-25,Sun,sunday,21. Sonntag nach Trinitatis,Psalm 63:4,Colossians 1:13,dc-augustine,2026
+2026-10-25,Sun,sunday,21. Sonntag nach Trinitatis,Psalm 63:3,Colossians 1:13,dc-augustine,2026
 2026-10-26,Mon,weekday,,Jeremiah 30:11,Romans 2:4,hh-scheffler-follow,2026
 2026-10-27,Tue,weekday,,Psalm 82:8,Acts 10:34-35,hh-lange-chosen,2026
 2026-10-28,Wed,weekday,,"Psalm 103:2,4",Luke 13:12-13,hc-blessed,2026
@@ -33,7 +33,7 @@ date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
 2026-10-30,Fri,weekday,,1 Samuel 2:8,Luke 1:46-48,hh-watts-ps113,2026
 2026-10-31,Sat,sunday,Reformationstag,Proverbs 10:2,Romans 3:24,tx-rockages,2026
 2026-11-01,Sun,sunday,22. Sonntag nach Trinitatis,Micah 5:3,Acts 1:8,wc-song-pentecost,2026
-2026-11-02,Mon,weekday,,Psalm 7:9,Acts 17:31,hc-medley-redeemer,2026
+2026-11-02,Mon,weekday,,Psalm 7:8,Acts 17:31,hc-medley-redeemer,2026
 2026-11-03,Tue,weekday,,Isaiah 40:28,Romans 11:36,hh-tersteegen,2026
 2026-11-04,Wed,weekday,,Zechariah 1:17,John 16:22,wc-zhao-evening,2026
 2026-11-05,Thu,weekday,,Micah 5:3,John 10:28,hh-thrupp-shepherd,2026
@@ -49,7 +49,7 @@ date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
 2026-11-15,Sun,sunday,Vorletzter Sonntag des Kirchenjahres,Ezekiel 34:28,Matthew 16:18,tx-foundation,2026
 2026-11-16,Mon,weekday,,Jeremiah 10:7,Acts 22:14-15,wc-songshangjie,2026
 2026-11-17,Tue,weekday,,Isaiah 53:12,John 1:29,tx-whensurvey,2026
-2026-11-18,Wed,sunday,Buss- und Bettag,Psalm 18:2,Luke 7:47,dc-herbert,2026
+2026-11-18,Wed,sunday,Buss- und Bettag,Psalm 18:1,Luke 7:47,dc-herbert,2026
 2026-11-19,Thu,weekday,,Ezekiel 37:23,Ephesians 2:4-5,pl-bcp-easter,2026
 2026-11-20,Fri,weekday,,Exodus 4:12,Luke 22:32,wc-jia-devotion,2026
 2026-11-21,Sat,weekday,,Isaiah 55:11,Hebrews 4:12,tx-wordofgod,2026
@@ -81,7 +81,7 @@ date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
 2026-12-17,Thu,weekday,,Hosea 8:12,Romans 15:4,tx-wordofgod,2026
 2026-12-18,Fri,weekday,,Psalm 130:1-2,Matthew 15:30,hc-itiswell,2026
 2026-12-19,Sat,weekday,,Jeremiah 10:6,Luke 1:37,tx-crown,2026
-2026-12-20,Sun,sunday,4. Sonntag im Advent,Psalm 46:5-6,Revelation 21:24,tx-foundation,2026
+2026-12-20,Sun,sunday,4. Sonntag im Advent,Psalm 46:4-5,Revelation 21:24,tx-foundation,2026
 2026-12-21,Mon,weekday,,Lamentations 3:58,Acts 7:59,hh-gerhardt,2026
 2026-12-22,Tue,weekday,,Psalm 115:14,Luke 1:42,tx-nowthank,2026
 2026-12-23,Wed,weekday,,Genesis 1:27,1 Corinthians 11:11-12,pl-francis,2026
@@ -90,6 +90,6 @@ date,weekday,track,church_day,ot_ref,nt_ref,third_text_id,plan_year
 2026-12-26,Sat,sunday,2. Weihnachtstag,Jeremiah 1:12,Galatians 4:4-5,hh-luther-vomhimmel,2026
 2026-12-27,Sun,sunday,1. Sonntag nach Weihnachten,Psalm 32:1,Ephesians 1:7,hh-zinzendorf,2026
 2026-12-28,Mon,weekday,,Ruth 2:4,Ephesians 6:23,pl-luther,2026
-2026-12-29,Tue,weekday,,Psalm 69:6,John 21:17,dc-augustine,2026
+2026-12-29,Tue,weekday,,Psalm 69:5,John 21:17,dc-augustine,2026
 2026-12-30,Wed,weekday,,Exodus 23:7,Philippians 4:8,wc-yangshaotang,2026
 2026-12-31,Thu,sunday,Altjahresabend,Deuteronomy 8:6,Matthew 12:50,tx-trustobey,2026
