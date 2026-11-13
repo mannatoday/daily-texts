@@ -100,6 +100,30 @@ class KjvBibleService:
         return text
 
 
+_VERSE_LIST = re.compile(r"^(?P<prefix>.*:)(?P<verses>.+)$")
+
+
+def split_comma_references(reference: str) -> list[str]:
+    """Expand a comma verse list into discrete references.
+
+    ``Psalm 107:10,13,15`` -> three references, ``Psalm 103:2,4`` -> two.
+    A comma always means "these specific verses", never the span between them,
+    so the verse between (103:3) is not pulled in. References without a comma,
+    including dash ranges and cross-chapter spans, are returned unchanged.
+    """
+    ref = reference.strip()
+    if "," not in ref:
+        return [ref]
+    match = _VERSE_LIST.match(ref)
+    if not match:
+        return [ref]
+    prefix = match.group("prefix")
+    parts = [part.strip() for part in match.group("verses").split(",") if part.strip()]
+    if len(parts) <= 1:
+        return [ref]
+    return [f"{prefix}{part}" for part in parts]
+
+
 class RoutingBibleService:
     """Send Chinese lookups to FHL and English lookups to their sources."""
 
@@ -116,6 +140,13 @@ class RoutingBibleService:
         self._api_bible = api_bible
 
     async def lookup(self, reference: str, *, version: str = "rcuv") -> str:
+        parts = split_comma_references(reference)
+        if len(parts) > 1:
+            texts = [await self.lookup(part, version=version) for part in parts]
+            joined = " ".join(text.strip() for text in texts if text and text.strip())
+            if not joined:
+                raise BibleLookupError(f"No text for {reference}")
+            return joined
         key = version.lower()
         if key == "esv":
             return await self._esv.lookup(reference)
@@ -237,10 +268,10 @@ def passage_ids(reference: str) -> list[str]:
 
 
 class ApiBibleService:
-    """Lookup NIV, NLT, and NIrV through API.Bible."""
+    """Lookup NIV through API.Bible."""
 
-    VERSIONS = ("niv", "nlt", "nirv")
-    _ABBR = {"niv": "NIV", "nlt": "NLT", "nirv": "NIRV"}
+    VERSIONS = ("niv",)
+    _ABBR = {"niv": "NIV"}
 
     def __init__(self, client: httpx.AsyncClient, settings: Settings) -> None:
         self._client = client
@@ -375,9 +406,7 @@ def _match_bible(bibles: list[dict], abbreviation: str) -> str | None:
             if wanted == "NIV" and "reader" in name:
                 continue
             return str(bible["id"])
-        if wanted == "NIRV" and "reader" in name and "international" in name:
-            loose = loose or str(bible["id"])
-        elif (
+        if (
             wanted == "NIV"
             and abbr.startswith("NIV")
             and "reader" not in name

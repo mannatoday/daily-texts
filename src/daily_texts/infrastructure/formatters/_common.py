@@ -58,6 +58,11 @@ def prayer_citation(content: LocalizedDailyText) -> str:
     return str(content.metadata.get("prayer_citation") or "").strip()
 
 
+def prayer_media_url(content: LocalizedDailyText) -> str:
+    """Optional recording for a sung third text (hymn). Empty for prose."""
+    return str(content.metadata.get("prayer_media_url") or "").strip()
+
+
 def lectionary_lines(content: LocalizedDailyText) -> list[str]:
     return [zh for zh, _en in lectionary_entries(content)]
 

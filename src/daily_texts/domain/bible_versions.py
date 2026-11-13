@@ -13,11 +13,11 @@ SITE_VERSIONS: list[tuple[str, str]] = [
     ("WCB", "環球聖經譯本"),
 ]
 
-# ESV stays out of this list until an ESV API key is available.
+# NIV routes through API.Bible; KJV is public domain via bible-api.com.
+# NLT and NIrV were dropped: they shared NIV's API.Bible route and failed
+# together whenever that route was rate-limited.
 ENGLISH_VERSIONS: list[tuple[str, str]] = [
     ("NIV", "NIV"),
-    ("NLT", "NLT"),
-    ("NIRV", "NIrV"),
     ("KJV", "KJV"),
 ]
 
@@ -38,8 +38,6 @@ FHL_VERSION_CODES: dict[str, str | None] = {
 ENGLISH_LOOKUP_VERSIONS: dict[str, str] = {
     "KJV": "kjv",
     "NIV": "niv",
-    "NLT": "nlt",
-    "NIRV": "nirv",
 }
 
 # Site code → Bible Gateway version query parameter (for optional external links).
@@ -50,8 +48,6 @@ GATEWAY_VERSION_CODES: dict[str, str] = {
     "CSBT": "CSBT",
     "KJV": "KJV",
     "NIV": "NIV",
-    "NLT": "NLT",
-    "NIRV": "NIRV",
 }
 
 # Shown in the footer while that version is selected.
@@ -60,18 +56,6 @@ VERSION_NOTICES: dict[str, str] = {
     "NIV": (
         "Scripture quotations taken from The Holy Bible, New International Version®, "
         "NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ "
-        "Used by permission. All rights reserved worldwide."
-    ),
-    "NLT": (
-        "Scripture quotations are taken from the Holy Bible, New Living Translation, "
-        "copyright © 1996, 2004, 2015 by Tyndale House Foundation. "
-        "Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. "
-        "All rights reserved."
-    ),
-    "NIRV": (
-        "Scripture quotations are taken from the Holy Bible, "
-        "New International Reader’s Version®, NIrV®. "
-        "Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ "
         "Used by permission. All rights reserved worldwide."
     ),
 }

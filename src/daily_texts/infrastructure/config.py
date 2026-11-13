@@ -71,6 +71,17 @@ class Settings(BaseSettings):
     api_bible_api_key: str = ""
     api_bible_api_base: str = "https://api.scripture.api.bible/v1"
 
+    # Verse text is cached locally so daily publishing can replay offline.
+    # Daily Publish sets BIBLE_OFFLINE=true: cache hits only, never the network.
+    # The one-time backfill runs with it false to populate the cache.
+    bible_offline: bool = False
+    verse_cache_path: Path = (
+        Path(__file__).resolve().parents[1]
+        / "inputs"
+        / "dataset"
+        / "verse_cache_2026.json"
+    )
+
     # Preferred: ordered chain used by CompositeTranslator.
     # Example: google,openai,anthropic,fallback
     translators: CsvStrings = Field(

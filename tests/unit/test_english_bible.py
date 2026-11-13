@@ -9,6 +9,7 @@ from daily_texts.infrastructure.bible.english import (
     EsvBibleService,
     KjvBibleService,
     passage_ids,
+    split_comma_references,
 )
 from daily_texts.infrastructure.config import Settings
 
@@ -59,6 +60,19 @@ async def test_kjv_lookup_returns_public_domain_text() -> None:
     text = await KjvBibleService(client, _settings()).lookup("John 3:16")
     assert text == "For God so loved the world."
     await client.aclose()
+
+
+def test_split_comma_references_expands_discrete_verses() -> None:
+    assert split_comma_references("Psalm 107:10,13,15") == [
+        "Psalm 107:10",
+        "Psalm 107:13",
+        "Psalm 107:15",
+    ]
+    assert split_comma_references("Psalm 103:2,4") == ["Psalm 103:2", "Psalm 103:4"]
+    # No comma: unchanged, including dash ranges and cross-chapter spans.
+    assert split_comma_references("John 4:25-26") == ["John 4:25-26"]
+    assert split_comma_references("Joshua 8:30-9:27") == ["Joshua 8:30-9:27"]
+    assert split_comma_references("Haggai 2:9") == ["Haggai 2:9"]
 
 
 def test_passage_ids_cover_ranges_and_skipped_verses() -> None:

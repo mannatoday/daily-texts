@@ -66,6 +66,10 @@ class DatasetProvider:
         citation = _prayer_citation(source)
         if citation:
             metadata["prayer_citation"] = citation
+        # Sung sources (hymns) may carry an optional recording to listen to.
+        media_url = (source.get("media_url") if source else "") or ""
+        if media_url.strip():
+            metadata["prayer_media_url"] = media_url.strip()
 
         return RawDailyText(
             date=day,

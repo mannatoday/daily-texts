@@ -393,6 +393,23 @@ p.prayer-source {
   word-break: break-word;
 }
 
+/* Optional "listen" affordance for sung third texts (hymns). Quiet, inline,
+   and set apart from the citation by a thin leading separator. */
+a.prayer-listen {
+  margin-inline-start: 0.5rem;
+  padding-inline-start: 0.5rem;
+  border-inline-start: 1px solid var(--text-muted);
+  white-space: nowrap;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+a.prayer-listen:hover,
+a.prayer-listen:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+}
+
 /* Share — a day-level action that closes the OT/NT/prayer group.
    One quiet button; the system sheet lists LINE, Messages, Mail, etc. */
 .share-bar {

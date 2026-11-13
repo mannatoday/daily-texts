@@ -7,8 +7,6 @@
   var VERSION_KEY = "dailyTexts.bibleVersion";
   var ENGLISH = [
     { code: "NIV", label: "NIV" },
-    { code: "NLT", label: "NLT" },
-    { code: "NIRV", label: "NIrV" },
     { code: "KJV", label: "KJV" }
   ];
   var CHINESE = ["CUV", "RCUV", "CNVT", "CSBT", "WCB"];
@@ -110,9 +108,7 @@
       CNVT: "CNVT",
       CSBT: "CSBT",
       KJV: "KJV",
-      NIV: "NIV",
-      NLT: "NLT",
-      NIRV: "NIRV"
+      NIV: "NIV"
     };
     var extra = (day && day.gateway) || {};
     Object.keys(extra).forEach(function (key) { map[key] = extra[key]; });
@@ -176,12 +172,9 @@
     if (!block || !block.translations) return "";
     var direct = block.translations[siteCode];
     if (direct && String(direct).trim()) return direct;
-    var english = ENGLISH.some(function (item) { return item.code === siteCode; });
-    if (!english) return "";
-    for (var i = 0; i < ENGLISH.length; i++) {
-      var alt = block.translations[ENGLISH[i].code];
-      if (alt && String(alt).trim()) return alt;
-    }
+    // No silent cross-version substitution: showing another version's wording
+    // under the selected version's label and copyright would be wrong. Return
+    // empty so the caller renders the Bible Gateway link instead.
     return "";
   }
 
@@ -235,9 +228,7 @@
   }
 
   var EXTRA_NOTICES = {
-    NIV: "Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
-    NLT: "Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.",
-    NIRV: "Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."
+    NIV: "Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."
   };
 
   function reportFums(block, siteCode) {

@@ -22,7 +22,7 @@
       var lang = params.get("lang");
       if (lang !== "en" && lang !== "zh") {
         var version = params.get("version");
-        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        if (version === "KJV" || version === "NIV") lang = "en";
         else if (version) lang = "zh";
         else lang = window.localStorage.getItem("dailyTexts.lang");
       }

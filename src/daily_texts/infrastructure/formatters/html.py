@@ -19,6 +19,7 @@ from daily_texts.infrastructure.formatters._common import (
     date_title_zh,
     lectionary_entries,
     prayer_citation,
+    prayer_media_url,
 )
 from daily_texts.infrastructure.formatters.day_payload import day_payload
 
@@ -70,7 +71,7 @@ LANG_BOOT_SCRIPT = """\
       var lang = params.get("lang");
       if (lang !== "en" && lang !== "zh") {
         var version = params.get("version");
-        if (version === "KJV" || version === "NIV" || version === "NLT" || version === "NIRV") lang = "en";
+        if (version === "KJV" || version === "NIV") lang = "en";
         else if (version) lang = "zh";
         else lang = window.localStorage.getItem("dailyTexts.lang");
       }
@@ -265,8 +266,18 @@ class HtmlFormatter:
             )
 
         citation = prayer_citation(content)
+        media_url = prayer_media_url(content)
+        listen_link = ""
+        if media_url:
+            listen_link = (
+                f' <a class="prayer-listen" href="{escape(media_url, quote=True)}"'
+                ' target="_blank" rel="noopener noreferrer"'
+                ' aria-label="在 YouTube 聆聽這首詩歌">&#9834; 聆聽詩歌</a>'
+            )
         citation_block = (
-            f'    <p class="prayer-source">— {escape(citation)}</p>\n' if citation else ""
+            f'    <p class="prayer-source">— {escape(citation)}{listen_link}</p>\n'
+            if citation
+            else ""
         )
         prayer_inner = (
             f"{_heading('今日禱文', 'Prayer', site_mode=site_mode)}"

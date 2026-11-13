@@ -40,6 +40,24 @@ def main(argv: list[str] | None = None) -> None:
     sched = sub.add_parser("run-scheduler", help="Run the daily cron scheduler")
     sched.add_argument("-v", "--verbose", action="store_true")
 
+    backfill = sub.add_parser(
+        "backfill",
+        help="Populate the local verse cache for the whole dataset (one-time, online)",
+    )
+    backfill.add_argument(
+        "--from", dest="start", type=_parse_date, default=None, help="Start date YYYY-MM-DD"
+    )
+    backfill.add_argument(
+        "--to", dest="end", type=_parse_date, default=None, help="End date YYYY-MM-DD"
+    )
+    backfill.add_argument(
+        "--delay",
+        type=float,
+        default=0.3,
+        help="Seconds to wait between network lookups (avoid API.Bible rate limits)",
+    )
+    backfill.add_argument("-v", "--verbose", action="store_true")
+
     args = parser.parse_args(argv)
     _configure_logging(verbose=args.verbose)
 
@@ -47,6 +65,8 @@ def main(argv: list[str] | None = None) -> None:
         asyncio.run(_cmd_fetch(args))
     elif args.command == "run-scheduler":
         run_scheduler(verbose=args.verbose)
+    elif args.command == "backfill":
+        asyncio.run(_cmd_backfill(args))
     else:
         parser.error(f"Unknown command: {args.command}")
 
@@ -63,6 +83,7 @@ async def _cmd_fetch(args: argparse.Namespace) -> None:
             force=args.force,
             expect_date=args.expect_date,
         )
+        _save_verse_cache(container.bible)
     finally:
         await container.aclose()
 
@@ -78,6 +99,40 @@ async def _cmd_fetch(args: argparse.Namespace) -> None:
     print(f"Wrote {len(result.outputs)} file(s) to {out_dir}")
     for item in result.outputs:
         print(f"  - {item.filename}")
+
+
+async def _cmd_backfill(args: argparse.Namespace) -> None:
+    from daily_texts.application.use_cases.backfill_cache import backfill_verse_cache
+    from daily_texts.infrastructure.providers.dataset import _DAYS_CSV
+
+    settings = Settings()
+    # Backfill must reach the network to fill the cache, regardless of env.
+    settings.bible_offline = False
+    container = build_container(settings)
+    try:
+        blanks = await backfill_verse_cache(
+            container.bible,
+            _DAYS_CSV,
+            start=args.start,
+            end=args.end,
+            delay_seconds=args.delay,
+        )
+    finally:
+        await container.aclose()
+
+    print(f"Verse cache written to {settings.verse_cache_path}")
+    if blanks:
+        print(f"WARNING: {len(blanks)} reference(s) still have no NIV text:")
+        for day, role, reference in blanks:
+            print(f"  - {day} {role} {reference}")
+    else:
+        print("All references have NIV text.")
+
+
+def _save_verse_cache(bible: object) -> None:
+    save = getattr(bible, "save", None)
+    if callable(save):
+        save()
 
 
 def _parse_date(value: str) -> date:

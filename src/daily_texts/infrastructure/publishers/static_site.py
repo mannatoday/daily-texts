@@ -663,8 +663,6 @@ _VERSION_JS = """\
   var VERSION_KEY = "dailyTexts.bibleVersion";
   var ENGLISH = [
     { code: "NIV", label: "NIV" },
-    { code: "NLT", label: "NLT" },
-    { code: "NIRV", label: "NIrV" },
     { code: "KJV", label: "KJV" }
   ];
   var CHINESE = ["CUV", "RCUV", "CNVT", "CSBT", "WCB"];
@@ -766,9 +764,7 @@ _VERSION_JS = """\
       CNVT: "CNVT",
       CSBT: "CSBT",
       KJV: "KJV",
-      NIV: "NIV",
-      NLT: "NLT",
-      NIRV: "NIRV"
+      NIV: "NIV"
     };
     var extra = (day && day.gateway) || {};
     Object.keys(extra).forEach(function (key) { map[key] = extra[key]; });
@@ -832,12 +828,9 @@ _VERSION_JS = """\
     if (!block || !block.translations) return "";
     var direct = block.translations[siteCode];
     if (direct && String(direct).trim()) return direct;
-    var english = ENGLISH.some(function (item) { return item.code === siteCode; });
-    if (!english) return "";
-    for (var i = 0; i < ENGLISH.length; i++) {
-      var alt = block.translations[ENGLISH[i].code];
-      if (alt && String(alt).trim()) return alt;
-    }
+    // No silent cross-version substitution: showing another version's wording
+    // under the selected version's label and copyright would be wrong. Return
+    // empty so the caller renders the Bible Gateway link instead.
     return "";
   }
 
@@ -891,9 +884,7 @@ _VERSION_JS = """\
   }
 
   var EXTRA_NOTICES = {
-    NIV: "Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide.",
-    NLT: "Scripture quotations are taken from the Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers, Carol Stream, Illinois 60188. All rights reserved.",
-    NIRV: "Scripture quotations are taken from the Holy Bible, New International Reader’s Version®, NIrV®. Copyright © 1995, 1996, 1998, 2014 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."
+    NIV: "Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."
   };
 
   function reportFums(block, siteCode) {
@@ -1289,12 +1280,12 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p>照這進度，詩篇大約一年讀完一遍；詩篇以外的舊約與新約大約兩年讀完。一年大約讀完整本聖經的一半。跟著每天的選讀走，大約兩年可以讀完聖經一遍。</p>
 
       <h2>關於本站中文版</h2>
-      <p class="meta">本站中文版依官方每日經文章節編排。經文正文引自已獲全世界使用授權的中文譯本，可在頁首切換。今日禱文依當天兩節挑選，並加入華人文化中的聖詩與禱文。本站供個人與家庭靈修使用，非官方出版物。</p>
+      <p class="meta">本站中文版依官方每日經文章節編排。經文正文引自已獲全世界使用授權的中文譯本，可在頁首切換。今日禱文依當天兩節挑選，並加入華人文化中的聖詩與禱文。部分聖詩第三段附 YouTube 聆聽連結，錄音版權屬各上傳者。本站供個人與家庭靈修使用，非官方出版物。</p>
 
       <h2>版權與來源</h2>
       <p class="meta">每日舊約守望經文與新約經文的章節，出自官方德文《Die Losungen》，由 <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> 出版。更多資訊見 <a href="https://www.losungen.de/" rel="noopener noreferrer">www.losungen.de</a>。</p>
       <p class="meta">英文版每日內容見 <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America — The Daily Texts</a>。讀經進度依北美摩拉維亞教會的讀經安排，說明見 <a href="https://www.moravian.org/2018/07/using-the-moravian-daily-texts/" rel="noopener noreferrer">Using the Moravian Daily Texts</a>。</p>
-      <p class="meta">中文經文正文引自已獲全世界使用授權的譯本：和合本、和合本修訂版、新譯本、中文標準譯本、環球聖經譯本。英文可在頁首切換 NIV、NLT、NIrV 與 KJV。NIV 與 NIrV 版權屬於 Biblica；NLT 版權屬於 Tyndale House；KJV 為公有領域。各譯本版權仍屬原出版機構。選用《環球聖經譯本》、NIV、NLT 或 NIrV 時，頁腳另標版權。</p>
+      <p class="meta">中文經文正文引自已獲全世界使用授權的譯本：和合本、和合本修訂版、新譯本、中文標準譯本、環球聖經譯本。英文可在頁首切換 NIV 與 KJV。NIV 版權屬於 Biblica；KJV 為公有領域。各譯本版權仍屬原出版機構。選用《環球聖經譯本》或 NIV 時，頁腳另標版權。</p>
       <p class="meta">今日禱文的出處是當天頁面句末的署名（作者與作品）。聖詩與禱文的版權依各作品而定。</p>
       <p class="meta">若需正式出版、轉載或商業用途，請另洽各原文出版單位，並遵守各譯本與作品的版權規定。</p>
       </div>
@@ -1331,12 +1322,12 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p>At this pace the Psalms are read through about once a year, and the rest of the Bible about once in two years. One year covers about half of the Bible. Following the daily readings, the Bible is read through in about two years.</p>
 
       <h2>This site</h2>
-      <p class="meta">The Chinese edition follows the official daily verses. Scripture is quoted from Chinese versions licensed for worldwide use, and the version can be changed at the top of the page. The prayer is chosen for the day’s two texts and draws on Chinese hymns and prayers. The site is for personal and family devotion and is not an official publication.</p>
+      <p class="meta">The Chinese edition follows the official daily verses. Scripture is quoted from Chinese versions licensed for worldwide use, and the version can be changed at the top of the page. The prayer is chosen for the day’s two texts and draws on Chinese hymns and prayers. Some hymn third texts include a YouTube link to listen; the recordings belong to their uploaders. The site is for personal and family devotion and is not an official publication.</p>
 
       <h2>Copyright and sources</h2>
       <p class="meta">The daily Old Testament watchword and New Testament text are taken from the official German <em>Die Losungen</em>, published by the <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a>. More information is at <a href="https://www.losungen.de/" rel="noopener noreferrer">www.losungen.de</a>.</p>
       <p class="meta">The English Daily Texts are published by the <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America</a>. The reading plan follows the North American Moravian arrangement, described in <a href="https://www.moravian.org/2018/07/using-the-moravian-daily-texts/" rel="noopener noreferrer">Using the Moravian Daily Texts</a>.</p>
-      <p class="meta">Chinese scripture is quoted from the Chinese Union Version, its revised edition, the New Chinese Version, the Chinese Standard Bible, and the Worldwide Chinese Bible. English scripture can be switched at the top of the page among the NIV, NLT, NIrV, and KJV. The NIV and NIrV are copyright Biblica; the NLT is copyright Tyndale House; the KJV is in the public domain. Copyright for each version remains with its publisher. When the Worldwide Chinese Bible, NIV, NLT, or NIrV is selected, a copyright line appears in the footer.</p>
+      <p class="meta">Chinese scripture is quoted from the Chinese Union Version, its revised edition, the New Chinese Version, the Chinese Standard Bible, and the Worldwide Chinese Bible. English scripture can be switched at the top of the page between the NIV and the KJV. The NIV is copyright Biblica; the KJV is in the public domain. Copyright for each version remains with its publisher. When the Worldwide Chinese Bible or the NIV is selected, a copyright line appears in the footer.</p>
       <p class="meta">The source of the prayer is the name printed at the end of that day’s prayer. Copyright in the hymns and prayers depends on each work.</p>
       <p class="meta">For formal publication, reprinting, or commercial use, contact each original publisher and follow the terms of each Bible version and each quoted work.</p>
       </div>
