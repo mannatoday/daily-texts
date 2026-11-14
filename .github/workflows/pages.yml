@@ -17,11 +17,12 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Upload and deploy must be separate jobs. In one job, deploy-pages asks for
+# the artifact before GitHub has registered the upload and fails with
+# "No artifacts named github-pages". A later rerun of that same run then
+# uploads a second copy and fails with "Multiple artifacts".
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  upload:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,6 +36,13 @@ jobs:
         with:
           path: site
 
+  deploy:
+    needs: upload
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
