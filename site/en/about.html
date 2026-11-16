@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-page-lang="en" data-href-zh="../about.html" data-href-en="about.html">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KK8K4PQW21"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KK8K4PQW21');
+</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="The history of the Moravian Daily Texts, and how this site is used for daily and family devotion." />
+  <title>About · Moravian Daily Texts</title>
+  <script>
+  (function () {
+    try {
+      var root = document.documentElement;
+      var page = root.getAttribute("data-page-lang") === "en" ? "en" : "zh";
+      var params = new URLSearchParams(window.location.search);
+      var qLang = params.get("lang");
+      var version = params.get("version");
+      var english = { NIV: 1, KJV: 1 };
+      var chinese = { CUV: 1, RCUV: 1, CNVT: 1, CSBT: 1, WCB: 1 };
+      var target = null;
+      if (qLang === "en" || qLang === "zh") target = qLang;
+      else if (version && english[version]) target = "en";
+      else if (version && chinese[version]) target = "zh";
+      else {
+        try {
+          var saved = window.localStorage.getItem("dailyTexts.lang");
+          if (saved === "en" || saved === "zh") target = saved;
+        } catch (err) {}
+      }
+      var explicit = qLang === "en" || qLang === "zh" ||
+        !!(version && (english[version] || chinese[version]));
+      if (explicit && target) {
+        try { window.localStorage.setItem("dailyTexts.lang", target); } catch (err) {}
+      }
+      if (!target || target === page) return;
+      var href = root.getAttribute(target === "en" ? "data-href-en" : "data-href-zh");
+      if (!href) return;
+      var url = new URL(href, window.location.href);
+      if (version && ((target === "en" && english[version]) || (target === "zh" && chinese[version]))) {
+        url.searchParams.set("version", version);
+      }
+      window.__dailyTextsRedirect = true;
+      window.location.replace(url.toString());
+    } catch (err) {}
+  })();
+  </script>
+  <link rel="canonical" href="https://mannatoday.github.io/daily-texts/en/about.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://mannatoday.github.io/daily-texts/about.html" />
+  <link rel="alternate" hreflang="en" href="https://mannatoday.github.io/daily-texts/en/about.html" />
+  <link rel="alternate" hreflang="x-default" href="https://mannatoday.github.io/daily-texts/about.html" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <link rel="icon" href="../icon.png?v=4" sizes="any" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=4" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Daily Texts" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../version.js" defer></script>
+  <script src="../install.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell about-page">
+  <div class="version-picker">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <a class="lang-toggle__btn" href="../about.html" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh">中文</a>
+      <a class="lang-toggle__btn" href="about.html" hreflang="en" lang="en" data-set-lang="en" aria-current="page">EN</a>
+    </div>
+  </div>
+    <nav class="day-nav" aria-label="Site">
+      <a class="day-nav__prev" href="index.html">← Home</a>
+      <span class="day-nav__home" aria-current="page">About</span>
+      <span class="day-nav__next" aria-disabled="true">Next →</span>
+    </nav>
+    <main id="main">
+      <h1>About Moravian Daily Texts</h1>
+
+      <h2>Beginnings</h2>
+      <p><em>Die Losungen</em> (Moravian Daily Texts) has been published every year since 1731. It is one of the longest-running daily devotionals.</p>
+      <p>In 1722, refugees from Bohemia and Moravia settled on the estate of Count Nikolaus Ludwig von Zinzendorf (1700–1760) and founded Herrnhut, “the Lord’s watch.” On 13 August 1727 the Moravian Church experienced a spiritual renewal there. On the evening of 3 May 1728, Zinzendorf gave the congregation a Bible verse to carry through the next day. He called it a <em>Losung</em>, a watchword. The verse was then carried to the village’s thirty-two households, and they talked about it together.</p>
+      <p>Zinzendorf prepared 365 watchwords for a full year, and the first book was printed at Herrnhut in 1731. The cover quoted Lamentations: the steadfast love of the Lord is new every morning. Early editions already set a Bible text beside a hymn verse. The text is God speaking; the verse is the congregation’s reply. In 1732 the Moravians began mission overseas, and the texts traveled with them. They are now published in more than sixty languages. The verses for each day are still chosen in Herrnhut, Germany, and then sent to the different language editions.</p>
+
+      <h2>Watchword and doctrinal text</h2>
+      <p>Each day now has two texts, chosen in different ways.</p>
+      <p>The Old Testament <em>Losung</em> (Watchword) is drawn by lot. From 1788 it was drawn from Old Testament verses suited to daily life; by 1812 the watchword was always from the Old Testament. It is usually a promise, an encouragement, an admonition, or a comfort for the day. Zinzendorf said these texts were an ongoing conversation between the Savior and the church.</p>
+      <p>The New Testament <em>Lehrtext</em> (Doctrinal Text) is not drawn by lot. It is chosen to go with that day’s watchword. The practice grew out of the collections Zinzendorf prepared for small groups. After his death in 1760, his colleagues kept the two texts separately, and in 1762 they were printed in four volumes at Barby. An explanation from 1801 said that the watchword is a promise, encouragement, warning, or comfort, and the doctrinal text names a truth already revealed. Since the late nineteenth century the two texts have answered each other.</p>
+
+      <h2>What each day contains</h2>
+      <p>A day usually includes:</p>
+      <ul>
+        <li>an Old Testament watchword</li>
+        <li>a New Testament text</li>
+        <li>a short prayer</li>
+        <li>a reading plan: Psalms, Old Testament, and New Testament</li>
+      </ul>
+      <p>The Old and New Testaments are set side by side, so promise and fulfillment, law and gospel, meet in the day’s reading.</p>
+
+      <h2>The prayer</h2>
+      <p>In Chinese, “今日禱文” is that short prayer. It answers the day’s two texts and turns the reader toward speaking to God. It is one hymn stanza or a short prayer, with the author and the work named at the end.</p>
+      <p>The prayer is chosen for those two texts and draws on Chinese hymns, liturgy, and devotional writing, together with historic Chinese hymnals and books of common prayer.</p>
+
+      <h2>Readings</h2>
+      <p>On the page these are the Readings. The Psalms, the Old Testament, and the New Testament each continue in their own order.</p>
+      <p>At this pace the Psalms are read through about once a year, and the rest of the Bible about once in two years. One year covers about half of the Bible. Following the daily readings, the Bible is read through in about two years.</p>
+
+      <h2>This site</h2>
+      <p class="meta">The Chinese edition follows the official daily verses. Scripture is quoted from Chinese versions licensed for worldwide use, and the version can be changed at the top of the page. The prayer is chosen for the day’s two texts and draws on Chinese hymns and prayers. Some hymn third texts include a YouTube link to listen; the recordings belong to their uploaders. The site is for personal and family devotion and is not an official publication.</p>
+
+      <h2>Copyright and sources</h2>
+      <p class="meta">The daily Old Testament watchword and New Testament text are taken from the official German <em>Die Losungen</em>, published by the <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a>. More information is at <a href="https://www.losungen.de/" rel="noopener noreferrer">www.losungen.de</a>.</p>
+      <p class="meta">The English Daily Texts are published by the <a href="https://www.moravian.org/the-daily-texts/" rel="noopener noreferrer">Moravian Church in America</a>. The reading plan follows the North American Moravian arrangement, described in <a href="https://www.moravian.org/2018/07/using-the-moravian-daily-texts/" rel="noopener noreferrer">Using the Moravian Daily Texts</a>.</p>
+      <p class="meta">Chinese scripture is quoted from the Chinese Union Version, its revised edition, the New Chinese Version, the Chinese Standard Bible, and the Worldwide Chinese Bible. English scripture can be switched at the top of the page between the NIV and the KJV. The NIV is copyright Biblica; the KJV is in the public domain. Copyright for each version remains with its publisher. When the Worldwide Chinese Bible or the NIV is selected, a copyright line appears in the footer.</p>
+      <p class="meta">The source of the prayer is the name printed at the end of that day’s prayer. Copyright in the hymns and prayers depends on each work.</p>
+      <p class="meta">For formal publication, reprinting, or commercial use, contact each original publisher and follow the terms of each Bible version and each quoted work.</p>
+      <p class="home-screen-note">To open this from the phone’s home screen, see <a href="install.html">how to add it</a>.</p>
+    </main>
+    <footer class="site-foot">
+      <p class="foot-credit">Moravian Daily Texts</p>
+      <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
+    </footer>
+  <nav class="tabbar" aria-label="Main">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">Today</span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">Home</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">About</span></a>
+  </nav>
+  </div>
+</body>
+</html>

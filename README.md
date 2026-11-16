@@ -14,8 +14,8 @@
 - 經文查詢：信望愛 FHL API（`rcuv`）
 - 禱告翻譯：可串接本機 Ollama、OpenAI、Anthropic、Google（複合備援）
 - 輸出：`output/{YYYY-MM-DD}/daily-text.{md,html,txt,json}`
-- 靜態站：`site/`（每日頁、首頁、歷日檔案、關於頁）→ GitHub Pages
-- 靜態站譯本切換（頁面右上，預設 RCUV）：CUV／RCUV／CNVT／CSBT；守望經文內文隨選項切換，URL 為 `?version=RCUV`，並以 localStorage 記住偏好
+- 靜態站：`site/`（每日頁、首頁、歷日檔案、關於頁）→ GitHub Pages。中文在既有網址，英文在 `en/`。
+- 靜態站譯本切換（頁面右上，中文預設 RCUV、英文預設 NIV）：同一語言內以 `?version=` 切換經文，並以 localStorage 記住偏好
 
 ## 系統需求
 

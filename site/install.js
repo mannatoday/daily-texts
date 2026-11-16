@@ -2,7 +2,14 @@
   "use strict";
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(function () {});
+    var swUrl = "sw.js";
+    var manifest = document.querySelector('link[rel="manifest"]');
+    if (manifest && manifest.href) {
+      try {
+        swUrl = new URL("sw.js", manifest.href).href;
+      } catch (err) {}
+    }
+    navigator.serviceWorker.register(swUrl).catch(function () {});
   }
 
   function isStandalone() {

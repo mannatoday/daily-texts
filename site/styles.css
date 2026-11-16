@@ -144,10 +144,11 @@ button:focus-visible {
   min-height: 2.25rem;
   padding: 0.2rem 0.6rem;
   cursor: pointer;
+  text-decoration: none;
 }
 
-html:not([data-lang="en"]) .lang-toggle__btn[data-set-lang="zh"],
-html[data-lang="en"] .lang-toggle__btn[data-set-lang="en"] {
+html[data-page-lang="zh"] .lang-toggle__btn[data-set-lang="zh"],
+html[data-page-lang="en"] .lang-toggle__btn[data-set-lang="en"] {
   background: var(--rule);
   color: var(--text);
 }

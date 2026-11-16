@@ -102,6 +102,8 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "[閱讀]" in out.content
     assert "today.html" in out.content
     assert 'class="tab__label"' in out.content
+    assert "<h2>舊約</h2>" in out.content
+    assert "<h2>Old Testament</h2>" not in out.content
     assert "首頁" in out.content
     assert 'id="share-day"' in out.content
     assert "share.js" in out.content
@@ -115,7 +117,8 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     group_close = out.content.index("</div>", share_idx)
     assert group_open < prayer_idx < share_idx < group_close < readings_idx
     assert "archive.html" not in out.content
-    assert "Old Testament" in out.content
+    assert "<h2>舊約</h2>" in out.content
+    assert "<h2>Old Testament</h2>" not in out.content
     assert "prayer-block" in out.content
     assert "data-set-lang=\"en\"" in out.content
     assert "english_versions" in out.content
@@ -124,6 +127,48 @@ def test_html_formatter_site_mode_has_version_aware_links() -> None:
     assert "version=RCU17TS" in out.content
     assert "環球聖經譯本" in out.content
     assert "經文引自《環球聖經譯本》，版權屬於環球聖經公會。" in out.content
+    assert 'lang="zh-Hant"' in out.content
+    assert 'data-page-lang="zh"' in out.content
+
+
+def test_html_formatter_english_site_page_bakes_english_verse() -> None:
+    sample = _sample()
+    sample.ot.translations = {"NIV": "I will refine them, NIV.", "KJV": "I will refine them, KJV."}
+    sample.nt.translations = {"NIV": "Pray, NIV."}
+    out = HtmlFormatter().format(
+        sample,
+        include_source_link=False,
+        stylesheet_href="styles.css",
+        lang="en",
+        asset_prefix="../",
+        href_zh="../2026-08-01.html",
+        href_en="2026-08-01.html",
+        canonical_href="https://mannatoday.github.io/daily-texts/en/2026-08-01.html",
+        alternate_zh="https://mannatoday.github.io/daily-texts/2026-08-01.html",
+        alternate_en="https://mannatoday.github.io/daily-texts/en/2026-08-01.html",
+    )
+    html = out.content
+    assert '<html lang="en"' in html
+    assert 'data-page-lang="en"' in html
+    assert "<title>Saturday, August 1, 2026 · Moravian Daily Texts</title>" in html
+    assert (
+        'content="August 1 daily reading. Old Testament Jeremiah 9:7, New Testament Luke 22:40."'
+        in html
+    )
+    assert '<p class="verse" data-verse="ot">I will refine them, NIV.</p>' in html
+    assert '<p class="verse" data-verse="nt">Pray, NIV.</p>' in html
+    assert "<h2>Old Testament</h2>" in html
+    assert "<h2>New Testament</h2>" in html
+    assert 'class="prayer"' not in html
+    assert 'rel="canonical" href="https://mannatoday.github.io/daily-texts/en/2026-08-01.html"' in html
+    assert 'hreflang="zh-Hant" href="https://mannatoday.github.io/daily-texts/2026-08-01.html"' in html
+    assert 'hreflang="en" href="https://mannatoday.github.io/daily-texts/en/2026-08-01.html"' in html
+    assert 'hreflang="x-default" href="https://mannatoday.github.io/daily-texts/2026-08-01.html"' in html
+    assert 'href="../styles.css"' in html
+    select = html[html.index("<select") : html.index("</select>")]
+    assert 'value="NIV" selected' in select
+    assert "和合本" not in select
+    assert 'href="../2026-08-01.html"' in html
 
 
 def test_plain_text_formatter() -> None:
