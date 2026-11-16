@@ -1,6 +1,6 @@
-// Language toggle plus multi-version watchword renderer.
-// Language: ?lang= → version hint → localStorage → Chinese.
-// Version: ?version= (if it belongs to that language) → per-language localStorage → default.
+// Bible-version picker. The page language is the URL (data-page-lang);
+// the head script sends ?lang= / the other language's ?version= to that URL.
+// Version: ?version= when it belongs to this page → per-language localStorage → default.
 (function () {
   "use strict";
   var LANG_KEY = "dailyTexts.lang";
@@ -72,15 +72,7 @@
   }
 
   function resolveLang() {
-    var q = queryParam("lang");
-    if (q === "en" || q === "zh") return q;
-    var version = queryParam("version");
-    if (version && ENGLISH.some(function (item) { return item.code === version; })) return "en";
-    if (version && CHINESE.indexOf(version) >= 0) return "zh";
-    var saved = stored(LANG_KEY);
-    if (saved === "en" || saved === "zh") return saved;
-    if (document.documentElement.getAttribute("data-lang") === "en") return "en";
-    return "zh";
+    return document.documentElement.getAttribute("data-page-lang") === "en" ? "en" : "zh";
   }
 
   function storedVersion(lang, codes) {
@@ -129,29 +121,6 @@
       "&version=" +
       encodeURIComponent(code)
     );
-  }
-
-  function setLangChrome(lang) {
-    var root = document.documentElement;
-    if (lang === "en") {
-      root.setAttribute("data-lang", "en");
-      root.lang = "en";
-    } else {
-      root.removeAttribute("data-lang");
-      root.lang = "zh-Hant";
-    }
-    var title = document.querySelector("title");
-    if (title) {
-      var next = title.getAttribute(lang === "en" ? "data-en" : "data-zh");
-      if (next) title.textContent = next;
-    }
-    var buttons = document.querySelectorAll("[data-set-lang]");
-    Array.prototype.forEach.call(buttons, function (btn) {
-      btn.setAttribute(
-        "aria-pressed",
-        btn.getAttribute("data-set-lang") === lang ? "true" : "false"
-      );
-    });
   }
 
   function fillSelect(lang, version) {
@@ -253,10 +222,10 @@
     if (text) note.textContent = text;
   }
 
-  function syncUrl(lang, version) {
+  function syncUrl(version) {
     try {
       var url = new URL(window.location.href);
-      url.searchParams.set("lang", lang);
+      url.searchParams.delete("lang");
       if (select) url.searchParams.set("version", version);
       window.history.replaceState({}, "", url.toString());
     } catch (err) {
@@ -265,36 +234,34 @@
   }
 
   function apply(lang, version) {
-    setLangChrome(lang);
     fillSelect(lang, version);
     applyVerses(version, lang);
     applyReadingLinks(version, lang);
     applyNotice(version);
-    remember(LANG_KEY, lang);
     remember(VERSION_KEY + "." + lang, version);
-    syncUrl(lang, version);
+    syncUrl(version);
   }
 
-  var lang = resolveLang();
-  var version = resolveVersion(lang, codesFor(lang));
-  apply(lang, version);
+  if (window.__dailyTextsRedirect) {
+    /* Head script is leaving this URL for the other language. */
+  } else {
+    var lang = resolveLang();
+    var version = resolveVersion(lang, codesFor(lang));
+    apply(lang, version);
 
-  if (select) {
-    select.addEventListener("change", function () {
-      version = select.value;
-      apply(lang, version);
-    });
+    if (select) {
+      select.addEventListener("change", function () {
+        version = select.value;
+        apply(lang, version);
+      });
+    }
   }
 
   var buttons = document.querySelectorAll("[data-set-lang]");
   Array.prototype.forEach.call(buttons, function (btn) {
     btn.addEventListener("click", function () {
       var next = btn.getAttribute("data-set-lang");
-      if (next !== "en" && next !== "zh") return;
-      if (next === lang) return;
-      lang = next;
-      version = storedVersion(lang, codesFor(lang));
-      apply(lang, version);
+      if (next === "en" || next === "zh") remember(LANG_KEY, next);
     });
   });
 })();

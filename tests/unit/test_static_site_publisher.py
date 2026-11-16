@@ -130,10 +130,28 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
     today = (tmp_path / "today.html").read_text(encoding="utf-8")
     day = (tmp_path / "2026-08-01.html").read_text(encoding="utf-8")
     assert "我要熬煉他們。" in today
-    assert "location.replace" not in today
+    assert 'http-equiv="refresh"' not in today
     assert "今日經文 · 摩拉維亞每日箴言" in today
-    assert 'data-en="Today · Moravian Daily Texts"' in today
     assert today != day  # title differs; body content matches
+    assert 'rel="canonical" href="https://mannatoday.github.io/daily-texts/2026-08-01.html"' in today
+    assert 'rel="canonical" href="https://mannatoday.github.io/daily-texts/today.html"' not in today
+    assert 'data-href-en="en/today.html"' in today
+    en_page = (tmp_path / "en" / "2026-08-01.html").read_text(encoding="utf-8")
+    assert '<html lang="en"' in en_page
+    assert "I will refine them." in en_page
+    assert "<h2>Old Testament</h2>" in en_page
+    assert 'class="prayer"' not in en_page
+    assert (
+        "August 1 daily reading. Old Testament Jeremiah 9:7, New Testament Luke 22:40."
+        in en_page
+    )
+    assert 'rel="canonical" href="https://mannatoday.github.io/daily-texts/en/2026-08-01.html"' in en_page
+    assert 'hreflang="x-default"' in en_page
+    assert 'href="../styles.css"' in en_page
+    en_today = (tmp_path / "en" / "today.html").read_text(encoding="utf-8")
+    assert "Today · Moravian Daily Texts" in en_today
+    assert 'rel="canonical" href="https://mannatoday.github.io/daily-texts/en/2026-08-01.html"' in en_today
+    assert "I will refine them." in en_today
     assert "about-blurb" not in today
     assert "了解更多" not in today
     assert "about-blurb" not in day
@@ -149,9 +167,17 @@ def test_static_site_publisher_writes_day_and_index(tmp_path: Path) -> None:
 
     sitemap = (tmp_path / "sitemap.xml").read_text(encoding="utf-8")
     assert "https://mannatoday.github.io/daily-texts/" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/en/" in sitemap
     assert "https://mannatoday.github.io/daily-texts/about.html" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/en/about.html" in sitemap
     assert "https://mannatoday.github.io/daily-texts/archive.html" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/en/archive.html" in sitemap
     assert "https://mannatoday.github.io/daily-texts/2026-08-01.html" in sitemap
+    assert "https://mannatoday.github.io/daily-texts/en/2026-08-01.html" in sitemap
+    assert 'hreflang="zh-Hant"' in sitemap
+    assert 'hreflang="en"' in sitemap
+    assert 'hreflang="x-default"' in sitemap
+    assert "xhtml:link" in sitemap
     assert "today.html" not in sitemap
     assert "install.html" not in sitemap
     robots = (tmp_path / "robots.txt").read_text(encoding="utf-8")
@@ -167,6 +193,12 @@ def test_static_site_publisher_prev_next_navigation(tmp_path: Path) -> None:
     jul = (tmp_path / "2026-07-31.html").read_text(encoding="utf-8")
     assert 'href="2026-07-31.html"' in aug
     assert 'href="2026-08-01.html"' in jul
+    en_aug = (tmp_path / "en" / "2026-08-01.html").read_text(encoding="utf-8")
+    en_jul = (tmp_path / "en" / "2026-07-31.html").read_text(encoding="utf-8")
+    assert 'href="2026-07-31.html"' in en_aug
+    assert 'href="2026-08-01.html"' in en_jul
+    assert "Previous" in en_aug
+    assert "前一日" in aug
 
 
 def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:
@@ -193,6 +225,10 @@ def test_static_site_publisher_index_lists_newest_first(tmp_path: Path) -> None:
     assert "2026 年 7 月" in archive
     assert 'id="cal-2026-08" checked' in archive
     assert "依月份" in archive
+    en_archive = (tmp_path / "en" / "archive.html").read_text(encoding="utf-8")
+    assert "August 2026" in en_archive
+    assert "July 2026" in en_archive
+    assert "<h2>舊約</h2>" not in en_archive
 
 
 def test_static_site_publisher_overwrites_same_day(tmp_path: Path) -> None:
@@ -208,6 +244,10 @@ def test_static_site_publisher_overwrites_same_day(tmp_path: Path) -> None:
 
     assert "更新後的舊約。" in second
     assert second != first
-    # Still a single day page
+    en_second = (tmp_path / "en" / "2026-08-01.html").read_text(encoding="utf-8")
+    assert '<p class="verse" data-verse="ot">更新後的舊約。</p>' not in en_second
+    assert '<p class="verse" data-verse="ot">I will refine them.</p>' in en_second
+    # Still a single day page at the site root (English lives under en/).
     day_pages = list(tmp_path.glob("????-??-??.html"))
     assert len(day_pages) == 1
+    assert len(list((tmp_path / "en").glob("????-??-??.html"))) == 1

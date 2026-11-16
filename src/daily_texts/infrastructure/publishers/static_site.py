@@ -13,15 +13,18 @@ from daily_texts.infrastructure.formatters._common import format_date_en, format
 from daily_texts.infrastructure.formatters.html import (
     GOOGLE_TAG,
     ICON_VERSION,
-    INSTALL_SCRIPT_TAG,
     LANG_BOOT_SCRIPT,
     LOSUNGEN_ATTRIBUTION_HTML,
-    PWA_HEAD_TAGS,
-    TABBAR_HTML,
-    VERSION_SCRIPT_TAG,
     HtmlFormatter,
-    bilingual,
+    deferred_script,
+    html_root_tag,
+    lang_toggle_html,
     load_devotional_css,
+    pick,
+    pwa_head_tags,
+    seo_links,
+    tabbar_html,
+    ui,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,6 +48,53 @@ _FONT_LINKS = """\
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
 """
+
+
+def _public_urls(filename: str) -> tuple[str, str]:
+    """Absolute canonical URLs ``(zh, en)`` for one site page.
+
+    Home is the directory URL (``/`` and ``/en/``). Other pages keep their
+    filenames. Chinese stays at the historical path; English lives under ``/en/``.
+    """
+    if filename in ("index.html", ""):
+        return f"{_SITE_BASE_URL}/", f"{_SITE_BASE_URL}/en/"
+    return f"{_SITE_BASE_URL}/{filename}", f"{_SITE_BASE_URL}/en/{filename}"
+
+
+def _relative_lang_hrefs(filename: str, lang: str) -> tuple[str, str]:
+    """Toggle targets ``(zh_href, en_href)`` relative to a page in ``lang``."""
+    if filename == "index.html":
+        if lang == "en":
+            return "../index.html", "index.html"
+        return "index.html", "en/index.html"
+    if lang == "en":
+        return f"../{filename}", filename
+    return filename, f"en/{filename}"
+
+
+def _lang_targets(
+    filename: str,
+    lang: str,
+    *,
+    canonical_filename: str | None = None,
+) -> dict[str, str]:
+    """Formatter kwargs for one language of ``filename``.
+
+    ``canonical_filename`` overrides the canonical/hreflang target. today.html
+    passes the dated page so the stable URL is not a second indexable copy.
+    Language-toggle hrefs still point at today.html so the stable URL is kept.
+    """
+    zh_url, en_url = _public_urls(canonical_filename or filename)
+    href_zh, href_en = _relative_lang_hrefs(filename, lang)
+    return {
+        "lang": lang,
+        "asset_prefix": "../" if lang == "en" else "",
+        "href_zh": href_zh,
+        "href_en": href_en,
+        "canonical_href": en_url if lang == "en" else zh_url,
+        "alternate_zh": zh_url,
+        "alternate_en": en_url,
+    }
 
 
 class StaticSitePublisher:
@@ -82,17 +132,13 @@ class StaticSitePublisher:
         self._write_install_page()
 
         if self._earliest_date is not None and content.date < self._earliest_date:
-            day_path = self._site_dir / f"{content.date.isoformat()}.html"
-            if day_path.is_file():
-                day_path.unlink()
+            self._remove_day_page(content.date)
             days = self._list_day_pages()
             self._write_today_page(days[0] if days else None)
-            index_path = self._site_dir / "index.html"
-            index_path.write_text(self._build_index(days), encoding="utf-8")
-            archive_path = self._site_dir / "archive.html"
-            archive_path.write_text(self._build_archive(days), encoding="utf-8")
+            self._write_index_and_archive(days)
             self._write_sitemap(days)
             self._write_robots_txt()
+            index_path = self._site_dir / "index.html"
             message = (
                 f"Skipped {content.date.isoformat()} (before "
                 f"{self._earliest_date.isoformat()}); updated {index_path}"
@@ -104,28 +150,26 @@ class StaticSitePublisher:
         days = sorted(set(days_before) | {content.date}, reverse=True)
 
         prev_href, next_href = _neighbors(content.date, days)
-        page = self._html.format(
+        filename = f"{content.date.isoformat()}.html"
+        zh_html, en_html = self._render_day(
             content,
-            include_source_link=self._include_source_link,
-            stylesheet_href="styles.css",
+            filename=filename,
             prev_href=prev_href,
             next_href=next_href,
         )
-        day_path = self._site_dir / f"{content.date.isoformat()}.html"
-        day_path.write_text(page.content, encoding="utf-8")
+        self._write_pair(filename, zh_html, en_html)
+        day_path = self._site_dir / filename
 
         self._refresh_neighbor_nav(content.date, days)
         self._write_today_page(days[0] if days else None)
         index_path = self._site_dir / "index.html"
-        index_path.write_text(self._build_index(days), encoding="utf-8")
-        archive_path = self._site_dir / "archive.html"
-        archive_path.write_text(self._build_archive(days), encoding="utf-8")
+        self._write_index_and_archive(days)
         self._write_sitemap(days)
         self._write_robots_txt()
 
         message = (
-            f"Wrote {day_path}, about.html, install.html, today.html, archive.html, "
-            f"sitemap.xml, and updated {index_path}"
+            f"Wrote {day_path}, en/{filename}, about.html, install.html, today.html, "
+            f"archive.html, sitemap.xml, and updated {index_path}"
         )
         logger.info(message)
         return PublishResult(channel=self.channel, success=True, message=message)
@@ -159,11 +203,56 @@ class StaticSitePublisher:
         (self._site_dir / "sw.js").write_text(_SW_JS, encoding="utf-8")
 
     def _write_about_page(self) -> None:
-        (self._site_dir / "about.html").write_text(_ABOUT_HTML, encoding="utf-8")
+        self._write_pair("about.html", _about_html("zh"), _about_html("en"))
 
     def _write_install_page(self) -> None:
         self._write_install_shots()
-        (self._site_dir / "install.html").write_text(_INSTALL_HTML, encoding="utf-8")
+        self._write_pair("install.html", _install_html("zh"), _install_html("en"))
+
+    def _write_pair(self, filename: str, zh_html: str, en_html: str) -> None:
+        (self._site_dir / filename).write_text(zh_html, encoding="utf-8")
+        en_dir = self._site_dir / "en"
+        en_dir.mkdir(parents=True, exist_ok=True)
+        (en_dir / filename).write_text(en_html, encoding="utf-8")
+
+    def _remove_day_page(self, day: date) -> None:
+        filename = f"{day.isoformat()}.html"
+        for path in (self._site_dir / filename, self._site_dir / "en" / filename):
+            if path.is_file():
+                path.unlink()
+
+    def _render_day(
+        self,
+        content: LocalizedDailyText,
+        *,
+        filename: str,
+        prev_href: str | None,
+        next_href: str | None,
+    ) -> tuple[str, str]:
+        pages: list[str] = []
+        for lang in ("zh", "en"):
+            page = self._html.format(
+                content,
+                include_source_link=self._include_source_link,
+                stylesheet_href="styles.css",
+                prev_href=prev_href,
+                next_href=next_href,
+                **_lang_targets(filename, lang),
+            )
+            pages.append(page.content)
+        return pages[0], pages[1]
+
+    def _write_index_and_archive(self, days: list[date]) -> None:
+        self._write_pair(
+            "index.html",
+            self._build_index(days, lang="zh"),
+            self._build_index(days, lang="en"),
+        )
+        self._write_pair(
+            "archive.html",
+            self._build_archive(days, lang="zh"),
+            self._build_archive(days, lang="en"),
+        )
 
     def _write_sitemap(self, days: list[date] | None = None) -> None:
         """Write sitemap.xml for Search Console (home, about, archive, dated days)."""
@@ -196,27 +285,28 @@ class StaticSitePublisher:
             (dest / name).write_bytes(src.read_bytes())
 
     def _write_today_page(self, latest: date | None = None) -> None:
-        """Copy the newest day page to today.html so the URL stays stable."""
+        """Copy each language's newest day page to today.html.
+
+        The copy keeps that day's canonical, so today.html is not a second URL
+        for the same text. The language toggle still points at today.html.
+        """
         if latest is None:
             days = self._list_day_pages()
             latest = days[0] if days else None
-        today_path = self._site_dir / "today.html"
         if latest is None:
-            today_path.write_text(
-                _shell_page(
-                    title_zh="今日經文 · 摩拉維亞每日箴言",
-                    title_en="Today · Moravian Daily Texts",
-                    description="今天的摩拉維亞每日箴言：舊約與新約每日靈修經文。",
-                    body=f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
-                    f'    <p class="archive-more"><a href="index.html">{bilingual("回首頁", "Home")}</a></p>\n',
-                    extra_class="site-index",
-                ),
-                encoding="utf-8",
-            )
+            self._write_pair("today.html", _empty_today("zh"), _empty_today("en"))
             return
-        day_path = self._site_dir / f"{latest.isoformat()}.html"
-        html = day_path.read_text(encoding="utf-8")
-        today_path.write_text(_as_today_page(html), encoding="utf-8")
+        filename = f"{latest.isoformat()}.html"
+        zh_src = self._site_dir / filename
+        en_src = self._site_dir / "en" / filename
+        zh_html = _as_today_page(zh_src.read_text(encoding="utf-8"), lang="zh")
+        if not en_src.is_file():
+            # An older day can be republished before its newer neighbor has an
+            # English page. Keep the Chinese today URL working either way.
+            (self._site_dir / "today.html").write_text(zh_html, encoding="utf-8")
+            return
+        en_html = _as_today_page(en_src.read_text(encoding="utf-8"), lang="en")
+        self._write_pair("today.html", zh_html, en_html)
 
     def _list_day_pages(self) -> list[date]:
         days: list[date] = []
@@ -241,61 +331,68 @@ class StaticSitePublisher:
             if neighbor_idx < 0 or neighbor_idx >= len(chronological):
                 continue
             neighbor = chronological[neighbor_idx]
-            path = self._site_dir / f"{neighbor.isoformat()}.html"
-            if not path.is_file():
-                continue
             prev_href, next_href = _neighbors(neighbor, days)
-            html = path.read_text(encoding="utf-8")
-            updated = _replace_day_nav(html, prev_href, next_href)
-            if updated != html:
-                path.write_text(updated, encoding="utf-8")
+            filename = f"{neighbor.isoformat()}.html"
+            for lang, path in (
+                ("zh", self._site_dir / filename),
+                ("en", self._site_dir / "en" / filename),
+            ):
+                if not path.is_file():
+                    continue
+                html = path.read_text(encoding="utf-8")
+                updated = _replace_day_nav(html, prev_href, next_href, lang=lang)
+                if updated != html:
+                    path.write_text(updated, encoding="utf-8")
 
-    def _build_index(self, days: list[date] | None = None) -> str:
+    def _build_index(self, days: list[date] | None = None, *, lang: str = "zh") -> str:
         days = days if days is not None else self._list_day_pages()
         if not days:
-            body = f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
+            body = f'    <p class="empty">{ui(lang, "尚無每日經文。", "No readings yet.")}</p>\n'
         else:
             latest = days[0]
-            latest_label = bilingual(format_date_zh(latest), format_date_en(latest))
+            latest_label = ui(lang, format_date_zh(latest), format_date_en(latest))
             recent = days[:3]
-            items = "\n".join(_day_list_item(d) for d in recent)
+            items = "\n".join(_day_list_item(d, lang) for d in recent)
             body = (
                 f'    <a class="today-card" href="today.html">'
-                f'<span class="today-card__label">{bilingual("閱讀今日經文", "Today’s reading")}</span>'
+                f'<span class="today-card__label">{ui(lang, "閱讀今日經文", "Today’s reading")}</span>'
                 f'<span class="today-card__date">{latest_label}</span>'
                 "</a>\n"
-                f'    <h2 class="archive-title">{bilingual("最近三天", "Recent days")}</h2>\n'
+                f'    <h2 class="archive-title">{ui(lang, "最近三天", "Recent days")}</h2>\n'
                 f'    <ul class="archive-list">\n{items}\n    </ul>\n'
-                f'    <p class="archive-more"><a href="archive.html">{bilingual("歷日檔案", "Archive")}</a></p>\n'
+                f'    <p class="archive-more"><a href="archive.html">'
+                f'{ui(lang, "歷日檔案", "Archive")}</a></p>\n'
             )
 
         return _shell_page(
-            title_zh=_HOME_TITLE_ZH,
-            title_en="Moravian Daily Texts",
-            description=_HOME_DESCRIPTION,
+            lang=lang,
+            filename="index.html",
+            title=pick(lang, _HOME_TITLE_ZH, _HOME_TITLE_EN),
+            description=pick(lang, _HOME_DESCRIPTION, _HOME_DESCRIPTION_EN),
             body=body,
             extra_class="site-index",
         )
 
-    def _build_archive(self, days: list[date] | None = None) -> str:
+    def _build_archive(self, days: list[date] | None = None, *, lang: str = "zh") -> str:
         days = days if days is not None else self._list_day_pages()
         if not days:
-            body = f'    <p class="empty">{bilingual("尚無每日經文。", "No readings yet.")}</p>\n'
+            body = f'    <p class="empty">{ui(lang, "尚無每日經文。", "No readings yet.")}</p>\n'
         else:
-            body = _archive_markup(days)
+            body = _archive_markup(days, lang=lang)
 
         return _shell_page(
-            title_zh="歷日檔案 · 摩拉維亞每日箴言",
-            title_en="Archive · Moravian Daily Texts",
-            description=_ARCHIVE_DESCRIPTION,
+            lang=lang,
+            filename="archive.html",
+            title=pick(lang, "歷日檔案 · 摩拉維亞每日箴言", "Archive · Moravian Daily Texts"),
+            description=pick(lang, _ARCHIVE_DESCRIPTION, _ARCHIVE_DESCRIPTION_EN),
             body=body,
             extra_class="site-index archive-page",
             top_nav=True,
         )
 
 
-def _day_list_item(day: date) -> str:
-    label = bilingual(format_date_zh(day), format_date_en(day))
+def _day_list_item(day: date, lang: str) -> str:
+    label = ui(lang, format_date_zh(day), format_date_en(day))
     return (
         "      <li>"
         f'<a href="{day.isoformat()}.html">'
@@ -305,40 +402,56 @@ def _day_list_item(day: date) -> str:
     )
 
 
-def _sitemap_url(loc: str, lastmod: date | None = None) -> str:
+def _sitemap_url(
+    loc: str,
+    lastmod: date | None,
+    alternates: list[tuple[str, str]],
+) -> str:
     lines = ["  <url>", f"    <loc>{escape(loc)}</loc>"]
     if lastmod is not None:
         lines.append(f"    <lastmod>{lastmod.isoformat()}</lastmod>")
+    for hreflang, href in alternates:
+        lines.append(
+            "    <xhtml:link rel=\"alternate\" "
+            f'hreflang="{hreflang}" href="{escape(href, quote=True)}"/>'
+        )
     lines.append("  </url>")
     return "\n".join(lines)
 
 
-def _build_sitemap(days: list[date]) -> str:
-    """Sitemap for Google: home, about, archive, and each dated day page.
+def _sitemap_pair(filename: str, lastmod: date | None) -> list[str]:
+    zh, en = _public_urls(filename)
+    alternates = [("zh-Hant", zh), ("en", en), ("x-default", zh)]
+    return [
+        _sitemap_url(zh, lastmod, alternates),
+        _sitemap_url(en, lastmod, alternates),
+    ]
 
-    Omits today.html (same content as the newest day), install.html, and
+
+def _build_sitemap(days: list[date]) -> str:
+    """Sitemap for both languages: home, about, archive, and each dated page.
+
+    Omits today.html (canonical points at the dated page), install.html, and
     the Search Console verification file.
     """
     newest = days[0] if days else None
-    entries = [
-        _sitemap_url(f"{_SITE_BASE_URL}/", newest),
-        _sitemap_url(f"{_SITE_BASE_URL}/about.html", newest),
-        _sitemap_url(f"{_SITE_BASE_URL}/archive.html", newest),
-    ]
+    entries: list[str] = []
+    entries.extend(_sitemap_pair("index.html", newest))
+    entries.extend(_sitemap_pair("about.html", newest))
+    entries.extend(_sitemap_pair("archive.html", newest))
     for day in days:
-        entries.append(
-            _sitemap_url(f"{_SITE_BASE_URL}/{day.isoformat()}.html", day)
-        )
+        entries.extend(_sitemap_pair(f"{day.isoformat()}.html", day))
     body = "\n".join(entries)
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+        '        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
         f"{body}\n"
         "</urlset>\n"
     )
 
 
-def _archive_markup(days: list[date], *, today: date | None = None) -> str:
+def _archive_markup(days: list[date], *, lang: str = "zh", today: date | None = None) -> str:
     """Month calendar plus a collapsed list, newest month first in the list."""
     published = set(days)
     today = date.today() if today is None else today
@@ -353,6 +466,7 @@ def _archive_markup(days: list[date], *, today: date | None = None) -> str:
             month,
             published,
             today=today,
+            lang=lang,
             checked=(year, month) == focus,
             prev_month=months[i - 1] if i > 0 else None,
             next_month=months[i + 1] if i + 1 < len(months) else None,
@@ -360,13 +474,13 @@ def _archive_markup(days: list[date], *, today: date | None = None) -> str:
         for i, (year, month) in enumerate(months)
     )
     lists = "\n".join(
-        _month_list(year, month, days, open_month=(year, month) == focus)
+        _month_list(year, month, days, lang=lang, open_month=(year, month) == focus)
         for year, month in reversed(months)
     )
     return (
-        f'    <h1 class="archive-page-title">{bilingual("歷日檔案", "Archive")}</h1>\n'
+        f'    <h1 class="archive-page-title">{ui(lang, "歷日檔案", "Archive")}</h1>\n'
         f'    <div class="cal">\n{panels}\n    </div>\n'
-        f'    <h2 class="archive-months-title">{bilingual("依月份", "By month")}</h2>\n'
+        f'    <h2 class="archive-months-title">{ui(lang, "依月份", "By month")}</h2>\n'
         f'    <div class="archive-months">\n{lists}\n    </div>\n'
     )
 
@@ -387,9 +501,8 @@ def _month_id(year: int, month: int) -> str:
     return f"cal-{year}-{month:02d}"
 
 
-def _month_label(year: int, month: int, *, with_year: bool) -> str:
-    zh = f"{year} 年 {month} 月" if with_year else f"{month} 月"
-    en_month = (
+def _month_names() -> tuple[str, ...]:
+    return (
         "January",
         "February",
         "March",
@@ -402,9 +515,14 @@ def _month_label(year: int, month: int, *, with_year: bool) -> str:
         "October",
         "November",
         "December",
-    )[month - 1]
+    )
+
+
+def _month_label(year: int, month: int, *, lang: str, with_year: bool) -> str:
+    zh = f"{year} 年 {month} 月" if with_year else f"{month} 月"
+    en_month = _month_names()[month - 1]
     en = f"{en_month} {year}" if with_year else en_month
-    return bilingual(zh, en)
+    return ui(lang, zh, en)
 
 
 def _calendar_month(
@@ -413,27 +531,26 @@ def _calendar_month(
     published: set[date],
     *,
     today: date,
+    lang: str,
     checked: bool,
     prev_month: tuple[int, int] | None,
     next_month: tuple[int, int] | None,
 ) -> str:
     checked_attr = " checked" if checked else ""
-    prev = _month_edge(prev_month, year, side="prev")
-    nxt = _month_edge(next_month, year, side="next")
+    prev = _month_edge(prev_month, year, side="prev", lang=lang)
+    nxt = _month_edge(next_month, year, side="next", lang=lang)
     title_zh = f"{year} 年 {month} 月"
-    title_en = (
-        "January February March April May June July August September October November December".split()
-    )[month - 1] + f" {year}"
-    title = bilingual(title_zh, title_en)
+    title_en = f"{_month_names()[month - 1]} {year}"
+    title = ui(lang, title_zh, title_en)
     heads = "".join(
-        f'<span class="cal-dow">{bilingual(zh, en)}</span>'
+        f'<span class="cal-dow">{ui(lang, zh, en)}</span>'
         for zh, en in zip(
             ("日", "一", "二", "三", "四", "五", "六"),
             ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
             strict=True,
         )
     )
-    cells = _calendar_cells(year, month, published, today)
+    cells = _calendar_cells(year, month, published, today, lang=lang)
     return (
         '      <div class="cal-month">\n'
         f'        <input class="cal-pick" type="radio" name="cal-month" id="{_month_id(year, month)}"{checked_attr}>\n'
@@ -443,7 +560,7 @@ def _calendar_month(
         f'            <h2 class="cal-nav__title">{title}</h2>\n'
         f"            {nxt}\n"
         "          </div>\n"
-        f'          <div class="cal-grid" aria-label="{escape(title_zh)}">\n'
+        f'          <div class="cal-grid" aria-label="{escape(pick(lang, title_zh, title_en))}">\n'
         f"            {heads}\n"
         f"{cells}\n"
         "          </div>\n"
@@ -452,13 +569,19 @@ def _calendar_month(
     )
 
 
-def _month_edge(target: tuple[int, int] | None, current_year: int, *, side: str) -> str:
+def _month_edge(
+    target: tuple[int, int] | None,
+    current_year: int,
+    *,
+    side: str,
+    lang: str,
+) -> str:
     css = "cal-nav__prev" if side == "prev" else "cal-nav__next"
     if target is None:
         return f'<span class="{css}"></span>'
     year, month = target
     mark = "‹ " if side == "prev" else " ›"
-    text = _month_label(year, month, with_year=year != current_year)
+    text = _month_label(year, month, lang=lang, with_year=year != current_year)
     if side == "next":
         text = f"{text}{mark}"
     else:
@@ -466,7 +589,9 @@ def _month_edge(target: tuple[int, int] | None, current_year: int, *, side: str)
     return f'<label class="{css}" for="{_month_id(year, month)}">{text}</label>'
 
 
-def _calendar_cells(year: int, month: int, published: set[date], today: date) -> str:
+def _calendar_cells(
+    year: int, month: int, published: set[date], today: date, *, lang: str
+) -> str:
     weeks = calendar.Calendar(firstweekday=calendar.SUNDAY).monthdayscalendar(year, month)
     lines: list[str] = []
     for week in weeks:
@@ -475,7 +600,7 @@ def _calendar_cells(year: int, month: int, published: set[date], today: date) ->
                 lines.append('            <span class="cal-day cal-day--pad"></span>')
                 continue
             day = date(year, month, day_num)
-            label = escape(format_date_zh(day))
+            label = escape(pick(lang, format_date_zh(day), format_date_en(day)))
             if day not in published:
                 lines.append(f'            <span class="cal-day cal-day--empty">{day_num}</span>')
                 continue
@@ -491,11 +616,13 @@ def _calendar_cells(year: int, month: int, published: set[date], today: date) ->
     return "\n".join(lines)
 
 
-def _month_list(year: int, month: int, days: list[date], *, open_month: bool) -> str:
+def _month_list(
+    year: int, month: int, days: list[date], *, lang: str, open_month: bool
+) -> str:
     in_month = [day for day in days if day.year == year and day.month == month]
-    items = "\n".join(_day_list_item(day) for day in in_month)
+    items = "\n".join(_day_list_item(day, lang) for day in in_month)
     opened = " open" if open_month else ""
-    title = f"{year} 年 {month} 月"
+    title = pick(lang, f"{year} 年 {month} 月", f"{_month_names()[month - 1]} {year}")
     return (
         f'      <details class="archive-month"{opened}>\n'
         f"        <summary>{title}</summary>\n"
@@ -505,101 +632,149 @@ def _month_list(year: int, month: int, days: list[date], *, open_month: bool) ->
 
 
 _HOME_TITLE_ZH = "摩拉維亞每日箴言｜每日靈修經文"
+_HOME_TITLE_EN = "Moravian Daily Texts"
 _HOME_DESCRIPTION = (
     "摩拉維亞每日箴言（每日箴文）：每天一段舊約、一段新約金句，"
     "供基督徒每日讀經、家庭靈修與家庭祭壇使用。"
 )
+_HOME_DESCRIPTION_EN = (
+    "Moravian Daily Texts: an Old Testament watchword and a New Testament text "
+    "each day, for personal and family devotion."
+)
 _ABOUT_DESCRIPTION = (
     "摩拉維亞每日箴言的由來，以及本站的每日靈修經文、讀經進度，如何用於家庭靈修。"
 )
+_ABOUT_DESCRIPTION_EN = (
+    "The history of the Moravian Daily Texts, and how this site is used for daily and family devotion."
+)
 _ARCHIVE_DESCRIPTION = "摩拉維亞每日箴言歷日檔案，按日期回看每日靈修經文。"
+_ARCHIVE_DESCRIPTION_EN = "Archive of the Moravian Daily Texts, by date."
+_INSTALL_DESCRIPTION = "把摩拉維亞每日箴言加到手機主頁"
+_INSTALL_DESCRIPTION_EN = "Add Moravian Daily Texts to your phone’s home screen."
+
+
+def _empty_today(lang: str) -> str:
+    body = (
+        f'    <p class="empty">{ui(lang, "尚無每日經文。", "No readings yet.")}</p>\n'
+        f'    <p class="archive-more"><a href="index.html">{ui(lang, "回首頁", "Home")}</a></p>\n'
+    )
+    return _shell_page(
+        lang=lang,
+        filename="today.html",
+        title=pick(lang, "今日經文 · 摩拉維亞每日箴言", "Today · Moravian Daily Texts"),
+        description=pick(
+            lang,
+            "今天的摩拉維亞每日箴言：舊約與新約每日靈修經文。",
+            "Today’s Moravian Daily Texts: the Old Testament watchword and New Testament text.",
+        ),
+        body=body,
+        extra_class="site-index",
+    )
 
 
 def _shell_page(
     *,
-    title_zh: str,
-    title_en: str,
+    lang: str,
+    filename: str,
+    title: str,
     description: str,
     body: str,
     extra_class: str,
     top_nav: bool = False,
+    footer_blurb: bool = True,
+    nav_html: str = "",
+    canonical_filename: str | None = None,
 ) -> str:
+    targets = _lang_targets(filename, lang, canonical_filename=canonical_filename)
+    prefix = targets["asset_prefix"]
     nav = ""
     if top_nav:
-        nav = f"""    <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
-      <span class="day-nav__home" aria-current="page">{bilingual("歷日檔案", "Archive")}</span>
-      <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
+        label = ui(lang, "網站導覽", "Site")
+        nav = f"""    <nav class="day-nav" aria-label="{label}">
+      <a class="day-nav__prev" href="index.html">← {ui(lang, "首頁", "Home")}</a>
+      <span class="day-nav__home" aria-current="page">{ui(lang, "歷日檔案", "Archive")}</span>
+      <span class="day-nav__next" aria-disabled="true">{ui(lang, "後一日", "Next")} →</span>
     </nav>
 """
+    elif nav_html:
+        nav = nav_html
     brand = ""
-    if not top_nav:
-        brand = f"""    <h1 class="brand">{bilingual("摩拉維亞每日箴言", "Moravian Daily Texts")}</h1>
-    <p class="subtitle">{bilingual("Moravian Daily Texts • 中文版", "Moravian Daily Texts")}</p>
-    <p class="lede">{bilingual("以神的話開始每一天", "Begin each day with the Word of God")}</p>
+    if not top_nav and filename == "index.html":
+        brand = f"""    <h1 class="brand">{ui(lang, "摩拉維亞每日箴言", "Moravian Daily Texts")}</h1>
+    <p class="subtitle">{ui(lang, "Moravian Daily Texts • 中文版", "Moravian Daily Texts • English")}</p>
+    <p class="lede">{ui(lang, "以神的話開始每一天", "Begin each day with the Word of God")}</p>
 """
-    blurb_zh = (
-        "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
-        "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
+    blurb = ""
+    if footer_blurb:
+        blurb_zh = (
+            "Moravian Daily Texts 自 1731 年開始出版，是歷史最悠久、持續出版的每日靈修讀本之一。"
+            "每天包含一段舊約經文、一段新約經文、禱告及讀經進度，陪伴全球信徒以神的話開始每一天。"
+        )
+        blurb_en = (
+            "Moravian Daily Texts has been published since 1731. Each day offers an Old Testament "
+            "watchword, a New Testament text, and a plan for reading Scripture."
+        )
+        blurb = f"""      <section class="about-blurb" aria-labelledby="about-blurb-title">
+        <h2 id="about-blurb-title">{ui(lang, "關於 Moravian Daily Texts", "About Moravian Daily Texts")}</h2>
+        <p>{escape(pick(lang, blurb_zh, blurb_en))}</p>
+      </section>
+"""
+    seo = seo_links(
+        canonical=targets["canonical_href"],
+        alternate_zh=targets["alternate_zh"],
+        alternate_en=targets["alternate_en"],
     )
-    blurb_en = (
-        "Moravian Daily Texts has been published since 1731. Each day offers an Old Testament "
-        "watchword, a New Testament text, and a plan for reading Scripture."
-    )
+    toggle = lang_toggle_html(lang, targets["href_zh"], targets["href_en"])
     return f"""<!DOCTYPE html>
-<html lang="zh-Hant">
+{html_root_tag(lang, targets["href_zh"], targets["href_en"])}
 <head>
 {GOOGLE_TAG}  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="{escape(description, quote=True)}" />
-  <title data-zh="{escape(title_zh, quote=True)}" data-en="{escape(title_en, quote=True)}">{escape(title_zh)}</title>
-{LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-{VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
+  <title>{escape(title)}</title>
+{LANG_BOOT_SCRIPT}{seo}{pwa_head_tags(prefix, lang=lang)}{_FONT_LINKS}  <link rel="stylesheet" href="{prefix}styles.css" />
+{deferred_script(prefix, "version.js")}{deferred_script(prefix, "install.js")}</head>
 <body>
-  <a class="skip-link" href="#main">{bilingual("跳至內容", "Skip to content")}</a>
+  <a class="skip-link" href="#main">{ui(lang, "跳至內容", "Skip to content")}</a>
   <div class="site-shell {extra_class}">
   <div class="version-picker">
-{_lang_toggle_markup()}  </div>
+{toggle}  </div>
 {nav}    <main id="main">
 {brand}{body}    </main>
     <footer class="site-foot">
-      <section class="about-blurb" aria-labelledby="about-blurb-title">
-        <h2 id="about-blurb-title">{bilingual("關於 Moravian Daily Texts", "About Moravian Daily Texts")}</h2>
-        <p class="i18n-zh">{blurb_zh}</p>
-        <p class="i18n-en">{blurb_en}</p>
-      </section>
-      <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
+{blurb}      <p class="foot-credit">{ui(lang, "摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
       {LOSUNGEN_ATTRIBUTION_HTML}
     </footer>
-{TABBAR_HTML}  </div>
+{tabbar_html(lang)}  </div>
 </body>
 </html>
 """
 
 
-def _lang_toggle_markup() -> str:
-    return """    <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
-      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
-    </div>
-"""
+def _as_today_page(day_html: str, *, lang: str) -> str:
+    """Stable today.html: retitle, and point the language toggle at today.html.
 
-
-def _as_today_page(day_html: str) -> str:
-    """Stable today.html: retitle, and drop the about blurb.
-
-    The homepage already introduces Moravian Daily Texts, and the tab bar
-    links to the about page, so the daily reading page stays on the texts.
+    Canonical and hreflang stay on the dated page copied from the day file.
     """
-    html = _TITLE_TAG.sub(
-        '<title data-zh="今日經文 · 摩拉維亞每日箴言" '
-        'data-en="Today · Moravian Daily Texts">'
-        "今日經文 · 摩拉維亞每日箴言</title>",
-        day_html,
-        count=1,
-    )
+    if lang == "en":
+        title = "Today · Moravian Daily Texts"
+        href_zh, href_en = "../today.html", "today.html"
+    else:
+        title = "今日經文 · 摩拉維亞每日箴言"
+        href_zh, href_en = "today.html", "en/today.html"
+    html = _TITLE_TAG.sub(f"<title>{escape(title)}</title>", day_html, count=1)
+    html = _HTML_TAG.sub(html_root_tag(lang, href_zh, href_en), html, count=1)
+    html = _retarget_lang_toggle(html, href_zh, href_en)
     return _ABOUT_BLURB_SECTION.sub("", html, count=1)
+
+
+def _retarget_lang_toggle(html: str, href_zh: str, href_en: str) -> str:
+    def repl(match: re.Match[str]) -> str:
+        href = href_zh if match.group(3) == "zh-Hant" else href_en
+        return f"{match.group(1)}{href}{match.group(2)}"
+
+    return _TOGGLE_HREF.sub(repl, html)
 
 
 _ABOUT_BLURB_SECTION = re.compile(
@@ -609,6 +784,10 @@ _ABOUT_BLURB_SECTION = re.compile(
 
 
 _TITLE_TAG = re.compile(r"<title\b[^>]*>.*?</title>", re.DOTALL)
+_HTML_TAG = re.compile(r"<html\b[^>]*>")
+_TOGGLE_HREF = re.compile(
+    r'(<a class="lang-toggle__btn" href=")[^"]*(" hreflang="(zh-Hant|en)")'
+)
 
 
 def _neighbors(day: date, days_newest_first: list[date]) -> tuple[str | None, str | None]:
@@ -630,7 +809,13 @@ _DATE_NAV = re.compile(
 _DATE_HEADING = re.compile(r"<h1>.*?</h1>", re.DOTALL)
 
 
-def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) -> str:
+def _replace_day_nav(
+    html: str,
+    prev_href: str | None,
+    next_href: str | None,
+    *,
+    lang: str,
+) -> str:
     from daily_texts.infrastructure.formatters.html import _nav_label, day_nav_control
 
     match = _DATE_NAV.search(html)
@@ -642,21 +827,21 @@ def _replace_day_nav(html: str, prev_href: str | None, next_href: str | None) ->
     prev = day_nav_control(
         prev_href,
         "day-nav__prev",
-        _nav_label("前一日", "Previous", bilingual_labels=True, prefix="← "),
+        _nav_label("前一日", "Previous", lang=lang, prefix="← "),
     )
     nxt = day_nav_control(
         next_href,
         "day-nav__next",
-        _nav_label("後一日", "Next", bilingual_labels=True, suffix=" →"),
+        _nav_label("後一日", "Next", lang=lang, suffix=" →"),
     )
     inner = f"\n{prev}    {heading.group(0)}\n{nxt}"
     return html[: match.start()] + match.group(1) + inner + match.group(3) + html[match.end() :]
 
 
 _VERSION_JS = """\
-// Language toggle plus multi-version watchword renderer.
-// Language: ?lang= → version hint → localStorage → Chinese.
-// Version: ?version= (if it belongs to that language) → per-language localStorage → default.
+// Bible-version picker. The page language is the URL (data-page-lang);
+// the head script sends ?lang= / the other language's ?version= to that URL.
+// Version: ?version= when it belongs to this page → per-language localStorage → default.
 (function () {
   "use strict";
   var LANG_KEY = "dailyTexts.lang";
@@ -728,15 +913,7 @@ _VERSION_JS = """\
   }
 
   function resolveLang() {
-    var q = queryParam("lang");
-    if (q === "en" || q === "zh") return q;
-    var version = queryParam("version");
-    if (version && ENGLISH.some(function (item) { return item.code === version; })) return "en";
-    if (version && CHINESE.indexOf(version) >= 0) return "zh";
-    var saved = stored(LANG_KEY);
-    if (saved === "en" || saved === "zh") return saved;
-    if (document.documentElement.getAttribute("data-lang") === "en") return "en";
-    return "zh";
+    return document.documentElement.getAttribute("data-page-lang") === "en" ? "en" : "zh";
   }
 
   function storedVersion(lang, codes) {
@@ -785,29 +962,6 @@ _VERSION_JS = """\
       "&version=" +
       encodeURIComponent(code)
     );
-  }
-
-  function setLangChrome(lang) {
-    var root = document.documentElement;
-    if (lang === "en") {
-      root.setAttribute("data-lang", "en");
-      root.lang = "en";
-    } else {
-      root.removeAttribute("data-lang");
-      root.lang = "zh-Hant";
-    }
-    var title = document.querySelector("title");
-    if (title) {
-      var next = title.getAttribute(lang === "en" ? "data-en" : "data-zh");
-      if (next) title.textContent = next;
-    }
-    var buttons = document.querySelectorAll("[data-set-lang]");
-    Array.prototype.forEach.call(buttons, function (btn) {
-      btn.setAttribute(
-        "aria-pressed",
-        btn.getAttribute("data-set-lang") === lang ? "true" : "false"
-      );
-    });
   }
 
   function fillSelect(lang, version) {
@@ -909,10 +1063,10 @@ _VERSION_JS = """\
     if (text) note.textContent = text;
   }
 
-  function syncUrl(lang, version) {
+  function syncUrl(version) {
     try {
       var url = new URL(window.location.href);
-      url.searchParams.set("lang", lang);
+      url.searchParams.delete("lang");
       if (select) url.searchParams.set("version", version);
       window.history.replaceState({}, "", url.toString());
     } catch (err) {
@@ -921,36 +1075,34 @@ _VERSION_JS = """\
   }
 
   function apply(lang, version) {
-    setLangChrome(lang);
     fillSelect(lang, version);
     applyVerses(version, lang);
     applyReadingLinks(version, lang);
     applyNotice(version);
-    remember(LANG_KEY, lang);
     remember(VERSION_KEY + "." + lang, version);
-    syncUrl(lang, version);
+    syncUrl(version);
   }
 
-  var lang = resolveLang();
-  var version = resolveVersion(lang, codesFor(lang));
-  apply(lang, version);
+  if (window.__dailyTextsRedirect) {
+    /* Head script is leaving this URL for the other language. */
+  } else {
+    var lang = resolveLang();
+    var version = resolveVersion(lang, codesFor(lang));
+    apply(lang, version);
 
-  if (select) {
-    select.addEventListener("change", function () {
-      version = select.value;
-      apply(lang, version);
-    });
+    if (select) {
+      select.addEventListener("change", function () {
+        version = select.value;
+        apply(lang, version);
+      });
+    }
   }
 
   var buttons = document.querySelectorAll("[data-set-lang]");
   Array.prototype.forEach.call(buttons, function (btn) {
     btn.addEventListener("click", function () {
       var next = btn.getAttribute("data-set-lang");
-      if (next !== "en" && next !== "zh") return;
-      if (next === lang) return;
-      lang = next;
-      version = storedVersion(lang, codesFor(lang));
-      apply(lang, version);
+      if (next === "en" || next === "zh") remember(LANG_KEY, next);
     });
   });
 })();
@@ -1016,7 +1168,7 @@ _SHARE_JS = """\
   }
 
   function isEnglish() {
-    return document.documentElement.getAttribute("data-lang") === "en";
+    return document.documentElement.getAttribute("data-page-lang") === "en";
   }
 
   function verseText(role) {
@@ -1036,7 +1188,11 @@ _SHARE_JS = """\
       var path = window.location.pathname || "";
       var base = path.replace(/[^/]+$/, "");
       var file = (day && day.date ? day.date : "today") + ".html";
-      return window.location.origin + base + file + window.location.search;
+      var url = window.location.origin + base + file;
+      var params = new URLSearchParams(window.location.search);
+      params.delete("lang");
+      var query = params.toString();
+      return query ? url + "?" + query : url;
     } catch (err) {
       return window.location.href;
     }
@@ -1166,7 +1322,14 @@ _INSTALL_JS = """\
   "use strict";
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(function () {});
+    var swUrl = "sw.js";
+    var manifest = document.querySelector('link[rel="manifest"]');
+    if (manifest && manifest.href) {
+      try {
+        swUrl = new URL("sw.js", manifest.href).href;
+      } catch (err) {}
+    }
+    navigator.serviceWorker.register(swUrl).catch(function () {});
   }
 
   function isStandalone() {
@@ -1227,28 +1390,7 @@ _INSTALL_JS = """\
 })();
 """
 
-_ABOUT_HTML = f"""<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-{GOOGLE_TAG}  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="{_ABOUT_DESCRIPTION}" />
-  <title data-zh="關於 · 摩拉維亞每日箴言" data-en="About · Moravian Daily Texts">關於 · 摩拉維亞每日箴言</title>
-{LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-{VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
-<body>
-  <a class="skip-link" href="#main">{bilingual("跳至內容", "Skip to content")}</a>
-  <div class="site-shell about-page">
-  <div class="version-picker">
-{_lang_toggle_markup()}  </div>
-    <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
-      <span class="day-nav__home" aria-current="page">{bilingual("關於", "About")}</span>
-      <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
-    </nav>
-    <main id="main">
-      <div class="i18n-zh">
+_ABOUT_BODY_ZH = """\
       <h1>關於 Moravian Daily Texts</h1>
 
       <h2>起源</h2>
@@ -1288,9 +1430,9 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">中文經文正文引自已獲全世界使用授權的譯本：和合本、和合本修訂版、新譯本、中文標準譯本、環球聖經譯本。英文可在頁首切換 NIV 與 KJV。NIV 版權屬於 Biblica；KJV 為公有領域。各譯本版權仍屬原出版機構。選用《環球聖經譯本》或 NIV 時，頁腳另標版權。</p>
       <p class="meta">今日禱文的出處是當天頁面句末的署名（作者與作品）。聖詩與禱文的版權依各作品而定。</p>
       <p class="meta">若需正式出版、轉載或商業用途，請另洽各原文出版單位，並遵守各譯本與作品的版權規定。</p>
-      </div>
+"""
 
-      <div class="i18n-en">
+_ABOUT_BODY_EN = """\
       <h1>About Moravian Daily Texts</h1>
 
       <h2>Beginnings</h2>
@@ -1330,89 +1472,111 @@ _ABOUT_HTML = f"""<!DOCTYPE html>
       <p class="meta">Chinese scripture is quoted from the Chinese Union Version, its revised edition, the New Chinese Version, the Chinese Standard Bible, and the Worldwide Chinese Bible. English scripture can be switched at the top of the page between the NIV and the KJV. The NIV is copyright Biblica; the KJV is in the public domain. Copyright for each version remains with its publisher. When the Worldwide Chinese Bible or the NIV is selected, a copyright line appears in the footer.</p>
       <p class="meta">The source of the prayer is the name printed at the end of that day’s prayer. Copyright in the hymns and prayers depends on each work.</p>
       <p class="meta">For formal publication, reprinting, or commercial use, contact each original publisher and follow the terms of each Bible version and each quoted work.</p>
-      </div>
-      <p class="home-screen-note"><span class="i18n-zh">想從手機主頁打開，見<a href="install.html">加到主畫面</a>。</span><span class="i18n-en">To open this from the phone’s home screen, see <a href="install.html">how to add it</a>.</span></p>
-    </main>
-    <footer class="site-foot">
-      <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
-      {LOSUNGEN_ATTRIBUTION_HTML}
-    </footer>
-{TABBAR_HTML}  </div>
-</body>
-</html>
 """
 
-_INSTALL_HTML = f"""<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-{GOOGLE_TAG}  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="把摩拉維亞每日箴言加到手機主頁" />
-  <title data-zh="加到手機主頁 · 摩拉維亞每日箴言" data-en="Add to Phone · Moravian Daily Texts">加到手機主頁 · 摩拉維亞每日箴言</title>
-{LANG_BOOT_SCRIPT}{PWA_HEAD_TAGS}{_FONT_LINKS}  <link rel="stylesheet" href="styles.css" />
-{VERSION_SCRIPT_TAG}{INSTALL_SCRIPT_TAG}</head>
-<body>
-  <a class="skip-link" href="#main">{bilingual("跳至內容", "Skip to content")}</a>
-  <div class="site-shell install-page">
-  <div class="version-picker">
-{_lang_toggle_markup()}  </div>
-    <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← {bilingual("首頁", "Home")}</a>
-      <span class="day-nav__home" aria-current="page">{bilingual("加到手機主頁", "Add to Phone")}</span>
-      <span class="day-nav__next" aria-disabled="true">{bilingual("後一日", "Next")} →</span>
+
+def _page_nav(lang: str, current_zh: str, current_en: str) -> str:
+    label = ui(lang, "網站導覽", "Site")
+    return f"""    <nav class="day-nav" aria-label="{label}">
+      <a class="day-nav__prev" href="index.html">← {ui(lang, "首頁", "Home")}</a>
+      <span class="day-nav__home" aria-current="page">{ui(lang, current_zh, current_en)}</span>
+      <span class="day-nav__next" aria-disabled="true">{ui(lang, "後一日", "Next")} →</span>
     </nav>
-    <main id="main">
-      <h1>{bilingual("如何把這個網站變成手機 App？", "How do I turn this website into a phone app?")}</h1>
-      <p class="lede">{bilingual("為了方便每天家庭靈修時快速打開，建議你將它設定到手機桌面上。", "Add it to the home screen so the family devotion is quick to open each day.")}</p>
-      <p id="install-done" class="install-done" hidden>{bilingual("你已經從主頁的圖示打開。", "You already opened this from the home-screen icon.")}</p>
-      <p id="install-now-wrap" class="install-now-wrap" hidden>{bilingual("這個瀏覽器可以直接安裝，按下面的按鈕即可。", "This browser can install it directly.")}<br /><button type="button" class="install-now" id="install-now">{bilingual("安裝", "Install")}</button></p>
+"""
+
+
+def _about_html(lang: str) -> str:
+    body = _ABOUT_BODY_EN if lang == "en" else _ABOUT_BODY_ZH
+    if lang == "en":
+        note = (
+            '      <p class="home-screen-note">To open this from the phone’s home screen, '
+            'see <a href="install.html">how to add it</a>.</p>\n'
+        )
+    else:
+        note = (
+            '      <p class="home-screen-note">想從手機主頁打開，見'
+            '<a href="install.html">加到主畫面</a>。</p>\n'
+        )
+    return _shell_page(
+        lang=lang,
+        filename="about.html",
+        title=pick(lang, "關於 · 摩拉維亞每日箴言", "About · Moravian Daily Texts"),
+        description=pick(lang, _ABOUT_DESCRIPTION, _ABOUT_DESCRIPTION_EN),
+        body=body + note,
+        extra_class="about-page",
+        footer_blurb=False,
+        nav_html=_page_nav(lang, "關於", "About"),
+    )
+
+def _install_html(lang: str) -> str:
+    prefix = "../" if lang == "en" else ""
+    if lang == "en":
+        alts = (
+            "Chrome menu at the top right, with Install or Create shortcut marked",
+            "Install dialog, with the install button marked",
+            "A notice that Daily Texts has been installed",
+            "The Daily Texts icon on the phone home screen",
+        )
+    else:
+        alts = (
+            "Chrome 右上角選單，安裝或建立捷徑被標出",
+            "安裝視窗，安裝按鈕被標出",
+            "通知寫著每日箴言已安裝",
+            "手機桌面上的每日箴言圖示",
+        )
+    body = f"""\
+      <h1>{ui(lang, "如何把這個網站變成手機 App？", "How do I turn this website into a phone app?")}</h1>
+      <p class="lede">{ui(lang, "為了方便每天家庭靈修時快速打開，建議你將它設定到手機桌面上。", "Add it to the home screen so the family devotion is quick to open each day.")}</p>
+      <p id="install-done" class="install-done" hidden>{ui(lang, "你已經從主頁的圖示打開。", "You already opened this from the home-screen icon.")}</p>
+      <p id="install-now-wrap" class="install-now-wrap" hidden>{ui(lang, "這個瀏覽器可以直接安裝，按下面的按鈕即可。", "This browser can install it directly.")}<br /><button type="button" class="install-now" id="install-now">{ui(lang, "安裝", "Install")}</button></p>
 
       <section class="install-aside" aria-labelledby="install-iphone">
-        <h2 id="install-iphone">{bilingual("蘋果手機（iPhone / Safari）", "iPhone (Safari)")}</h2>
+        <h2 id="install-iphone">{ui(lang, "蘋果手機（iPhone / Safari）", "iPhone (Safari)")}</h2>
         <ol class="install-steps">
-          <li class="install-step"><p>{bilingual("用 Safari 瀏覽器打開這個網址。", "Open this site in Safari.")}</p></li>
-          <li class="install-step"><p>{bilingual("點擊畫面下方的「分享」圖示（一個正方形帶有向上箭頭）。", "Tap the Share icon at the bottom of the screen (a square with an arrow pointing up).")}</p></li>
-          <li class="install-step"><p>{bilingual("往下滑動，選擇「加入主畫面」（Add to Home Screen）。", "Scroll down and choose “Add to Home Screen”.")}</p></li>
-          <li class="install-step"><p>{bilingual("命名為「摩拉維亞每日箴言」，點擊右上角「新增」即可。", "Name it 摩拉維亞每日箴言, then tap Add at the top right.")}</p></li>
+          <li class="install-step"><p>{ui(lang, "用 Safari 瀏覽器打開這個網址。", "Open this site in Safari.")}</p></li>
+          <li class="install-step"><p>{ui(lang, "點擊畫面下方的「分享」圖示（一個正方形帶有向上箭頭）。", "Tap the Share icon at the bottom of the screen (a square with an arrow pointing up).")}</p></li>
+          <li class="install-step"><p>{ui(lang, "往下滑動，選擇「加入主畫面」（Add to Home Screen）。", "Scroll down and choose “Add to Home Screen”.")}</p></li>
+          <li class="install-step"><p>{ui(lang, "命名為「摩拉維亞每日箴言」，點擊右上角「新增」即可。", "Name it 摩拉維亞每日箴言, then tap Add at the top right.")}</p></li>
         </ol>
       </section>
 
       <section class="install-aside" aria-labelledby="install-android">
-        <h2 id="install-android">{bilingual("安卓手機（Android / Chrome）", "Android (Chrome)")}</h2>
+        <h2 id="install-android">{ui(lang, "安卓手機（Android / Chrome）", "Android (Chrome)")}</h2>
         <ol class="install-steps">
           <li class="install-step">
-            <p>{bilingual("用 Chrome 瀏覽器打開這個網址。", "Open this site in Chrome.")}</p>
+            <p>{ui(lang, "用 Chrome 瀏覽器打開這個網址。", "Open this site in Chrome.")}</p>
           </li>
           <li class="install-step">
-            <p>{bilingual("點擊右上角的「三個點」功能選單。", "Tap the three-dot menu at the top right.")}</p>
+            <p>{ui(lang, "點擊右上角的「三個點」功能選單。", "Tap the three-dot menu at the top right.")}</p>
             <figure>
-              <img src="install/step2.jpg" width="1080" height="2085" alt="Chrome 右上角選單，安裝或建立捷徑被標出" />
+              <img src="{prefix}install/step2.jpg" width="1080" height="2085" alt="{escape(alts[0], quote=True)}" />
             </figure>
           </li>
           <li class="install-step">
-            <p>{bilingual("選擇「安裝應用程式」或「加入主畫面」。", "Choose “Install app” or “Add to Home screen”.")}</p>
+            <p>{ui(lang, "選擇「安裝應用程式」或「加入主畫面」。", "Choose “Install app” or “Add to Home screen”.")}</p>
             <figure>
-              <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，安裝按鈕被標出" />
+              <img src="{prefix}install/step3.jpg" width="1075" height="2108" alt="{escape(alts[1], quote=True)}" />
             </figure>
             <figure>
-              <img class="install-shot--banner" src="install/almostdone.jpg" width="1077" height="281" alt="通知寫著每日箴言已安裝" />
+              <img class="install-shot--banner" src="{prefix}install/almostdone.jpg" width="1077" height="281" alt="{escape(alts[2], quote=True)}" />
             </figure>
           </li>
           <li class="install-step">
-            <p>{bilingual("確認後，手機桌面就會出現一個像 App 一樣的快捷圖示。", "After you confirm, a shortcut that looks like an app appears on the home screen.")}</p>
+            <p>{ui(lang, "確認後，手機桌面就會出現一個像 App 一樣的快捷圖示。", "After you confirm, a shortcut that looks like an app appears on the home screen.")}</p>
             <figure>
-              <img src="install/installed.jpg" width="1079" height="1539" alt="手機桌面上的每日箴言圖示" />
+              <img src="{prefix}install/installed.jpg" width="1079" height="1539" alt="{escape(alts[3], quote=True)}" />
             </figure>
           </li>
         </ol>
       </section>
-    </main>
-    <footer class="site-foot">
-      <p class="foot-credit">{bilingual("摩拉維亞每日箴言 · 中文整理", "Moravian Daily Texts")}</p>
-      {LOSUNGEN_ATTRIBUTION_HTML}
-    </footer>
-{TABBAR_HTML}  </div>
-</body>
-</html>
 """
+    return _shell_page(
+        lang=lang,
+        filename="install.html",
+        title=pick(lang, "加到手機主頁 · 摩拉維亞每日箴言", "Add to Phone · Moravian Daily Texts"),
+        description=pick(lang, _INSTALL_DESCRIPTION, _INSTALL_DESCRIPTION_EN),
+        body=body,
+        extra_class="install-page",
+        footer_blurb=False,
+        nav_html=_page_nav(lang, "加到手機主頁", "Add to Phone"),
+    )

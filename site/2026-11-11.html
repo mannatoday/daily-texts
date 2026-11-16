@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-page-lang="zh" data-href-zh="2026-11-11.html" data-href-en="en/2026-11-11.html">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KK8K4PQW21"></script>
@@ -14,28 +14,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="11 月 11 日每日靈修經文。舊約彌迦書 7:7，新約馬太福音 7:8。" />
-  <title data-zh="2026 年 11 月 11 日（星期三） · 摩拉維亞每日箴言" data-en="Wednesday, November 11, 2026 · Moravian Daily Texts">2026 年 11 月 11 日（星期三） · 摩拉維亞每日箴言</title>
+  <title>2026 年 11 月 11 日（星期三） · 摩拉維亞每日箴言</title>
   <script>
   (function () {
     try {
+      var root = document.documentElement;
+      var page = root.getAttribute("data-page-lang") === "en" ? "en" : "zh";
       var params = new URLSearchParams(window.location.search);
-      var lang = params.get("lang");
-      if (lang !== "en" && lang !== "zh") {
-        var version = params.get("version");
-        if (version === "KJV" || version === "NIV") lang = "en";
-        else if (version) lang = "zh";
-        else lang = window.localStorage.getItem("dailyTexts.lang");
+      var qLang = params.get("lang");
+      var version = params.get("version");
+      var english = { NIV: 1, KJV: 1 };
+      var chinese = { CUV: 1, RCUV: 1, CNVT: 1, CSBT: 1, WCB: 1 };
+      var target = null;
+      if (qLang === "en" || qLang === "zh") target = qLang;
+      else if (version && english[version]) target = "en";
+      else if (version && chinese[version]) target = "zh";
+      else {
+        try {
+          var saved = window.localStorage.getItem("dailyTexts.lang");
+          if (saved === "en" || saved === "zh") target = saved;
+        } catch (err) {}
       }
-      if (lang === "en") {
-        document.documentElement.setAttribute("data-lang", "en");
-        document.documentElement.lang = "en";
-        var title = document.querySelector("title");
-        var english = title && title.getAttribute("data-en");
-        if (english) title.textContent = english;
+      var explicit = qLang === "en" || qLang === "zh" ||
+        !!(version && (english[version] || chinese[version]));
+      if (explicit && target) {
+        try { window.localStorage.setItem("dailyTexts.lang", target); } catch (err) {}
       }
+      if (!target || target === page) return;
+      var href = root.getAttribute(target === "en" ? "data-href-en" : "data-href-zh");
+      if (!href) return;
+      var url = new URL(href, window.location.href);
+      if (version && ((target === "en" && english[version]) || (target === "zh" && chinese[version]))) {
+        url.searchParams.set("version", version);
+      }
+      window.__dailyTextsRedirect = true;
+      window.location.replace(url.toString());
     } catch (err) {}
   })();
   </script>
+  <link rel="canonical" href="https://mannatoday.github.io/daily-texts/2026-11-11.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://mannatoday.github.io/daily-texts/2026-11-11.html" />
+  <link rel="alternate" hreflang="en" href="https://mannatoday.github.io/daily-texts/en/2026-11-11.html" />
+  <link rel="alternate" hreflang="x-default" href="https://mannatoday.github.io/daily-texts/2026-11-11.html" />
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -53,14 +73,14 @@
   <script src="share.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
+  <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">
   <div class="version-picker">
     <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
-      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+      <a class="lang-toggle__btn" href="2026-11-11.html" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh" aria-current="page">中文</a>
+      <a class="lang-toggle__btn" href="en/2026-11-11.html" hreflang="en" lang="en" data-set-lang="en">EN</a>
     </div>
-    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
+    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -72,45 +92,45 @@
   <main id="main">
     <article>
     <nav class="day-nav day-nav--date" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-11-10.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
-    <h1><span class="i18n-zh">2026 年 11 月 11 日（星期三）</span><span class="i18n-en">Wednesday, November 11, 2026</span></h1>
-    <a class="day-nav__next" href="2026-11-12.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
+    <a class="day-nav__prev" href="2026-11-10.html">← 前一日</a>
+    <h1>2026 年 11 月 11 日（星期三）</h1>
+    <a class="day-nav__next" href="2026-11-12.html">後一日 →</a>
 </nav>
     <div class="day-share">
-    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
+    <h2>舊約</h2>
     <p class="verse" data-verse="ot">至於我，我要仰望耶和華， 等候那救我的上帝； 我的上帝必應允我。</p>
-    <p class="ref">— <span class="i18n-zh">彌迦書 7:7</span><span class="i18n-en">Micah 7:7</span></p>
-    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
+    <p class="ref">— 彌迦書 7:7</p>
+    <h2>新約</h2>
     <p class="verse" data-verse="nt">因為凡祈求的，就得着；尋找的，就找到；叩門的，就給他開門。</p>
-    <p class="ref">— <span class="i18n-zh">馬太福音 7:8</span><span class="i18n-en">Matthew 7:8</span></p>
+    <p class="ref">— 馬太福音 7:8</p>
     <div class="prayer-block">
-    <h2><span class="i18n-zh">今日禱文</span><span class="i18n-en">Prayer</span></h2>
+    <h2>今日禱文</h2>
     <p class="prayer">我心遑遑。惟主是望。望主一言。慰我愁腸。長夜漫漫。惟主是盼。盼主不至。坐以待旦。</p>
     <p class="prayer-source">— 吳經熊〈聖詠譯義（詩篇130待旦）〉</p>
     </div>
     <div class="share-bar">
       <button type="button" class="share-btn" id="share-day">
         <span class="share-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19c0-7 5-11 11-11h5"/><polyline points="16 4 21 8 16 12"/></svg></span>
-        <span class="share-btn__label"><span class="i18n-zh">分享今日經文</span><span class="i18n-en">Share today’s reading</span></span>
+        <span class="share-btn__label">分享今日經文</span>
       </button>
       <span id="share-status" class="share-status" hidden></span>
     </div>
     </div>
-    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 121</span><span class="i18n-en">Psalm 121</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20121&amp;version=RCU17TS" data-ref="Psalm 121" data-label-zh="詩篇 121" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 121"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">列王紀上 4</span><span class="i18n-en">1 Kings 4</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Kings%204&amp;version=RCU17TS" data-ref="1 Kings 4" data-label-zh="列王紀上 4" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 列王紀上 4"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 17:1–26</span><span class="i18n-en">John 17:1-26</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%2017%3A1-26&amp;version=RCU17TS" data-ref="John 17:1-26" data-label-zh="約翰福音 17:1–26" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 17:1–26"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <h2>經文選讀</h2>
+    <p class="reading"><span class="reading__ref">詩篇 121</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%20121&amp;version=RCU17TS" data-ref="Psalm 121" data-label-zh="詩篇 121" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 121">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">列王紀上 4</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=1%20Kings%204&amp;version=RCU17TS" data-ref="1 Kings 4" data-label-zh="列王紀上 4" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 列王紀上 4">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">約翰福音 17:1–26</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%2017%3A1-26&amp;version=RCU17TS" data-ref="John 17:1-26" data-label-zh="約翰福音 17:1–26" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 17:1–26">[閱讀]</a></p>
     </article>
   </main>
   <footer class="site-foot">
-    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
+    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
   </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-11-11","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 11 月 11 日（星期三）","date_title_en":"Wednesday, November 11, 2026","week_watchword":null,"ot":{"reference":"Micah 7:7","reference_zh":"彌迦書 7:7","translations":{"CUV":"至於我，我要仰望耶和華，要等候那救我的 神；我的 神必應允我。","RCUV":"至於我，我要仰望耶和華， 等候那救我的上帝； 我的上帝必應允我。","CNVT":"至於我，我卻要仰望耶和華，我要等候那拯救我的 神；我的 神必應允我。","CSBT":"但我仍要守候耶和華， 等候神我的救主， 我的神必垂聽我。","WCB":"而我，我仰望的是耶和華， 我要等候那位拯救我的 神； 我的 神會垂聽我的祈禱。","NIV":"But as for me, I watch in hope for the Lord, I wait for God my Savior; my God will hear me.","KJV":"Therefore I will look unto the LORD; I will wait for the God of my salvation: my God will hear me."},"fums":{"NIV":"GzcBoBwHbqxlyoOgvR4E_P0kP37V-mkFslFUJEtXX-isOz0o_9vlcP_egjD5WpZnklhJkAYyHRpOUEgEOxnd8c_zdgD9shqaz7vOZVpXybqw8iEYW6Sx-oniXY96ncrmYHGPM0Yw78KfPVa9BUQCTg2cecBq8HMbaa20HuNXKC1YZYwZg-19MvV5WwLItPN0ohCyJ0tmR6xg9Tze73RbpVmKoSzkcjmfyVCFLMsiLWS_nOaFd35ZTGE"}},"nt":{"reference":"Matthew 7:8","reference_zh":"馬太福音 7:8","translations":{"CUV":"因為凡祈求的，就得著；尋找的，就尋見；叩門的，就給他開門。","RCUV":"因為凡祈求的，就得着；尋找的，就找到；叩門的，就給他開門。","CNVT":"因為凡祈求的就得著，尋找的就尋見，叩門的就給他開門。","CSBT":"因為凡祈求的，就得到；尋找的，就找到；敲門的，就為他開門。","WCB":"因為凡祈求的就得到，尋找的就尋見，叩門的就會給他開門。","NIV":"For everyone who asks receives; the one who seeks finds; and to the one who knocks, the door will be opened.","KJV":"For every one that asketh receiveth; and he that seeketh findeth; and to him that knocketh it shall be opened."},"fums":{"NIV":"GzcBQIzTFfOihHUPAjom-fFX2zBttFFUtA5LV9-37TruVvA4_II4nL1o1e-dzqzZDYLYHCURk_Fn3rZ_nrcD0C-ruXm861ymdZWsCysfgrFFGqtf6XjXw85IZVWI-hbOGMHJE3_arLoLYE4o5bDHg1cDn7eS1krrSb6F0oJXzqcxsb0fpzxvSzAybaROBIb4yRLbEVaweh7va_0sFjVlv5rJ6MpKhrpYyjI1Xs5tDvSLYhamLDg"}},"prayer":"我心遑遑。惟主是望。望主一言。慰我愁腸。長夜漫漫。惟主是盼。盼主不至。坐以待旦。","readings":[{"reference":"Psalm 121","reference_zh":"詩篇 121"},{"reference":"1 Kings 4","reference_zh":"列王紀上 4"},{"reference":"John 17:1-26","reference_zh":"約翰福音 17:1–26"}],"source_url":"dataset://days_2026_q4/2026-11-11","translation":{"provider":"dataset","status":"already_zh","source_chars":40,"result_chars":40,"kept_english":false}}</script>

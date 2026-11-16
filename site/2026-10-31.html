@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-page-lang="zh" data-href-zh="2026-10-31.html" data-href-en="en/2026-10-31.html">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KK8K4PQW21"></script>
@@ -14,28 +14,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="10 月 31 日每日靈修經文。舊約箴言 10:2，新約羅馬書 3:24。" />
-  <title data-zh="2026 年 10 月 31 日（星期六）（宗教改革紀念日） · 摩拉維亞每日箴言" data-en="Saturday, October 31, 2026 (Reformation Day) · Moravian Daily Texts">2026 年 10 月 31 日（星期六）（宗教改革紀念日） · 摩拉維亞每日箴言</title>
+  <title>2026 年 10 月 31 日（星期六）（宗教改革紀念日） · 摩拉維亞每日箴言</title>
   <script>
   (function () {
     try {
+      var root = document.documentElement;
+      var page = root.getAttribute("data-page-lang") === "en" ? "en" : "zh";
       var params = new URLSearchParams(window.location.search);
-      var lang = params.get("lang");
-      if (lang !== "en" && lang !== "zh") {
-        var version = params.get("version");
-        if (version === "KJV" || version === "NIV") lang = "en";
-        else if (version) lang = "zh";
-        else lang = window.localStorage.getItem("dailyTexts.lang");
+      var qLang = params.get("lang");
+      var version = params.get("version");
+      var english = { NIV: 1, KJV: 1 };
+      var chinese = { CUV: 1, RCUV: 1, CNVT: 1, CSBT: 1, WCB: 1 };
+      var target = null;
+      if (qLang === "en" || qLang === "zh") target = qLang;
+      else if (version && english[version]) target = "en";
+      else if (version && chinese[version]) target = "zh";
+      else {
+        try {
+          var saved = window.localStorage.getItem("dailyTexts.lang");
+          if (saved === "en" || saved === "zh") target = saved;
+        } catch (err) {}
       }
-      if (lang === "en") {
-        document.documentElement.setAttribute("data-lang", "en");
-        document.documentElement.lang = "en";
-        var title = document.querySelector("title");
-        var english = title && title.getAttribute("data-en");
-        if (english) title.textContent = english;
+      var explicit = qLang === "en" || qLang === "zh" ||
+        !!(version && (english[version] || chinese[version]));
+      if (explicit && target) {
+        try { window.localStorage.setItem("dailyTexts.lang", target); } catch (err) {}
       }
+      if (!target || target === page) return;
+      var href = root.getAttribute(target === "en" ? "data-href-en" : "data-href-zh");
+      if (!href) return;
+      var url = new URL(href, window.location.href);
+      if (version && ((target === "en" && english[version]) || (target === "zh" && chinese[version]))) {
+        url.searchParams.set("version", version);
+      }
+      window.__dailyTextsRedirect = true;
+      window.location.replace(url.toString());
     } catch (err) {}
   })();
   </script>
+  <link rel="canonical" href="https://mannatoday.github.io/daily-texts/2026-10-31.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://mannatoday.github.io/daily-texts/2026-10-31.html" />
+  <link rel="alternate" hreflang="en" href="https://mannatoday.github.io/daily-texts/en/2026-10-31.html" />
+  <link rel="alternate" hreflang="x-default" href="https://mannatoday.github.io/daily-texts/2026-10-31.html" />
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -53,14 +73,14 @@
   <script src="share.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
+  <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell">
   <div class="version-picker">
     <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
-      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+      <a class="lang-toggle__btn" href="2026-10-31.html" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh" aria-current="page">中文</a>
+      <a class="lang-toggle__btn" href="en/2026-10-31.html" hreflang="en" lang="en" data-set-lang="en">EN</a>
     </div>
-    <label class="version-picker__label" for="bible-version"><span class="i18n-zh">閱讀譯本</span><span class="i18n-en">Version</span></label>
+    <label class="version-picker__label" for="bible-version">閱讀譯本</label>
     <select id="bible-version" class="version-picker__select" autocomplete="off">
       <option value="CUV">和合本</option>
       <option value="RCUV" selected>和合本修訂版</option>
@@ -72,46 +92,46 @@
   <main id="main">
     <article>
     <nav class="day-nav day-nav--date" aria-label="日期導覽">
-    <a class="day-nav__prev" href="2026-10-30.html">← <span class="i18n-zh">前一日</span><span class="i18n-en">Previous</span></a>
-    <h1><span class="i18n-zh">2026 年 10 月 31 日（星期六）（宗教改革紀念日）</span><span class="i18n-en">Saturday, October 31, 2026 (Reformation Day)</span></h1>
-    <a class="day-nav__next" href="2026-11-01.html"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</a>
-    </nav>
+    <a class="day-nav__prev" href="2026-10-30.html">← 前一日</a>
+    <h1>2026 年 10 月 31 日（星期六）（宗教改革紀念日）</h1>
+    <a class="day-nav__next" href="2026-11-01.html">後一日 →</a>
+</nav>
     <div class="day-share">
-    <h2><span class="i18n-zh">舊約</span><span class="i18n-en">Old Testament</span></h2>
+    <h2>舊約</h2>
     <p class="verse" data-verse="ot">不義之財毫無益處； 惟有公義能救人脫離死亡。</p>
-    <p class="ref">— <span class="i18n-zh">箴言 10:2</span><span class="i18n-en">Proverbs 10:2</span></p>
-    <h2><span class="i18n-zh">新約</span><span class="i18n-en">New Testament</span></h2>
+    <p class="ref">— 箴言 10:2</p>
+    <h2>新約</h2>
     <p class="verse" data-verse="nt">如今卻蒙上帝的恩典，藉着在基督耶穌裏的救贖，就白白地得稱為義。</p>
-    <p class="ref">— <span class="i18n-zh">羅馬書 3:24</span><span class="i18n-en">Romans 3:24</span></p>
+    <p class="ref">— 羅馬書 3:24</p>
     <div class="prayer-block">
-    <h2><span class="i18n-zh">今日禱文</span><span class="i18n-en">Prayer</span></h2>
+    <h2>今日禱文</h2>
     <p class="prayer">縱使勤勞直到死，一生流淚永不止，依舊不能贖罪過，惟有耶穌能救我，兩手空空無代價，祇靠救主十字架。</p>
     <p class="prayer-source">— Augustus M. Toplady〈萬古磐石 (Rock of Ages)〉 <a class="prayer-listen" href="https://www.youtube.com/watch?v=GAfAko5dwoM" target="_blank" rel="noopener noreferrer" aria-label="在 YouTube 聆聽這首詩歌">&#9834; 聆聽詩歌</a></p>
     </div>
     <div class="share-bar">
       <button type="button" class="share-btn" id="share-day">
         <span class="share-btn__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19c0-7 5-11 11-11h5"/><polyline points="16 4 21 8 16 12"/></svg></span>
-        <span class="share-btn__label"><span class="i18n-zh">分享今日經文</span><span class="i18n-en">Share today’s reading</span></span>
+        <span class="share-btn__label">分享今日經文</span>
       </button>
       <span id="share-status" class="share-status" hidden></span>
     </div>
     </div>
-    <h2><span class="i18n-zh">經文選讀</span><span class="i18n-en">Readings</span></h2>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">詩篇 46</span><span class="i18n-en">Psalm 46</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%2046&amp;version=RCU17TS" data-ref="Psalm 46" data-label-zh="詩篇 46" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 46"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">耶利米書 31:31–34</span><span class="i18n-en">Jeremiah 31:31-34</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Jeremiah%2031%3A31-34&amp;version=RCU17TS" data-ref="Jeremiah 31:31-34" data-label-zh="耶利米書 31:31–34" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 耶利米書 31:31–34"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">羅馬書 3:19–28</span><span class="i18n-en">Romans 3:19-28</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Romans%203%3A19-28&amp;version=RCU17TS" data-ref="Romans 3:19-28" data-label-zh="羅馬書 3:19–28" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 羅馬書 3:19–28"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
-    <p class="reading"><span class="reading__ref"><span class="i18n-zh">約翰福音 8:31–36</span><span class="i18n-en">John 8:31-36</span></span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%208%3A31-36&amp;version=RCU17TS" data-ref="John 8:31-36" data-label-zh="約翰福音 8:31–36" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 8:31–36"><span class="i18n-zh">[閱讀]</span><span class="i18n-en">[Read]</span></a></p>
+    <h2>經文選讀</h2>
+    <p class="reading"><span class="reading__ref">詩篇 46</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Psalm%2046&amp;version=RCU17TS" data-ref="Psalm 46" data-label-zh="詩篇 46" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 詩篇 46">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">耶利米書 31:31–34</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Jeremiah%2031%3A31-34&amp;version=RCU17TS" data-ref="Jeremiah 31:31-34" data-label-zh="耶利米書 31:31–34" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 耶利米書 31:31–34">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">羅馬書 3:19–28</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=Romans%203%3A19-28&amp;version=RCU17TS" data-ref="Romans 3:19-28" data-label-zh="羅馬書 3:19–28" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 羅馬書 3:19–28">[閱讀]</a></p>
+    <p class="reading"><span class="reading__ref">約翰福音 8:31–36</span><a class="reading__open" href="https://www.biblegateway.com/passage/?search=John%208%3A31-36&amp;version=RCU17TS" data-ref="John 8:31-36" data-label-zh="約翰福音 8:31–36" target="_blank" rel="noopener noreferrer" title="在 Bible Gateway 閱讀" aria-label="閱讀 約翰福音 8:31–36">[閱讀]</a></p>
     </article>
   </main>
   <footer class="site-foot">
-    <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
+    <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
     <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     <p id="version-notice" class="version-notice" hidden>經文引自《環球聖經譯本》，版權屬於環球聖經公會。</p>
   </footer>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
   </nav>
   </div>
   <script type="application/json" id="day-data">{"date":"2026-10-31","default_version":"RCUV","default_english_version":"NIV","versions":[{"code":"CUV","label":"和合本"},{"code":"RCUV","label":"和合本修訂版"},{"code":"CNVT","label":"新譯本"},{"code":"CSBT","label":"中文標準譯本"},{"code":"WCB","label":"環球聖經譯本"}],"english_versions":[{"code":"NIV","label":"NIV"},{"code":"KJV","label":"KJV"}],"gateway":{"CUV":"CUV","RCUV":"RCU17TS","CNVT":"CNVT","CSBT":"CSBT","KJV":"KJV","NIV":"NIV"},"notices":{"WCB":"經文引自《環球聖經譯本》，版權屬於環球聖經公會。","NIV":"Scripture quotations taken from The Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™ Used by permission. All rights reserved worldwide."},"date_title_zh":"2026 年 10 月 31 日（星期六）（宗教改革紀念日）","date_title_en":"Saturday, October 31, 2026 (Reformation Day)","week_watchword":null,"ot":{"reference":"Proverbs 10:2","reference_zh":"箴言 10:2","translations":{"CUV":"不義之財毫無益處；惟有公義能救人脫離死亡。","RCUV":"不義之財毫無益處； 惟有公義能救人脫離死亡。","CNVT":"不義之財毫無益處，唯有公義能救人脫離死亡。","CSBT":"不義之財沒有益處， 唯有公義解救人脫離死亡。","WCB":"不義之財無益； 公義救人免死。","NIV":"Ill-gotten treasures have no lasting value, but righteousness delivers from death.","KJV":"Treasures of wickedness profit nothing: but righteousness delivereth from death."},"fums":{"NIV":"GzoBiBwHbqxlyoOgvZ5Fa0t98p7MiYX26YEISUySpasvdNadHpR_OBzs23c43lqWt8gTqzBIAtlcEjGZjQqi5T_79o_n7QCYFw2az7vJZVpXiS6sfAiWRVmaE53vZjDqNa12gHoNZ63g4YE_WmbdAjADKCXYfeCqwPcWilT0kG8ht-g1ixsDtvfr5PO2BJFug8NEIOQnS7YtKFg9j_ddr2W5qPM4m6uYVnMV4sqq2WJuw3qWCvMyhHl1GA"}},"nt":{"reference":"Romans 3:24","reference_zh":"羅馬書 3:24","translations":{"CUV":"如今卻蒙 神的恩典，因基督耶穌的救贖，就白白地稱義。","RCUV":"如今卻蒙上帝的恩典，藉着在基督耶穌裏的救贖，就白白地得稱為義。","CNVT":"但他們卻因著 神的恩典，藉著在基督耶穌裡的救贖，就白白地稱義。","CSBT":"但藉著神的恩典，藉著在基督耶穌裡的救贖，卻無償地被稱為義。","WCB":"但是靠著 神的恩典，藉著在基督耶穌裡的救贖，就蒙贈予稱義。","NIV":"and all are justified freely by his grace through the redemption that came by Christ Jesus.","KJV":"Being justified freely by his grace through the redemption that is in Christ Jesus:"},"fums":{"NIV":"GzoBYJwHtmOXCgaDm8IzcEnDNZWPvkKuZeHeTm4KCJKlqy90qunp6WmgXBAE1taCMGu3-3fyC_54vRxic5RETOYXvW37x_N2ANyLDpvHuyt12laZGlchRs9qPN2Sznc3ygarEZDfQr0XnDzwR5nVsADMAEoh7D4Aq8DrLYY0DCjfYukp2ejrGLC9XyeftyUgGdZymgiEAMoS3B4UrJ7H-1xf0XNVCtUkTQsTl9NqWlrMDLW0P6jUnD0G"}},"prayer":"縱使勤勞直到死，一生流淚永不止，依舊不能贖罪過，惟有耶穌能救我，兩手空空無代價，祇靠救主十字架。","readings":[{"reference":"Psalm 46","reference_zh":"詩篇 46"},{"reference":"Jeremiah 31:31-34","reference_zh":"耶利米書 31:31–34"},{"reference":"Romans 3:19-28","reference_zh":"羅馬書 3:19–28"},{"reference":"John 8:31-36","reference_zh":"約翰福音 8:31–36"}],"source_url":"dataset://days_2026_q4/2026-10-31","translation":{"provider":"dataset","status":"already_zh","source_chars":48,"result_chars":48,"kept_english":false}}</script>

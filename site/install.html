@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-page-lang="zh" data-href-zh="install.html" data-href-en="en/install.html">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KK8K4PQW21"></script>
@@ -14,28 +14,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="把摩拉維亞每日箴言加到手機主頁" />
-  <title data-zh="加到手機主頁 · 摩拉維亞每日箴言" data-en="Add to Phone · Moravian Daily Texts">加到手機主頁 · 摩拉維亞每日箴言</title>
+  <title>加到手機主頁 · 摩拉維亞每日箴言</title>
   <script>
   (function () {
     try {
+      var root = document.documentElement;
+      var page = root.getAttribute("data-page-lang") === "en" ? "en" : "zh";
       var params = new URLSearchParams(window.location.search);
-      var lang = params.get("lang");
-      if (lang !== "en" && lang !== "zh") {
-        var version = params.get("version");
-        if (version === "KJV" || version === "NIV") lang = "en";
-        else if (version) lang = "zh";
-        else lang = window.localStorage.getItem("dailyTexts.lang");
+      var qLang = params.get("lang");
+      var version = params.get("version");
+      var english = { NIV: 1, KJV: 1 };
+      var chinese = { CUV: 1, RCUV: 1, CNVT: 1, CSBT: 1, WCB: 1 };
+      var target = null;
+      if (qLang === "en" || qLang === "zh") target = qLang;
+      else if (version && english[version]) target = "en";
+      else if (version && chinese[version]) target = "zh";
+      else {
+        try {
+          var saved = window.localStorage.getItem("dailyTexts.lang");
+          if (saved === "en" || saved === "zh") target = saved;
+        } catch (err) {}
       }
-      if (lang === "en") {
-        document.documentElement.setAttribute("data-lang", "en");
-        document.documentElement.lang = "en";
-        var title = document.querySelector("title");
-        var english = title && title.getAttribute("data-en");
-        if (english) title.textContent = english;
+      var explicit = qLang === "en" || qLang === "zh" ||
+        !!(version && (english[version] || chinese[version]));
+      if (explicit && target) {
+        try { window.localStorage.setItem("dailyTexts.lang", target); } catch (err) {}
       }
+      if (!target || target === page) return;
+      var href = root.getAttribute(target === "en" ? "data-href-en" : "data-href-zh");
+      if (!href) return;
+      var url = new URL(href, window.location.href);
+      if (version && ((target === "en" && english[version]) || (target === "zh" && chinese[version]))) {
+        url.searchParams.set("version", version);
+      }
+      window.__dailyTextsRedirect = true;
+      window.location.replace(url.toString());
     } catch (err) {}
   })();
   </script>
+  <link rel="canonical" href="https://mannatoday.github.io/daily-texts/install.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://mannatoday.github.io/daily-texts/install.html" />
+  <link rel="alternate" hreflang="en" href="https://mannatoday.github.io/daily-texts/en/install.html" />
+  <link rel="alternate" hreflang="x-default" href="https://mannatoday.github.io/daily-texts/install.html" />
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" href="icon.png?v=4" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4" />
@@ -52,49 +72,49 @@
   <script src="install.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main"><span class="i18n-zh">跳至內容</span><span class="i18n-en">Skip to content</span></a>
+  <a class="skip-link" href="#main">跳至內容</a>
   <div class="site-shell install-page">
   <div class="version-picker">
     <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" class="lang-toggle__btn" data-set-lang="zh" aria-pressed="true">中文</button>
-      <button type="button" class="lang-toggle__btn" data-set-lang="en" aria-pressed="false">EN</button>
+      <a class="lang-toggle__btn" href="install.html" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh" aria-current="page">中文</a>
+      <a class="lang-toggle__btn" href="en/install.html" hreflang="en" lang="en" data-set-lang="en">EN</a>
     </div>
   </div>
     <nav class="day-nav" aria-label="網站導覽">
-      <a class="day-nav__prev" href="index.html">← <span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></a>
-      <span class="day-nav__home" aria-current="page"><span class="i18n-zh">加到手機主頁</span><span class="i18n-en">Add to Phone</span></span>
-      <span class="day-nav__next" aria-disabled="true"><span class="i18n-zh">後一日</span><span class="i18n-en">Next</span> →</span>
+      <a class="day-nav__prev" href="index.html">← 首頁</a>
+      <span class="day-nav__home" aria-current="page">加到手機主頁</span>
+      <span class="day-nav__next" aria-disabled="true">後一日 →</span>
     </nav>
     <main id="main">
-      <h1><span class="i18n-zh">如何把這個網站變成手機 App？</span><span class="i18n-en">How do I turn this website into a phone app?</span></h1>
-      <p class="lede"><span class="i18n-zh">為了方便每天家庭靈修時快速打開，建議你將它設定到手機桌面上。</span><span class="i18n-en">Add it to the home screen so the family devotion is quick to open each day.</span></p>
-      <p id="install-done" class="install-done" hidden><span class="i18n-zh">你已經從主頁的圖示打開。</span><span class="i18n-en">You already opened this from the home-screen icon.</span></p>
-      <p id="install-now-wrap" class="install-now-wrap" hidden><span class="i18n-zh">這個瀏覽器可以直接安裝，按下面的按鈕即可。</span><span class="i18n-en">This browser can install it directly.</span><br /><button type="button" class="install-now" id="install-now"><span class="i18n-zh">安裝</span><span class="i18n-en">Install</span></button></p>
+      <h1>如何把這個網站變成手機 App？</h1>
+      <p class="lede">為了方便每天家庭靈修時快速打開，建議你將它設定到手機桌面上。</p>
+      <p id="install-done" class="install-done" hidden>你已經從主頁的圖示打開。</p>
+      <p id="install-now-wrap" class="install-now-wrap" hidden>這個瀏覽器可以直接安裝，按下面的按鈕即可。<br /><button type="button" class="install-now" id="install-now">安裝</button></p>
 
       <section class="install-aside" aria-labelledby="install-iphone">
-        <h2 id="install-iphone"><span class="i18n-zh">蘋果手機（iPhone / Safari）</span><span class="i18n-en">iPhone (Safari)</span></h2>
+        <h2 id="install-iphone">蘋果手機（iPhone / Safari）</h2>
         <ol class="install-steps">
-          <li class="install-step"><p><span class="i18n-zh">用 Safari 瀏覽器打開這個網址。</span><span class="i18n-en">Open this site in Safari.</span></p></li>
-          <li class="install-step"><p><span class="i18n-zh">點擊畫面下方的「分享」圖示（一個正方形帶有向上箭頭）。</span><span class="i18n-en">Tap the Share icon at the bottom of the screen (a square with an arrow pointing up).</span></p></li>
-          <li class="install-step"><p><span class="i18n-zh">往下滑動，選擇「加入主畫面」（Add to Home Screen）。</span><span class="i18n-en">Scroll down and choose “Add to Home Screen”.</span></p></li>
-          <li class="install-step"><p><span class="i18n-zh">命名為「摩拉維亞每日箴言」，點擊右上角「新增」即可。</span><span class="i18n-en">Name it 摩拉維亞每日箴言, then tap Add at the top right.</span></p></li>
+          <li class="install-step"><p>用 Safari 瀏覽器打開這個網址。</p></li>
+          <li class="install-step"><p>點擊畫面下方的「分享」圖示（一個正方形帶有向上箭頭）。</p></li>
+          <li class="install-step"><p>往下滑動，選擇「加入主畫面」（Add to Home Screen）。</p></li>
+          <li class="install-step"><p>命名為「摩拉維亞每日箴言」，點擊右上角「新增」即可。</p></li>
         </ol>
       </section>
 
       <section class="install-aside" aria-labelledby="install-android">
-        <h2 id="install-android"><span class="i18n-zh">安卓手機（Android / Chrome）</span><span class="i18n-en">Android (Chrome)</span></h2>
+        <h2 id="install-android">安卓手機（Android / Chrome）</h2>
         <ol class="install-steps">
           <li class="install-step">
-            <p><span class="i18n-zh">用 Chrome 瀏覽器打開這個網址。</span><span class="i18n-en">Open this site in Chrome.</span></p>
+            <p>用 Chrome 瀏覽器打開這個網址。</p>
           </li>
           <li class="install-step">
-            <p><span class="i18n-zh">點擊右上角的「三個點」功能選單。</span><span class="i18n-en">Tap the three-dot menu at the top right.</span></p>
+            <p>點擊右上角的「三個點」功能選單。</p>
             <figure>
               <img src="install/step2.jpg" width="1080" height="2085" alt="Chrome 右上角選單，安裝或建立捷徑被標出" />
             </figure>
           </li>
           <li class="install-step">
-            <p><span class="i18n-zh">選擇「安裝應用程式」或「加入主畫面」。</span><span class="i18n-en">Choose “Install app” or “Add to Home screen”.</span></p>
+            <p>選擇「安裝應用程式」或「加入主畫面」。</p>
             <figure>
               <img src="install/step3.jpg" width="1075" height="2108" alt="安裝視窗，安裝按鈕被標出" />
             </figure>
@@ -103,7 +123,7 @@
             </figure>
           </li>
           <li class="install-step">
-            <p><span class="i18n-zh">確認後，手機桌面就會出現一個像 App 一樣的快捷圖示。</span><span class="i18n-en">After you confirm, a shortcut that looks like an app appears on the home screen.</span></p>
+            <p>確認後，手機桌面就會出現一個像 App 一樣的快捷圖示。</p>
             <figure>
               <img src="install/installed.jpg" width="1079" height="1539" alt="手機桌面上的每日箴言圖示" />
             </figure>
@@ -112,13 +132,13 @@
       </section>
     </main>
     <footer class="site-foot">
-      <p class="foot-credit"><span class="i18n-zh">摩拉維亞每日箴言 · 中文整理</span><span class="i18n-en">Moravian Daily Texts</span></p>
+      <p class="foot-credit">摩拉維亞每日箴言 · 中文整理</p>
       <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
     </footer>
   <nav class="tabbar" aria-label="主要導覽">
-    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label"><span class="i18n-zh">今日</span><span class="i18n-en">Today</span></span></a>
-    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label"><span class="i18n-zh">首頁</span><span class="i18n-en">Home</span></span></a>
-    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label"><span class="i18n-zh">關於</span><span class="i18n-en">About</span></span></a>
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">今日</span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">首頁</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">關於</span></a>
   </nav>
   </div>
 </body>

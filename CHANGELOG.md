@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 靜態站中英分頁：中文留在既有網址，英文在 `/en/`。每頁有該語言的 `<html lang>`、標題、描述與經文正文，以及 canonical 與 hreflang（`zh-Hant`、`en`、`x-default`）。`today.html` 的 canonical 指向當日日期頁，不進 sitemap。
+
 ### Planned
 
 - 真實 `LinePublisher` / `EmailPublisher`

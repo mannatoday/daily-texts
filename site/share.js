@@ -12,7 +12,7 @@
   }
 
   function isEnglish() {
-    return document.documentElement.getAttribute("data-lang") === "en";
+    return document.documentElement.getAttribute("data-page-lang") === "en";
   }
 
   function verseText(role) {
@@ -32,7 +32,11 @@
       var path = window.location.pathname || "";
       var base = path.replace(/[^/]+$/, "");
       var file = (day && day.date ? day.date : "today") + ".html";
-      return window.location.origin + base + file + window.location.search;
+      var url = window.location.origin + base + file;
+      var params = new URLSearchParams(window.location.search);
+      params.delete("lang");
+      var query = params.toString();
+      return query ? url + "?" + query : url;
     } catch (err) {
       return window.location.href;
     }

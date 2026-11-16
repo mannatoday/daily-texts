@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-page-lang="en" data-href-zh="../index.html" data-href-en="index.html">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KK8K4PQW21"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KK8K4PQW21');
+</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Moravian Daily Texts: an Old Testament watchword and a New Testament text each day, for personal and family devotion." />
+  <title>Moravian Daily Texts</title>
+  <script>
+  (function () {
+    try {
+      var root = document.documentElement;
+      var page = root.getAttribute("data-page-lang") === "en" ? "en" : "zh";
+      var params = new URLSearchParams(window.location.search);
+      var qLang = params.get("lang");
+      var version = params.get("version");
+      var english = { NIV: 1, KJV: 1 };
+      var chinese = { CUV: 1, RCUV: 1, CNVT: 1, CSBT: 1, WCB: 1 };
+      var target = null;
+      if (qLang === "en" || qLang === "zh") target = qLang;
+      else if (version && english[version]) target = "en";
+      else if (version && chinese[version]) target = "zh";
+      else {
+        try {
+          var saved = window.localStorage.getItem("dailyTexts.lang");
+          if (saved === "en" || saved === "zh") target = saved;
+        } catch (err) {}
+      }
+      var explicit = qLang === "en" || qLang === "zh" ||
+        !!(version && (english[version] || chinese[version]));
+      if (explicit && target) {
+        try { window.localStorage.setItem("dailyTexts.lang", target); } catch (err) {}
+      }
+      if (!target || target === page) return;
+      var href = root.getAttribute(target === "en" ? "data-href-en" : "data-href-zh");
+      if (!href) return;
+      var url = new URL(href, window.location.href);
+      if (version && ((target === "en" && english[version]) || (target === "zh" && chinese[version]))) {
+        url.searchParams.set("version", version);
+      }
+      window.__dailyTextsRedirect = true;
+      window.location.replace(url.toString());
+    } catch (err) {}
+  })();
+  </script>
+  <link rel="canonical" href="https://mannatoday.github.io/daily-texts/en/" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://mannatoday.github.io/daily-texts/" />
+  <link rel="alternate" hreflang="en" href="https://mannatoday.github.io/daily-texts/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://mannatoday.github.io/daily-texts/" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <link rel="icon" href="../icon.png?v=4" sizes="any" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=4" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Daily Texts" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../version.js" defer></script>
+  <script src="../install.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell site-index">
+  <div class="version-picker">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <a class="lang-toggle__btn" href="../index.html" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh">中文</a>
+      <a class="lang-toggle__btn" href="index.html" hreflang="en" lang="en" data-set-lang="en" aria-current="page">EN</a>
+    </div>
+  </div>
+    <main id="main">
+    <h1 class="brand">Moravian Daily Texts</h1>
+    <p class="subtitle">Moravian Daily Texts • English</p>
+    <p class="lede">Begin each day with the Word of God</p>
+    <a class="today-card" href="today.html"><span class="today-card__label">Today’s reading</span><span class="today-card__date">Monday, November 16, 2026</span></a>
+    <h2 class="archive-title">Recent days</h2>
+    <ul class="archive-list">
+      <li><a href="2026-11-16.html"><span>Monday, November 16, 2026</span><span class="iso">2026-11-16</span></a></li>
+      <li><a href="2026-11-15.html"><span>Sunday, November 15, 2026</span><span class="iso">2026-11-15</span></a></li>
+      <li><a href="2026-11-14.html"><span>Saturday, November 14, 2026</span><span class="iso">2026-11-14</span></a></li>
+    </ul>
+    <p class="archive-more"><a href="archive.html">Archive</a></p>
+    </main>
+    <footer class="site-foot">
+      <section class="about-blurb" aria-labelledby="about-blurb-title">
+        <h2 id="about-blurb-title">About Moravian Daily Texts</h2>
+        <p>Moravian Daily Texts has been published since 1731. Each day offers an Old Testament watchword, a New Testament text, and a plan for reading Scripture.</p>
+      </section>
+      <p class="foot-credit">Moravian Daily Texts</p>
+      <p class="foot-attribution" lang="de">© <a href="https://www.herrnhuter.de/" rel="noopener noreferrer">Evangelische Brüder-Unität – Herrnhuter Brüdergemeine</a> · <a href="https://www.losungen.de/" rel="noopener noreferrer">Weitere Informationen finden Sie hier.</a></p>
+    </footer>
+  <nav class="tabbar" aria-label="Main">
+    <a class="tab" href="today.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg></span><span class="tab__label">Today</span></a>
+    <a class="tab" href="index.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M7 10.2V19.5h10V10.2"/></svg></span><span class="tab__label">Home</span></a>
+    <a class="tab" href="about.html"><span class="tab__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg></span><span class="tab__label">About</span></a>
+  </nav>
+  </div>
+</body>
+</html>
